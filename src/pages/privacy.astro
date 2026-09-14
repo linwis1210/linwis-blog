@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { SOCIAL } from "../config/social";
+---
+
+<BaseLayout title="Privacy" description="隐私说明：本站如何处理访问数据。">
+  <div class="page-shell pt-12 pb-16">
+    <h1 class="display-lg">Privacy</h1>
+
+    <div class="prose mt-10">
+      <p>更新于 2026-09-06。本页说明本站收集哪些信息以及如何使用它们。</p>
+
+      <h2>数据收集</h2>
+      <p>
+        本站尽可能不收集个人信息。当前不使用 Cookie 存储身份信息，
+        唯一的本地存储是 <code>localStorage</code> 中的主题偏好（light / dark），
+        仅保存在你的浏览器中，不会上传。
+      </p>
+
+      <h2>访问统计</h2>
+      <p>
+        本站计划接入无 Cookie 的轻量统计（如 Umami / Plausible），
+        仅收集匿名的页面浏览量、来源与设备类型，不建立用户画像、不跨站跟踪。
+        统计服务启用后，本页会同步更新具体的 Provider 与其隐私政策链接。
+      </p>
+
+      <h2>评论</h2>
+      <p>
+        文章评论由 Giscus 提供，数据存储在 GitHub Discussions。
+        使用评论即意味着你与 GitHub 之间的数据交互遵循
+        <a href="https://docs.github.com/en/site-policy" target="_blank" rel="noopener noreferrer">GitHub 隐私政策</a>。
+      </p>
+
+      <h2>第三方服务</h2>
+      <p>
+        页面可能加载 GitHub API（用于首页动态展示）。
+        这些请求由你的浏览器直接发起，失败时相应区块会静默隐藏，不影响阅读。
+      </p>
+
+      <h2>联系</h2>
+      <p>
+        关于隐私的问题，发邮件到
+        <a href={`mailto:${SOCIAL.email}`}>{SOCIAL.email}</a>。
+      </p>
+    </div>
+  </div>
+</BaseLayout>

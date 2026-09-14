@@ -1,0 +1,47 @@
+---
+import { SITE } from "../config/site";
+import { SOCIAL } from "../config/social";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-line">
+  <div
+    class="page-shell py-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+  >
+    <div>
+      <p class="font-mono text-sm font-bold">
+        {SITE.title}<span class="text-accent">_</span>
+      </p>
+      <p class="mt-1 text-xs text-muted">
+        © {year} {SITE.author} · {SITE.tagline}
+      </p>
+      {
+        SITE.icp && (
+          <p class="mt-1 text-xs text-faint">
+            <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">
+              {SITE.icp}
+            </a>
+          </p>
+        )
+      }
+    </div>
+
+    <nav class="flex items-center gap-4 text-xs text-muted" aria-label="页脚导航">
+      <a href="/privacy" class="hover:text-accent transition-colors">Privacy</a>
+      <a href="/terms" class="hover:text-accent transition-colors">Terms</a>
+      <a href="/rss.xml" class="hover:text-accent transition-colors">RSS</a>
+      <a
+        href={SOCIAL.github}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="hover:text-accent transition-colors inline-flex items-center gap-1"
+      >
+        GitHub
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M7 17 17 7M8 7h9v9"></path>
+        </svg>
+      </a>
+    </nav>
+  </div>
+</footer>

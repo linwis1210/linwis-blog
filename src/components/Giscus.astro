@@ -1,0 +1,77 @@
+---
+/**
+ * Giscus 评论（GitHub Discussions）。
+ * Progressive Enhancement：加载失败 / 未配置均不影响正文阅读。
+ * 在 src/config/social.ts 的 FEATURES.giscus 中配置并启用。
+ */
+import { FEATURES } from "../config/social";
+
+const giscus = FEATURES.giscus;
+const dev = import.meta.env.DEV;
+---
+
+{
+  giscus.enabled && giscus.repo && giscus.repoId ? (
+    <section class="border-t border-line" aria-label="评论">
+      <div class="page-shell py-8">
+        <div
+          id="giscus-container"
+          data-repo={giscus.repo}
+          data-repo-id={giscus.repoId}
+          data-category={giscus.category}
+          data-category-id={giscus.categoryId}
+        >
+          <p class="text-xs text-faint">评论加载中…</p>
+        </div>
+      </div>
+    </section>
+  ) : dev ? (
+    <section class="border-t border-line" aria-label="评论">
+      <div class="page-shell py-8">
+        <p class="rounded-lg border border-dashed border-line px-4 py-6 text-center text-xs text-faint">
+          Giscus 评论未启用 — 在 src/config/social.ts 的 FEATURES.giscus 中填写
+          repo / repoId 并设 enabled: true（生产环境下此占位不渲染）
+        </p>
+      </div>
+    </section>
+  ) : null
+}
+
+<script>
+  const container = document.getElementById("giscus-container");
+  if (container) {
+    const s = document.createElement("script");
+    s.src = "https://giscus.app/client.js";
+    s.async = true;
+    s.crossOrigin = "anonymous";
+    s.setAttribute("data-repo", container.dataset.repo ?? "");
+    s.setAttribute("data-repo-id", container.dataset.repoId ?? "");
+    s.setAttribute("data-category", container.dataset.category ?? "Announcements");
+    s.setAttribute("data-category-id", container.dataset.categoryId ?? "");
+    s.setAttribute("data-mapping", "pathname");
+    s.setAttribute("data-strict", "0");
+    s.setAttribute("data-reactions-enabled", "1");
+    s.setAttribute("data-emit-metadata", "0");
+    s.setAttribute("data-input-position", "top");
+    s.setAttribute("data-theme", "preferred_color_scheme");
+    s.setAttribute("data-lang", "zh-CN");
+    s.setAttribute("data-loading", "lazy");
+
+    // 超时降级：加载失败时保留静态提示，正文不受影响
+    const fallback = setTimeout(() => {
+      if (!container.querySelector("iframe")) {
+        container.innerHTML =
+          '<p class="text-xs text-faint">评论加载失败，不影响文章阅读。</p>';
+      }
+    }, 8000);
+
+    s.addEventListener("load", () => clearTimeout(fallback));
+    s.addEventListener("error", () => {
+      clearTimeout(fallback);
+      container.innerHTML =
+        '<p class="text-xs text-faint">评论不可用，不影响文章阅读。</p>';
+    });
+
+    container.appendChild(s);
+  }
+</script>

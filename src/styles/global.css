@@ -1,0 +1,848 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------------------
+   Design Tokens — linwis_ · Quiet Engineering
+   近白画布 + 炭黑正文 + 冷灰辅助 + 细分隔线，唯一交互强调色为蓝。
+   深色为 GitHub 式深空层级（非纯黑）。色板见 DESIGN.md §4。
+--------------------------------------------------------------------------- */
+:root {
+  --bg: #fbfbfd;
+  --surface: #ffffff;
+  --surface-subtle: #f6f8fa;
+  --surface-hover: #f3f4f6;
+  --fg: #1d1d1f;
+  --muted: #656d76;
+  --faint: #8c959f;
+  --line: #eaecef;
+  --line-strong: #d8dee4;
+  --accent: #0071e3;
+  --accent-hover: #0066cc;
+  --accent-soft: #eaf4ff;
+  --success: #1a7f37;
+  --warning: #9a6700;
+  --danger: #d1242f;
+  --code-bg: #f6f8fa;
+  --kbd-bg: #eff1f3;
+
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface-subtle: #11161d;
+  --surface-hover: #1c2128;
+  --fg: #f0f6fc;
+  --muted: #8b949e;
+  --faint: #6e7681;
+  --line: #21262d;
+  --line-strong: #30363d;
+  --accent: #58a6ff;
+  --accent-hover: #79c0ff;
+  --accent-soft: #0d2742;
+  --success: #3fb950;
+  --warning: #d29922;
+  --danger: #f85149;
+  --code-bg: #161b22;
+  --kbd-bg: #21262d;
+
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-surface-hover: var(--surface-hover);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", sans-serif;
+  --font-mono:
+    ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+}
+
+/* ---------------------------------------------------------------------------
+   全局容器 — DESIGN.md §8.1：1200–1280px，水平内边距随断点放宽
+--------------------------------------------------------------------------- */
+.page-shell {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 76rem;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .page-shell {
+    padding-inline: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page-shell {
+    padding-inline: 2.75rem;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   字号层级 — DESIGN.md §6
+--------------------------------------------------------------------------- */
+.display-xl {
+  font-size: clamp(3.5rem, 7vw, 6.5rem);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+}
+
+.display-lg {
+  font-size: clamp(2.75rem, 5vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.035em;
+}
+
+.lead {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 60ch;
+}
+
+@media (min-width: 640px) {
+  .lead {
+    font-size: 1.3125rem;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+.dark ::selection {
+  background: var(--accent-soft);
+  color: var(--fg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   文章排版（.prose）— 自带层级，不依赖 typography 插件
+   正文 17px / 68ch，层级靠字号与留白（DESIGN.md §6 / §8.2）
+--------------------------------------------------------------------------- */
+.prose {
+  font-size: 1.0625rem;
+  line-height: 1.78;
+  color: var(--fg);
+  overflow-wrap: break-word;
+  max-width: 68ch;
+}
+
+@media (min-width: 640px) {
+  .prose {
+    font-size: 1.09375rem;
+  }
+}
+
+.prose > * + * {
+  margin-top: 1.15em;
+}
+
+.prose h2,
+.prose h3,
+.prose h4 {
+  font-weight: 650;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  scroll-margin-top: 5.5rem;
+}
+
+.prose > h2 {
+  margin-top: 2.6em;
+  padding-bottom: 0.45em;
+  border-bottom: 1px solid var(--line);
+  font-size: 1.5rem;
+}
+
+.prose > h3 {
+  margin-top: 2em;
+  font-size: 1.25rem;
+}
+
+.prose > h4 {
+  margin-top: 1.7em;
+  font-size: 1.1rem;
+}
+
+.prose p {
+  color: var(--fg);
+}
+
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  text-underline-offset: 3px;
+}
+
+.prose a:hover {
+  text-decoration-color: var(--accent);
+}
+
+.prose strong {
+  font-weight: 650;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.4em;
+}
+
+.prose ul {
+  list-style: disc;
+}
+
+.prose ol {
+  list-style: decimal;
+}
+
+.prose li + li {
+  margin-top: 0.35em;
+}
+
+.prose li::marker {
+  color: var(--faint);
+}
+
+.prose blockquote {
+  border-left: 2px solid var(--line-strong);
+  padding-left: 1.1em;
+  color: var(--muted);
+  font-style: normal;
+}
+
+.prose blockquote > * + * {
+  margin-top: 0.6em;
+}
+
+.prose hr {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 2.6em 0;
+}
+
+/* 行内代码 */
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--code-bg);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.12em 0.35em;
+}
+
+.prose pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.8125rem;
+  line-height: 1.7;
+}
+
+/* 代码块 */
+.prose .astro-code {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  background: var(--code-bg) !important;
+}
+
+/* Shiki 双主题：暗色下切换到 dark vars */
+.dark .astro-code,
+.dark .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+
+/* [!code highlight] */
+.prose .astro-code .highlighted {
+  background: var(--accent-soft);
+  display: inline-block;
+  width: 100%;
+}
+
+/* [!code ++]/[--]（diff） */
+.prose .astro-code .diff.add {
+  background: rgba(46, 160, 67, 0.12);
+  display: inline-block;
+  width: 100%;
+}
+.prose .astro-code .diff.remove {
+  background: rgba(248, 81, 73, 0.12);
+  display: inline-block;
+  width: 100%;
+  opacity: 0.75;
+}
+
+/* 表格 */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  display: block;
+  overflow-x: auto;
+}
+
+.prose th,
+.prose td {
+  border: 1px solid var(--line);
+  padding: 0.45em 0.85em;
+  text-align: left;
+  vertical-align: top;
+}
+
+.prose th {
+  font-weight: 600;
+  background: var(--code-bg);
+  white-space: nowrap;
+}
+
+/* 图片 */
+.prose img {
+  border-radius: 8px;
+  border: 1px solid var(--line);
+}
+
+.prose figure {
+  margin: 0;
+}
+
+.prose figcaption {
+  margin-top: 0.6em;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+/* 脚注 */
+.prose .footnotes {
+  margin-top: 3em;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--line);
+  font-size: 0.84rem;
+  color: var(--muted);
+}
+
+.prose .footnotes li::marker {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.prose .data-footnote-backlink {
+  text-decoration: none;
+}
+
+/* 键盘按键 */
+kbd {
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  background: var(--kbd-bg);
+  border: 1px solid var(--line-strong);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  padding: 0.1em 0.45em;
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------------------
+   Callout（remark-directive 容器转换而来）
+--------------------------------------------------------------------------- */
+.callout {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  background: var(--surface);
+  padding: 0.85rem 1.1rem;
+  font-size: 0.9rem;
+}
+
+.callout > * + * {
+  margin-top: 0.5em;
+}
+
+.callout-title {
+  font-weight: 650;
+  font-size: 0.84rem;
+  letter-spacing: 0.01em;
+  color: var(--accent);
+  margin-bottom: 0.15em;
+}
+
+.callout[data-type="warning"] {
+  border-left-color: var(--warning);
+}
+.callout[data-type="warning"] .callout-title {
+  color: var(--warning);
+}
+
+.callout[data-type="caution"] {
+  border-left-color: var(--danger);
+}
+.callout[data-type="caution"] .callout-title {
+  color: var(--danger);
+}
+
+/* ---------------------------------------------------------------------------
+   标题锚点
+--------------------------------------------------------------------------- */
+.heading-anchor {
+  margin-left: 0.45em;
+  color: var(--faint);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  font-weight: 400;
+}
+
+.heading-anchor:focus-visible,
+.prose h2:hover .heading-anchor,
+.prose h3:hover .heading-anchor,
+.prose h4:hover .heading-anchor {
+  opacity: 1;
+}
+
+.heading-anchor:hover {
+  color: var(--accent);
+}
+
+/* ---------------------------------------------------------------------------
+   Hero 终端装饰 — 全站唯一的常驻动效：光标闪烁
+--------------------------------------------------------------------------- */
+@keyframes caret-blink {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  50%,
+  95% {
+    opacity: 0;
+  }
+}
+
+.caret {
+  display: inline-block;
+  width: 0.42em;
+  height: 0.78em;
+  margin-left: 0.08em;
+  vertical-align: baseline;
+  transform: translateY(0.06em);
+  background: var(--accent);
+  animation: caret-blink 1.2s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caret {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Header 导航链接：hover 变 accent + 底部指示条展开（当前页常显）
+--------------------------------------------------------------------------- */
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.2s ease;
+}
+
+.nav-link:hover,
+/* JS 驱动的悬停类：光标特效的 mouseover 委托维护（部分环境 :hover 渲染不可靠） */
+.nav-link.is-hovered {
+  color: var(--accent);
+}
+
+/* 激活页仅用深色加粗文字单一指示（DESIGN.md §9），下划线只服务 hover 反馈 */
+.nav-link:hover::after,
+.nav-link.is-hovered::after {
+  transform: scaleX(1);
+}
+
+/* ---------------------------------------------------------------------------
+   鼠标特效：卡片 spotlight + 光标轮换 + 点击特效轮换
+   （默认关闭，见 src/config/effects.ts；颜色对齐规范蓝）
+--------------------------------------------------------------------------- */
+:root {
+  --spotlight-color: rgba(0, 113, 227, 0.06);
+  --cursor-color: #0071e3;
+  --spark-color: #0071e3;
+}
+
+.dark {
+  --spotlight-color: rgba(88, 166, 255, 0.09);
+  --cursor-color: #58a6ff;
+  --spark-color: #58a6ff;
+}
+
+.spotlight-card {
+  position: relative;
+}
+
+.spotlight-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  background: radial-gradient(
+    260px circle at var(--mx, 50%) var(--my, 50%),
+    var(--spotlight-color),
+    transparent 70%
+  );
+}
+
+.spotlight-card:hover::after {
+  opacity: 1;
+}
+
+/* ---- 光标容器：内部内容由脚本按当前样式渲染 ---- */
+html.custom-cursor,
+html.custom-cursor * {
+  cursor: none;
+}
+
+/* 文本输入场景恢复系统光标 */
+html.custom-cursor input,
+html.custom-cursor textarea,
+html.custom-cursor select,
+html.custom-cursor [contenteditable] {
+  cursor: auto;
+}
+
+#cursor-fx {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 90;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  will-change: transform;
+}
+
+html.custom-cursor #cursor-fx {
+  display: block;
+}
+
+/* 样式①：呼吸光点（光晕扩散动画；悬停放大/速度形变由脚本驱动） */
+.cf-dot {
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%;
+  background: var(--cursor-color);
+  animation: dot-pulse 2.2s ease-out infinite;
+}
+
+@keyframes dot-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--cursor-color) 40%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 10px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+/* 样式②：mono 方块（旋转由脚本帧驱动，与缩放合成） */
+.cf-block {
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 2px;
+  background: var(--cursor-color);
+}
+
+/* 样式③：彗星拖尾（主点 + 5 个渐小的尾点，颜色渐变、位置由脚本链式 lerp） */
+.cf-comet-head {
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%;
+  background: var(--cursor-color);
+}
+
+.cf-comet-bit {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* 样式④：文字标签 —— 平时是空心细环，悬停可点元素时展开为胶囊 */
+.cf-label {
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border: 1.5px solid var(--cursor-color);
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  color: #fff;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.cf-label.is-active {
+  width: auto;
+  height: auto;
+  margin: 10px 0 0 12px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border-color: var(--cursor-color);
+  background: var(--cursor-color);
+}
+
+/* 样式⑤：Emoji 跟随 */
+.cf-emoji {
+  font-size: 17px;
+  line-height: 1;
+  margin: -9px 0 0 -8px;
+}
+
+/* ---- 点击特效元素 ---- */
+/* ① 火花：细线径向射出 */
+.click-spark {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 2.5px;
+  height: 11px;
+  margin: -5.5px 0 0 -1.25px;
+  border-radius: 1.5px;
+  background: var(--spark-color);
+  pointer-events: none;
+  z-index: 89;
+  will-change: transform, opacity;
+}
+
+/* ② 纸屑：小矩形抛物线飘落 */
+.cf-confetti {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 7px;
+  margin: -3.5px 0 0 -2px;
+  border-radius: 1px;
+  pointer-events: none;
+  z-index: 89;
+  will-change: transform, opacity;
+}
+
+/* ③ Emoji 碎片 */
+.cf-emoji-bit {
+  position: fixed;
+  top: 0;
+  left: 0;
+  font-size: 15px;
+  line-height: 1;
+  margin: -8px 0 0 -8px;
+  pointer-events: none;
+  z-index: 89;
+  will-change: transform, opacity;
+}
+
+/* ④ 涟漪：扩散圆环 */
+.cf-ripple {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border-radius: 50%;
+  border: 2px solid var(--spark-color);
+  pointer-events: none;
+  z-index: 88;
+  will-change: transform, opacity;
+}
+
+/* ⑤ 方块粒子：mono 像素风 */
+.cf-square {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 3px;
+  background: var(--spark-color);
+  pointer-events: none;
+  z-index: 89;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlight-card::after,
+  #cursor-fx,
+  .click-spark,
+  .cf-confetti,
+  .cf-emoji-bit,
+  .cf-ripple,
+  .cf-square {
+    display: none !important;
+  }
+}
+
+@media (pointer: coarse) {
+  #cursor-fx,
+  .click-spark,
+  .cf-confetti,
+  .cf-emoji-bit,
+  .cf-ripple,
+  .cf-square {
+    display: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   搜索对话框
+--------------------------------------------------------------------------- */
+.search-dialog {
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--fg);
+  padding: 0;
+  width: min(92vw, 560px);
+  max-height: min(70vh, 520px);
+  margin: auto;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.18);
+}
+
+.dark .search-dialog {
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+}
+
+.search-dialog::backdrop {
+  background: rgba(15, 15, 20, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+.search-item mark {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+/* ---------------------------------------------------------------------------
+   TOC
+--------------------------------------------------------------------------- */
+.toc-link {
+  color: var(--muted);
+  border-left: 1.5px solid var(--line);
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.toc-link:hover {
+  color: var(--fg);
+}
+
+.toc-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+}
+
+/* ---------------------------------------------------------------------------
+   Lightbox
+--------------------------------------------------------------------------- */
+.lightbox-dialog {
+  border: none;
+  background: transparent;
+  padding: 0;
+  max-width: 94vw;
+  max-height: 92vh;
+}
+
+.lightbox-dialog::backdrop {
+  background: rgba(10, 10, 14, 0.82);
+}
+
+.lightbox-dialog img {
+  max-width: 94vw;
+  max-height: 88vh;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}

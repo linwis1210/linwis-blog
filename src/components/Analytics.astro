@@ -1,0 +1,22 @@
+---
+/**
+ * Analytics 适配器。
+ * 统计能力通过 src/config/social.ts 的 FEATURES.analytics 开关控制；
+ * 更换 Provider 时只需修改本组件，不影响页面代码。
+ * Low-cookie / Cookie-free 原则：优先 Umami / Plausible 类方案。
+ */
+import { FEATURES } from "../config/social";
+
+const { enabled, provider } = FEATURES.analytics;
+---
+
+{
+  enabled && provider === "umami" && (
+    <script is:inline defer src="https://analytics.example.com/script.js" data-website-id="TO-BE-CONFIGURED" />
+  )
+}
+{
+  enabled && provider === "plausible" && (
+    <script is:inline defer data-domain="linwis.dev" src="https://plausible.io/js/script.js" />
+  )
+}

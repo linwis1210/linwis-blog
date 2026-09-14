@@ -1,0 +1,268 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import TOC from "../../components/TOC.astro";
+import Giscus from "../../components/Giscus.astro";
+import { getPublishedPosts, formatDate, type Post } from "../../lib/posts";
+import { normalizeTags } from "../../lib/tags";
+import { countStats } from "../../lib/stats";
+import { getRelatedPosts, getSeriesPosts } from "../../lib/related";
+import { SITE } from "../../config/site";
+import { categoryToSlug } from "../../config/categories";
+import { tagToSlug } from "../../lib/tags";
+
+export async function getStaticPaths() {
+  const { getCollection } = await import("astro:content");
+  const { getPublishedPosts } = await import("../../lib/posts");
+  const all = await getCollection("blog");
+  // draft 与未来文章不参与构建，URL 在发布前不可访问
+  return getPublishedPosts(all).map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props as { post: Post };
+const { Content, headings } = await render(post);
+const { words, minutes } = countStats(post.body);
+const tags = normalizeTags(post.data.tags);
+
+const all = await getCollection("blog");
+const published = getPublishedPosts(all);
+
+// 上一篇（更早发布）/ 下一篇（更新发布），按发布时间排序
+const sortedByDate = [...published].sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+const currentIndex = sortedByDate.findIndex((p) => p.id === post.id);
+const newer = currentIndex > 0 ? sortedByDate[currentIndex - 1] : null;
+const older =
+  currentIndex >= 0 && currentIndex < sortedByDate.length - 1
+    ? sortedByDate[currentIndex + 1]
+    : null;
+
+const related = getRelatedPosts(post, published, 3);
+const seriesPosts = post.data.series
+  ? getSeriesPosts(post.data.series, published)
+  : [];
+
+const githubBlob = `https://github.com/${SITE.repo}/blob/main/${SITE.contentDir}/${post.id}.md`;
+const githubEdit = `https://github.com/${SITE.repo}/edit/main/${SITE.contentDir}/${post.id}.md`;
+const githubHistory = `https://github.com/${SITE.repo}/commits/main/${SITE.contentDir}/${post.id}.md`;
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <article class="page-shell pt-12 sm:pt-16 pb-16 lg:pb-24">
+    <!-- 文章头部 -->
+    <header>
+      <a
+        href={`/blog/category/${categoryToSlug(post.data.category)}`}
+        class="font-mono text-xs uppercase tracking-wider text-accent hover:underline underline-offset-4"
+      >
+        {post.data.category}
+      </a>
+      <h1 class="display-lg mt-4 max-w-[24ch]">
+        {post.data.title}
+      </h1>
+      <p class="lead mt-4">{post.data.description}</p>
+
+      <div
+        class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs text-faint"
+      >
+        <span>发布于 {formatDate(post.data.date)}</span>
+        {
+          post.data.updated && (
+            <span>更新于 {formatDate(post.data.updated)}</span>
+          )
+        }
+        <span>{minutes} 分钟阅读</span>
+        <span>{words} 字</span>
+      </div>
+
+      {
+        tags.length > 0 && (
+          <div class="mt-3 flex flex-wrap gap-x-3 gap-y-1.5">
+            {tags.map((tag) => (
+              <a
+                href={`/blog/tag/${tagToSlug(tag)}`}
+                class="font-mono text-xs text-muted hover:text-accent transition-colors"
+              >
+                #{tag}
+              </a>
+            ))}
+          </div>
+        )
+      }
+    </header>
+
+    <!-- 移动端折叠 TOC -->
+    {
+      headings.filter((h) => h.depth === 2 || h.depth === 3).length > 0 && (
+        <details class="lg:hidden mt-8 rounded-lg border border-line bg-surface">
+          <summary class="cursor-pointer select-none px-4 py-2.5 text-sm font-medium">
+            目录
+          </summary>
+          <div class="px-4 pb-3">
+            <TOC headings={headings} />
+          </div>
+        </details>
+      )
+    }
+
+    <!-- 系列导航 -->
+    {
+      post.data.series && seriesPosts.length > 1 && (
+        <aside class="mt-8 rounded-lg border border-line bg-surface p-4">
+          <p class="font-mono text-[11px] text-faint">
+            系列 · {post.data.series}
+          </p>
+          <ol class="mt-2.5 space-y-1.5">
+            {seriesPosts.map((p, i) => (
+              <li class="flex items-baseline gap-2.5 text-sm">
+                <span class="font-mono text-[11px] text-faint tabular-nums">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                {p.id === post.id ? (
+                  <span class="text-accent font-medium">{p.data.title}</span>
+                ) : (
+                  <a href={`/blog/${p.id}`} class="text-muted hover:text-fg transition-colors">
+                    {p.data.title}
+                  </a>
+                )}
+              </li>
+            ))}
+          </ol>
+        </aside>
+      )
+    }
+
+    <!-- 正文 + 桌面 TOC -->
+    <div class="mt-12 lg:grid lg:grid-cols-[minmax(0,68ch)_200px] lg:gap-16">
+      <div class="prose min-w-0">
+        <Content />
+      </div>
+      <aside class="hidden lg:block">
+        <div class="sticky top-20">
+          <TOC headings={headings} />
+        </div>
+      </aside>
+    </div>
+
+    <!-- 操作行：分享 / GitHub -->
+    <footer class="mt-14 pt-6 border-t border-line">
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs">
+        <button type="button" data-copy-link class="inline-flex items-center gap-1.5 text-muted hover:text-accent transition-colors">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"></path>
+            <path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"></path>
+          </svg>
+          <span data-copy-link-label>复制链接</span>
+        </button>
+        <button type="button" data-web-share class="hidden items-center gap-1.5 text-muted hover:text-accent transition-colors">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+            <path d="M16 6l-4-4-4 4M12 2v13"></path>
+          </svg>
+          分享
+        </button>
+        <a href={githubBlob} target="_blank" rel="noopener noreferrer" class="text-muted hover:text-accent transition-colors">
+          View on GitHub
+        </a>
+        <a href={githubEdit} target="_blank" rel="noopener noreferrer" class="text-muted hover:text-accent transition-colors">
+          Edit on GitHub
+        </a>
+        <a href={githubHistory} target="_blank" rel="noopener noreferrer" class="text-muted hover:text-accent transition-colors">
+          History
+        </a>
+      </div>
+    </footer>
+  </article>
+
+  <!-- 上一篇 / 下一篇 -->
+  {
+    (newer || older) && (
+      <nav
+        class="border-t border-line"
+        aria-label="文章导航"
+      >
+        <div class="page-shell py-8 grid sm:grid-cols-2 gap-4">
+          {older ? (
+            <a href={`/blog/${older.id}`} class="group">
+              <p class="text-xs text-faint">← 上一篇</p>
+              <p class="mt-1 text-sm font-medium group-hover:text-accent transition-colors">
+                {older.data.title}
+              </p>
+            </a>
+          ) : (
+            <span />
+          )}
+          {newer && (
+            <a href={`/blog/${newer.id}`} class="group sm:text-right">
+              <p class="text-xs text-faint">下一篇 →</p>
+              <p class="mt-1 text-sm font-medium group-hover:text-accent transition-colors">
+                {newer.data.title}
+              </p>
+            </a>
+          )}
+        </div>
+      </nav>
+    )
+  }
+
+  <!-- 相关文章 -->
+  {
+    related.length > 0 && (
+      <section class="border-t border-line" aria-label="相关文章">
+        <div class="page-shell py-10">
+          <h2 class="text-sm font-semibold tracking-tight">相关文章</h2>
+          <ul class="mt-4 divide-y divide-line">
+            {related.map((p) => (
+              <li>
+                <a href={`/blog/${p.id}`} class="group flex items-baseline gap-4 py-3">
+                  <time class="font-mono text-xs text-faint tabular-nums shrink-0 w-[88px]">
+                    {formatDate(p.data.date)}
+                  </time>
+                  <span class="text-[15px] font-medium group-hover:text-accent transition-colors min-w-0 truncate">
+                    {p.data.title}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <Giscus />
+</BaseLayout>
+
+<script>
+  // 复制文章链接
+  const copyBtn = document.querySelector<HTMLElement>("[data-copy-link]");
+  const copyLabel = document.querySelector<HTMLElement>("[data-copy-link-label]");
+  copyBtn?.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      if (copyLabel) {
+        copyLabel.textContent = "已复制";
+        setTimeout(() => (copyLabel.textContent = "复制链接"), 1600);
+      }
+    } catch {
+      if (copyLabel) copyLabel.textContent = "复制失败";
+    }
+  });
+
+  // Web Share API（支持时显示）
+  const shareBtn = document.querySelector<HTMLElement>("[data-web-share]");
+  if (shareBtn && "share" in navigator) {
+    shareBtn.classList.remove("hidden");
+    shareBtn.classList.add("inline-flex");
+    shareBtn.addEventListener("click", () =>
+      navigator.share({
+        title: document.title,
+        url: window.location.href,
+      }),
+    );
+  }
+</script>

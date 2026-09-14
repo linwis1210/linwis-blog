@@ -1,0 +1,68 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getPublishedPosts, formatMonth } from "../lib/posts";
+
+const all = await getCollection("blog");
+const posts = getPublishedPosts(all);
+
+// 按年 → 月分组，年内按时间倒序
+const byYear = new Map<number, { date: Date; posts: typeof posts }[]>();
+for (const post of posts) {
+  const d = post.data.date;
+  const year = d.getFullYear();
+  const months = byYear.get(year) ?? [];
+  let monthGroup = months.find((m) => m.date.getMonth() === d.getMonth());
+  if (!monthGroup) {
+    monthGroup = { date: d, posts: [] };
+    months.push(monthGroup);
+  }
+  monthGroup.posts.push(post);
+  byYear.set(year, months);
+}
+const years = [...byYear.entries()].sort((a, b) => b[0] - a[0]);
+---
+
+<BaseLayout title="Archive" description="全部文章的时间线归档：按年份与月份组织。">
+  <div class="page-shell pt-12 sm:pt-16 pb-16 lg:pb-24">
+    <h1 class="display-lg">Archive</h1>
+    <p class="mt-3 font-mono text-sm text-muted">{posts.length} posts</p>
+
+    {
+      years.map(([year, months]) => (
+        <section class="mt-12" aria-label={`${year} 年文章`}>
+          <h2 class="font-mono text-lg font-bold tabular-nums">{year}</h2>
+          {months.map((month) => (
+            <div class="mt-4">
+              <h3 class="text-xs uppercase tracking-wider text-faint font-mono">{formatMonth(month.date)}</h3>
+              <ul class="mt-2 divide-y divide-line/70">
+                {month.posts.map((post) => (
+                  <li class="flex items-baseline gap-4 py-2">
+                    <time
+                      datetime={post.data.date.toISOString()}
+                      class="font-mono text-[13px] text-faint tabular-nums shrink-0 w-14"
+                    >
+                      {String(post.data.date.getDate()).padStart(2, "0")} 日
+                    </time>
+                    <a
+                      href={`/blog/${post.id}`}
+                      class="text-sm font-medium hover:text-accent transition-colors min-w-0 truncate"
+                    >
+                      {post.data.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </section>
+      ))
+    }
+
+    {
+      posts.length === 0 && (
+        <p class="py-14 text-center text-sm text-muted">还没有已发布的文章。</p>
+      )
+    }
+  </div>
+</BaseLayout>

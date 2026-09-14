@@ -1,0 +1,49 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PostList from "../../../components/PostList.astro";
+import { getPublishedPosts } from "../../../lib/posts";
+import { normalizeTag, normalizeTags, tagToSlug } from "../../../lib/tags";
+
+export async function getStaticPaths() {
+  const { getCollection } = await import("astro:content");
+  const { getPublishedPosts } = await import("../../../lib/posts");
+  const { normalizeTags, tagToSlug } = await import("../../../lib/tags");
+
+  const all = await getCollection("blog");
+  const tags = new Set<string>();
+  for (const post of getPublishedPosts(all)) {
+    for (const tag of normalizeTags(post.data.tags)) tags.add(tag);
+  }
+  return [...tags].map((tag) => ({ params: { tag: tagToSlug(tag) } }));
+}
+
+const slug = Astro.params.tag ?? "";
+const tag = decodeURIComponent(slug);
+
+const all = await getCollection("blog");
+const posts = getPublishedPosts(all).filter((p) =>
+  normalizeTags(p.data.tags).some((t) => normalizeTag(t) === tag),
+);
+---
+
+<BaseLayout title={`标签：${tag}`} description={`标签「${tag}」下的全部文章。`}>
+  <div class="page-shell pt-12 sm:pt-16 pb-16 lg:pb-24">
+    <a href="/blog" class="font-mono text-xs text-faint hover:text-accent transition-colors">
+      ← /blog
+    </a>
+    <h1 class="display-lg mt-4 font-mono">
+      <span class="text-accent">#</span>{tag}
+    </h1>
+    <p class="mt-3 font-mono text-sm text-muted">{posts.length} 篇文章</p>
+    <div class="mt-10">
+      {
+        posts.length > 0 ? (
+          <PostList posts={posts} />
+        ) : (
+          <p class="py-14 text-center text-sm text-muted">该标签下暂无已发布文章。</p>
+        )
+      }
+    </div>
+  </div>
+</BaseLayout>

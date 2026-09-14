@@ -1,0 +1,121 @@
+---
+import "../styles/global.css";
+import { SITE } from "../config/site";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import SearchDialog from "../components/SearchDialog.astro";
+import CursorEffects from "../components/CursorEffects.astro";
+import Analytics from "../components/Analytics.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = SITE.description } = Astro.props;
+const pageTitle = title ? `${title} — ${SITE.title}` : `${SITE.title} — ${SITE.tagline}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- 主题防闪烁：首帧渲染前根据 localStorage / 系统偏好设置 class -->
+    <script is:inline>
+      (() => {
+        const stored = localStorage.getItem("theme");
+        const dark = stored
+          ? stored === "dark"
+          : window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.classList.toggle("dark", dark);
+      })();
+    </script>
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-surface focus:px-3 focus:py-2 focus:rounded-md focus:border focus:border-line"
+    >
+      跳到主要内容
+    </a>
+    <Header />
+    <main id="main" class="flex-1 w-full">
+      <slot />
+    </main>
+    <Footer />
+    <SearchDialog />
+    <CursorEffects />
+    <Analytics />
+
+    <!-- 图片 Lightbox -->
+    <dialog id="lightbox" class="lightbox-dialog" aria-label="图片预览">
+      <img src="" alt="" />
+    </dialog>
+
+    <script>
+      // 代码块复制按钮
+      document.querySelectorAll<HTMLElement>(".astro-code").forEach((pre) => {
+        pre.style.position = "relative";
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className =
+          "code-copy-btn absolute right-2.5 top-2.5 rounded-md border border-line bg-surface px-2 py-1 text-[11px] text-muted opacity-0 transition-opacity hover:text-accent focus-visible:opacity-100";
+        btn.textContent = "Copy";
+        btn.addEventListener("click", async () => {
+          const code = pre.querySelector("code")?.textContent ?? "";
+          try {
+            await navigator.clipboard.writeText(code);
+            btn.textContent = "Copied";
+          } catch {
+            btn.textContent = "Failed";
+          }
+          setTimeout(() => (btn.textContent = "Copy"), 1600);
+        });
+        pre.addEventListener("mouseenter", () => (btn.style.opacity = "1"));
+        pre.addEventListener("mouseleave", () => (btn.style.opacity = "0"));
+        pre.appendChild(btn);
+      });
+
+      // 图片 Lightbox：点击正文图片放大预览
+      const lightbox = document.getElementById("lightbox") as HTMLDialogElement | null;
+      const lightboxImg = lightbox?.querySelector("img");
+      document
+        .querySelectorAll<HTMLElement>(".prose img")
+        .forEach((img) => {
+          img.loading = "lazy";
+          img.style.cursor = "zoom-in";
+          img.addEventListener("click", () => {
+            if (!lightbox || !lightboxImg) return;
+            lightboxImg.src = img.src;
+            lightboxImg.alt = img.alt;
+            lightbox.showModal();
+          });
+        });
+      lightbox?.addEventListener("click", (e) => {
+        if (e.target === lightbox || e.target === lightboxImg) lightbox.close();
+      });
+
+      // 标题锚点：点击时复制带 hash 的完整链接（同时保留默认跳转）
+      document.querySelectorAll<HTMLAnchorElement>(".heading-anchor").forEach((a) => {
+        a.addEventListener("click", () => {
+          const id = a.closest<HTMLElement>("[id]")?.id;
+          if (!id) return;
+          navigator.clipboard
+            .writeText(`${window.location.origin}${window.location.pathname}#${id}`)
+            .catch(() => {});
+        });
+      });
+    </script>
+  </body>
+</html>

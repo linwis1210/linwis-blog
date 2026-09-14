@@ -1,0 +1,41 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PostList from "../../../components/PostList.astro";
+import Pagination from "../../../components/Pagination.astro";
+import { getPublishedPosts } from "../../../lib/posts";
+
+export async function getStaticPaths() {
+  const PAGE_SIZE = 10;
+  const { getCollection } = await import("astro:content");
+  const { getPublishedPosts } = await import("../../../lib/posts");
+
+  const all = await getCollection("blog");
+  const posts = getPublishedPosts(all);
+  const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
+
+  return Array.from({ length: totalPages - 1 }, (_, i) => ({
+    params: { page: String(i + 2) },
+  }));
+}
+
+const all = await getCollection("blog");
+const posts = getPublishedPosts(all);
+const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
+const page = Number(Astro.params.page);
+---
+
+<BaseLayout title={`Blog 第 ${page} 页`} description="全部技术文章 · 分页浏览。">
+  <div class="page-shell pt-12 sm:pt-16 pb-16 lg:pb-24">
+    <h1 class="display-lg">Blog</h1>
+    <div class="mt-10">
+      <PostList posts={posts.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)} />
+    </div>
+    <Pagination
+      currentPage={page}
+      totalPages={totalPages}
+      basePath="/blog"
+      pageBase="/blog/page"
+    />
+  </div>
+</BaseLayout>

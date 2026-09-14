@@ -1,0 +1,271 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostList from "../../components/PostList.astro";
+import Pagination from "../../components/Pagination.astro";
+import { getPublishedPosts, formatDate } from "../../lib/posts";
+import { normalizeTags } from "../../lib/tags";
+import { countStats } from "../../lib/stats";
+import { CATEGORIES } from "../../config/categories";
+
+const PAGE_SIZE = 10;
+
+const all = await getCollection("blog");
+const posts = getPublishedPosts(all);
+const featured = posts.filter((p) => p.data.featured).slice(0, 3);
+const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
+
+// 客户端筛选 / 排序 / 分页的数据源（默认视图仍是服务端渲染）
+const payload = posts.map((p) => ({
+  id: p.id,
+  title: p.data.title,
+  description: p.data.description,
+  date: formatDate(p.data.date),
+  updated: p.data.updated ? formatDate(p.data.updated) : null,
+  category: p.data.category,
+  tags: normalizeTags(p.data.tags),
+  featured: p.data.featured,
+  minutes: countStats(p.body).minutes,
+}));
+
+const allTags = [...new Set(payload.flatMap((p) => p.tags))];
+---
+
+<BaseLayout title="Blog" description="全部技术文章：按分类与标签浏览，支持按发布或更新时间排序。">
+  <div class="page-shell pt-12 sm:pt-16 pb-16 lg:pb-24">
+    <h1 class="display-lg">Blog</h1>
+
+    {
+      featured.length > 0 && (
+        <section class="mt-10" aria-label="Featured Posts">
+          <ul class="divide-y divide-line">
+            {featured.map((post) => (
+              <li>
+                <a
+                  href={`/blog/${post.id}`}
+                  class="group flex gap-3 items-baseline py-3"
+                >
+                  <span class="text-accent font-mono text-xs shrink-0 pt-0.5" aria-hidden="true">
+                    ★
+                  </span>
+                  <span>
+                    <span class="text-[15px] font-medium group-hover:text-accent transition-colors">
+                      {post.data.title}
+                    </span>
+                    <span class="block mt-0.5 text-sm text-muted leading-relaxed">
+                      {post.data.description}
+                    </span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <section class="mt-10" aria-label="全部文章">
+      <!-- 筛选栏：分类 / 标签由客户端过滤；排序切换 -->
+      <div class="flex flex-col gap-2 pb-4 border-b border-line">
+        <div class="flex flex-wrap items-center gap-x-1 gap-y-1.5">
+          <span class="font-mono text-[11px] text-faint w-11 shrink-0">分类</span>
+          <button type="button" data-filter-category="" data-filter-active class="filter-chip">全部</button>
+          {CATEGORIES.map((c) => (
+            <button type="button" data-filter-category={c.name} class="filter-chip">{c.name}</button>
+          ))}
+        </div>
+        <div class="flex flex-wrap items-center gap-x-1 gap-y-1.5">
+          <span class="font-mono text-[11px] text-faint w-11 shrink-0">标签</span>
+          <button type="button" data-filter-tag="" data-filter-active class="filter-chip">全部</button>
+          {allTags.map((t) => (
+            <button type="button" data-filter-tag={t} class="filter-chip">{t}</button>
+          ))}
+        </div>
+        <div class="flex flex-wrap items-center gap-x-1 gap-y-1.5">
+          <span class="font-mono text-[11px] text-faint w-11 shrink-0">排序</span>
+          <button type="button" data-sort="date" data-filter-active class="filter-chip">发布时间</button>
+          <button type="button" data-sort="updated" class="filter-chip">更新时间</button>
+        </div>
+      </div>
+
+      <div id="post-list">
+        <PostList posts={posts.slice(0, PAGE_SIZE)} />
+      </div>
+
+      <p id="post-empty" class="hidden py-14 text-center text-sm text-muted">
+        该筛选条件下暂无文章。
+      </p>
+
+      <div id="static-pagination">
+        <Pagination
+          currentPage={1}
+          totalPages={totalPages}
+          basePath="/blog"
+          pageBase="/blog/page"
+        />
+      </div>
+      <div id="client-pagination" class="hidden mt-10 flex items-center justify-center gap-1.5"></div>
+
+      <p class="mt-6 text-xs text-faint font-mono">
+        {posts.length} posts · {PAGE_SIZE} / page
+      </p>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .filter-chip {
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    color: var(--muted);
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+  .filter-chip:hover {
+    color: var(--fg);
+  }
+  .filter-chip[data-filter-active] {
+    color: var(--accent);
+    background: var(--accent-soft);
+  }
+</style>
+
+<script type="application/json" id="blog-data" set:html={JSON.stringify(payload)} />
+
+<script>
+  interface Item {
+    id: string;
+    title: string;
+    description: string;
+    date: string;
+    updated: string | null;
+    category: string;
+    tags: string[];
+    featured: boolean;
+    minutes: number;
+  }
+
+  const data: Item[] = JSON.parse(
+    document.getElementById("blog-data")?.textContent ?? "[]",
+  );
+
+  const state = { category: "", tag: "", sort: "date", page: 1 };
+  const PAGE_SIZE = 10;
+
+  const listEl = document.getElementById("post-list");
+  const emptyEl = document.getElementById("post-empty");
+  const staticPagination = document.getElementById("static-pagination");
+  const clientPagination = document.getElementById("client-pagination");
+
+  function filtered(): Item[] {
+    const items = data.filter(
+      (p) =>
+        (!state.category || p.category === state.category) &&
+        (!state.tag || p.tags.includes(state.tag)),
+    );
+    return state.sort === "updated"
+      ? items.sort(
+          (a, b) =>
+            new Date(b.updated ?? b.date).getTime() -
+            new Date(a.updated ?? a.date).getTime(),
+        )
+      : items.sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+        );
+  }
+
+  function row(item: Item): string {
+    return `
+      <li>
+        <a href="/blog/${item.id}" class="group flex gap-3 sm:gap-5 py-3.5 items-baseline">
+          <time class="font-mono text-[13px] text-faint tabular-nums shrink-0 w-[88px]">${item.date}</time>
+          <span class="min-w-0">
+            <span class="text-base font-medium group-hover:text-accent transition-colors leading-snug">
+              ${item.featured ? '<span class="text-accent font-mono text-xs mr-1.5" aria-hidden="true">★</span>' : ""}${item.title}
+              <span class="ml-2 font-mono text-[11px] text-faint align-middle">${item.category}</span>
+            </span>
+            <span class="block mt-1 text-sm text-muted leading-relaxed line-clamp-2">${item.description}</span>
+          </span>
+        </a>
+      </li>`;
+  }
+
+  function render(): void {
+    const items = filtered();
+    const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+    state.page = Math.min(state.page, totalPages);
+    const pageItems = items.slice((state.page - 1) * PAGE_SIZE, state.page * PAGE_SIZE);
+
+    if (listEl) {
+      listEl.innerHTML = `<ul class="divide-y divide-line/70">${pageItems.map(row).join("")}</ul>`;
+    }
+    if (emptyEl) emptyEl.classList.toggle("hidden", items.length > 0);
+
+    // 有任何筛选时启用客户端分页，静态分页隐藏
+    const filteredActive = Boolean(state.category || state.tag || state.sort !== "date");
+    if (staticPagination && clientPagination) {
+      staticPagination.classList.toggle("hidden", filteredActive);
+      clientPagination.classList.toggle("hidden", !filteredActive || totalPages <= 1);
+      if (filteredActive && totalPages > 1) {
+        clientPagination.innerHTML = pageButtons(state.page, totalPages);
+      }
+    }
+  }
+
+  function pageButtons(current: number, total: number): string {
+    let html = "";
+    html += current === 1
+      ? `<span class="min-w-8 h-8 px-2 inline-flex items-center justify-center rounded-md border border-line text-sm text-faint cursor-not-allowed">上一页</span>`
+      : `<button type="button" data-page="${current - 1}" class="min-w-8 h-8 px-2 inline-flex items-center justify-center rounded-md border border-line text-sm text-muted hover:text-fg hover:border-line-strong">上一页</button>`;
+    for (let n = 1; n <= total; n++) {
+      html += n === current
+        ? `<span class="min-w-8 h-8 px-2 inline-flex items-center justify-center rounded-md border border-accent text-sm text-accent font-medium" aria-current="page">${n}</span>`
+        : `<button type="button" data-page="${n}" class="min-w-8 h-8 px-2 inline-flex items-center justify-center rounded-md border border-line text-sm text-muted hover:text-fg hover:border-line-strong">${n}</button>`;
+    }
+    html += current === total
+      ? `<span class="min-w-8 h-8 px-2 inline-flex items-center justify-center rounded-md border border-line text-sm text-faint cursor-not-allowed">下一页</span>`
+      : `<button type="button" data-page="${current + 1}" class="min-w-8 h-8 px-2 inline-flex items-center justify-center rounded-md border border-line text-sm text-muted hover:text-fg hover:border-line-strong">下一页</button>`;
+    return html;
+  }
+
+  document.querySelectorAll<HTMLButtonElement>("[data-filter-category]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      state.category = btn.dataset.filterCategory ?? "";
+      state.page = 1;
+      setActive("[data-filter-category]", btn);
+      render();
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>("[data-filter-tag]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      state.tag = btn.dataset.filterTag ?? "";
+      state.page = 1;
+      setActive("[data-filter-tag]", btn);
+      render();
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>("[data-sort]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      state.sort = btn.dataset.sort ?? "date";
+      state.page = 1;
+      setActive("[data-sort]", btn);
+      render();
+    });
+  });
+
+  clientPagination?.addEventListener("click", (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>("[data-page]");
+    if (!btn) return;
+    state.page = Number(btn.dataset.page);
+    render();
+  });
+
+  function setActive(selector: string, activeBtn: Element): void {
+    document.querySelectorAll(selector).forEach((el) => {
+      if (el === activeBtn) el.setAttribute("data-filter-active", "");
+      else el.removeAttribute("data-filter-active");
+    });
+  }
+</script>

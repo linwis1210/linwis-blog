@@ -1,0 +1,44 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PostList from "../../../components/PostList.astro";
+import { getPublishedPosts } from "../../../lib/posts";
+import { CATEGORIES, categoryToSlug } from "../../../config/categories";
+
+export async function getStaticPaths() {
+  return CATEGORIES.map((c) => ({ params: { category: categoryToSlug(c.name) } }));
+}
+
+const slug = Astro.params.category ?? "";
+const category = CATEGORIES.find((c) => categoryToSlug(c.name) === slug);
+
+const all = await getCollection("blog");
+const posts = category
+  ? getPublishedPosts(all).filter((p) => p.data.category === category.name)
+  : [];
+---
+
+<BaseLayout title={`分类：${category?.name ?? "未知"}`} description={category?.description}>
+  <div class="page-shell pt-12 sm:pt-16 pb-16 lg:pb-24">
+    <a href="/blog" class="font-mono text-xs text-faint hover:text-accent transition-colors">
+      ← /blog
+    </a>
+    <h1 class="display-lg mt-4">
+      {category?.name ?? "未知分类"}
+    </h1>
+    {
+      category?.description && (
+        <p class="lead mt-4">{category.description}</p>
+      )
+    }
+    <div class="mt-10">
+      {
+        posts.length > 0 ? (
+          <PostList posts={posts} />
+        ) : (
+          <p class="py-14 text-center text-sm text-muted">该分类下暂无已发布文章。</p>
+        )
+      }
+    </div>
+  </div>
+</BaseLayout>

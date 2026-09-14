@@ -1,0 +1,433 @@
+---
+/**
+ * 鼠标特效：卡片 spotlight + 光标样式轮换 + 点击特效轮换。
+ * 每次点击：触发当前点击特效，随后光标与特效各切到下一种（5 种循环）。
+ * 纯视觉增强：仅桌面精确指针（pointer: fine）且未开启 reduced-motion 时启用；
+ * 单一 rAF 循环驱动，页面隐藏时暂停。开关见 src/config/effects.ts。
+ */
+import { EFFECTS } from "../config/effects";
+
+const dev = import.meta.env.DEV;
+const runSpotlight = EFFECTS.enabled && EFFECTS.cardSpotlight;
+const runCursor = EFFECTS.enabled && EFFECTS.cursorRotation;
+const runClicks = EFFECTS.enabled && EFFECTS.clickRotation;
+const renderAnything = EFFECTS.enabled && (runSpotlight || runCursor || runClicks);
+---
+
+{
+  renderAnything ? (
+    <>
+      {runCursor && <div id="cursor-fx" aria-hidden="true" data-cursor-style="dot" />}
+      {(runCursor || runClicks || runSpotlight) && (
+        <script define:vars={{ clickRotationOn: runClicks, cursorRotationOn: runCursor }}>
+          (() => {
+            const fine = window.matchMedia("(pointer: fine)").matches;
+            const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            if (!fine || reduced) return;
+
+            // ---- 共享 rAF 循环：无 ticker 时自动停止 ----
+            const tickers = new Set();
+            let rafId = 0;
+
+            function loop() {
+              if (tickers.size === 0) {
+                rafId = 0;
+                return;
+              }
+              for (const fn of tickers) fn();
+              rafId = requestAnimationFrame(loop);
+            }
+
+            function ensureLoop() {
+              if (!rafId && tickers.size > 0) rafId = requestAnimationFrame(loop);
+            }
+
+            // ---- 卡片 spotlight（--mx/--my 驱动 ::after 高光）----
+            for (const card of document.querySelectorAll(".spotlight-card")) {
+              card.addEventListener(
+                "mousemove",
+                (e) => {
+                  const rect = card.getBoundingClientRect();
+                  card.style.setProperty("--mx", `${e.clientX - rect.left}px`);
+                  card.style.setProperty("--my", `${e.clientY - rect.top}px`);
+                },
+                { passive: true },
+              );
+            }
+
+            // ============================================================
+            // 光标样式轮换：dot → block → comet → label → emoji
+            // ============================================================
+            const fx = document.getElementById("cursor-fx");
+            const CURSOR_STYLES = [
+              { id: "dot" },
+              { id: "block" },
+              { id: "comet" },
+              { id: "label", text: "阅读 →" },
+              { id: "emoji", char: "⚡" },
+            ];
+            const INTERACTIVE = 'a, button, [role="button"], summary, [data-hover]';
+            const INPUT = "input, textarea, select, [contenteditable]";
+
+            let cursorIndex = 0;
+            let clickIndex = 0;
+            let mouseX = -100, mouseY = -100;
+            let visible = false;
+            // hover 状态（切换样式后恢复形态用）
+            let hoverInteractive = false;
+            let hoverInput = false;
+            let lastHoverEl = null;
+            // 每样式的动画状态
+            let innerEl = null, headEl = null;
+            let tails = [];                          // comet 的尾点链
+            let scale = 1, scaleTarget = 1;          // dot / block / comet-head 放大
+
+            function renderCursor() {
+              if (!fx) return;
+              const style = CURSOR_STYLES[cursorIndex];
+              fx.dataset.cursorStyle = style.id;
+              fx.innerHTML = "";
+              innerEl = null;
+              headEl = null;
+              tails = [];
+              scale = 1;
+              scaleTarget = 1;
+
+              const make = (cls) => {
+                const el = document.createElement("div");
+                el.className = cls;
+                fx.appendChild(el);
+                return el;
+              };
+
+              if (style.id === "comet") {
+                headEl = make("cf-comet-head");
+                innerEl = headEl;
+                // 渐变彗尾：蓝 → 浅蓝；初始都在鼠标位置，避免从原点飞入
+                const TAIL = [
+                  { size: 7, opacity: 0.55, color: "#58a6ff" },
+                  { size: 5.8, opacity: 0.45, color: "#79c0ff" },
+                  { size: 4.6, opacity: 0.36, color: "#a5d6ff" },
+                  { size: 3.4, opacity: 0.27, color: "#c9e5ff" },
+                  { size: 2.4, opacity: 0.18, color: "#e8f2ff" },
+                ];
+                for (const t of TAIL) {
+                  const el = make("cf-comet-bit");
+                  el.style.width = `${t.size}px`;
+                  el.style.height = `${t.size}px`;
+                  el.style.margin = `-${t.size / 2}px 0 0 -${t.size / 2}px`;
+                  el.style.opacity = String(t.opacity);
+                  el.style.background = t.color;
+                  tails.push({ el, x: mouseX, y: mouseY });
+                }
+              } else {
+                innerEl = make(style.id === "label" ? "cf-label" : `cf-${style.id}`);
+                if (style.id === "emoji") innerEl.textContent = style.char;
+              }
+
+              if (visible) applyHoverState();
+            }
+
+            /** 依据当前 hover 状态更新形态（样式切换后复用） */
+            function applyHoverState() {
+              if (!fx) return;
+              if (hoverInput) {
+                fx.style.opacity = "0";
+                return;
+              }
+              fx.style.opacity = "1";
+              scaleTarget = 1;
+              const style = CURSOR_STYLES[cursorIndex];
+              // 可点击暗示：悬停链接/按钮时主形态套一圈半透明光环
+              const glow = hoverInteractive
+                ? "0 0 0 3.5px color-mix(in srgb, var(--cursor-color) 32%, transparent)"
+                : "";
+              if (style.id === "dot") {
+                if (hoverInteractive) scaleTarget = 1.7;
+                // dot-pulse 呼吸动画的 box-shadow 会盖掉光环，悬停可点元素时暂停
+                innerEl.style.animation = hoverInteractive ? "none" : "";
+                innerEl.style.boxShadow = hoverInteractive ? glow : "";
+              } else if (style.id === "block") {
+                if (hoverInteractive) scaleTarget = 1.5;
+                innerEl.style.boxShadow = hoverInteractive ? glow : "";
+              } else if (style.id === "comet") {
+                if (hoverInteractive) scaleTarget = 1.3;
+                headEl.style.boxShadow = hoverInteractive ? glow : "";
+              } else if (style.id === "emoji") {
+                innerEl.style.boxShadow = hoverInteractive ? glow : "";
+              } else if (style.id === "label" && innerEl) {
+                if (hoverInteractive) {
+                  innerEl.classList.add("is-active");
+                  innerEl.textContent = style.text;
+                } else {
+                  innerEl.classList.remove("is-active");
+                  innerEl.textContent = "";
+                }
+              }
+            }
+
+            // 速度形变：移动越快沿运动方向拉伸越多（果冻感）
+            let lastMX = -100, lastMY = -100;
+            let stretch = 1;
+            let velAngle = 0;
+            let spinAngle = 0; // 方块自旋
+            let frame = 0;     // emoji 摆动相位
+
+            function cursorTick() {
+              if (!fx) return;
+              fx.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+              const styleId = CURSOR_STYLES[cursorIndex].id;
+
+              // 帧间位移 → 速度形变参数
+              const dx = mouseX - lastMX;
+              const dy = mouseY - lastMY;
+              lastMX = mouseX;
+              lastMY = mouseY;
+              const speed = Math.hypot(dx, dy);
+              if (speed > 1.5) velAngle = Math.atan2(dy, dx);
+              const targetStretch = speed > 1.5 ? Math.min(1 + speed / 16, 1.75) : 1;
+              stretch += (targetStretch - stretch) * 0.3;
+
+              if (styleId === "comet") {
+                // 头点（速度形变 + 悬停缩放）+ 尾点链式跟随
+                scale += (scaleTarget - scale) * 0.25;
+                headEl.style.transform = `rotate(${velAngle}rad) scale(${scale * stretch}, ${scale / Math.sqrt(stretch)})`;
+                let px = mouseX, py = mouseY;
+                for (const t of tails) {
+                  t.x += (px - t.x) * 0.38;
+                  t.y += (py - t.y) * 0.38;
+                  t.el.style.transform = `translate3d(${t.x - mouseX}px, ${t.y - mouseY}px, 0)`;
+                  px = t.x;
+                  py = t.y;
+                }
+              } else if (styleId === "block") {
+                // 方块：持续自旋 + 悬停缩放 + 速度形变
+                spinAngle = (spinAngle + 0.8) % 360;
+                scale += (scaleTarget - scale) * 0.25;
+                innerEl.style.transform = `rotate(${spinAngle}deg) scale(${scale * stretch}, ${scale / Math.sqrt(stretch)})`;
+              } else if (styleId === "dot") {
+                // 小点：呼吸光晕（CSS）+ 悬停缩放 + 速度形变
+                scale += (scaleTarget - scale) * 0.25;
+                innerEl.style.transform = `rotate(${velAngle}rad) scale(${scale * stretch}, ${scale / Math.sqrt(stretch)})`;
+              } else if (styleId === "emoji") {
+                // Emoji：正弦摆动 + 悬停缩放
+                frame += 1;
+                scale += (scaleTarget - scale) * 0.25;
+                innerEl.style.transform = `rotate(${Math.sin(frame / 9) * 12}deg) scale(${scale})`;
+              }
+              // label：环/胶囊形态切换即可，不做帧动画
+            }
+
+            if (fx && cursorRotationOn) {
+              document.documentElement.classList.add("custom-cursor");
+              renderCursor();
+
+              window.addEventListener(
+                "mousemove",
+                (e) => {
+                  mouseX = e.clientX;
+                  mouseY = e.clientY;
+                  if (!visible) {
+                    visible = true;
+                    ringX = mouseX;
+                    ringY = mouseY;
+                    fx.style.opacity = "1";
+                    tickers.add(cursorTick);
+                    ensureLoop();
+                  }
+                },
+                { passive: true },
+              );
+
+              document.addEventListener("mouseover", (e) => {
+                const t = e.target;
+                if (!t || typeof t.closest !== "function") return;
+                hoverInput = Boolean(t.closest(INPUT));
+                const interactiveEl = t.closest(INTERACTIVE);
+                hoverInteractive = Boolean(interactiveEl);
+                // 维护 .nav-link.is-hovered（部分环境 :hover 渲染不可靠，JS 类双保险）
+                if (lastHoverEl !== interactiveEl) {
+                  lastHoverEl?.classList?.remove("is-hovered");
+                  interactiveEl?.classList?.add("is-hovered");
+                  lastHoverEl = interactiveEl;
+                }
+                applyHoverState();
+              });
+
+              document.documentElement.addEventListener("mouseleave", () => {
+                fx.style.opacity = "0";
+              });
+              document.documentElement.addEventListener("mouseenter", () => {
+                if (visible) fx.style.opacity = "1";
+              });
+            }
+
+            // ============================================================
+            // 点击特效轮换：sparks → confetti → emoji → ripple → squares
+            // ============================================================
+            const CONFETTI_COLORS = ["#58a6ff", "#79c0ff", "#0071e3", "#a5d6ff", "#f0f6fc"];
+            const EMOJI_POOL = ["✨", "🎉", "⚡", "💥"];
+
+            function spawn(cls, x, y, fallbackMs) {
+              const el = document.createElement("div");
+              el.className = cls;
+              el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+              document.body.appendChild(el);
+              if (fallbackMs) setTimeout(() => el.remove(), fallbackMs);
+              return el;
+            }
+
+            /** 通用碎片动画：位置/速度/重力/自旋/生命，结束后自删 */
+            function debrisTick(parts, onFrame) {
+              function tick() {
+                let alive = false;
+                for (const p of parts) {
+                  if (p.progress >= 1) continue;
+                  alive = true;
+                  p.progress = Math.min(1, p.progress + p.decay);
+                  onFrame(p);
+                  if (p.progress >= 1) p.el.remove();
+                }
+                if (!alive) tickers.delete(tick);
+              }
+              tickers.add(tick);
+              ensureLoop();
+            }
+
+            const CLICK_FX = [
+              // ① 火花四射
+              (x, y) => {
+                const parts = [];
+                for (let i = 0; i < 10; i++) {
+                  const angle = (i / 10) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+                  parts.push({
+                    el: spawn("click-spark", x, y, 800),
+                    x, y,
+                    angle,
+                    progress: 0,
+                    decay: 0.032,
+                  });
+                }
+                debrisTick(parts, (p) => {
+                  const eased = 1 - Math.pow(1 - p.progress, 3);
+                  p.el.style.transform = `rotate(${p.angle}rad) translateX(${6 + eased * 38}px)`;
+                  p.el.style.opacity = String(1 - p.progress);
+                });
+              },
+              // ② 五彩纸屑（cyan 系）
+              (x, y) => {
+                const parts = [];
+                for (let i = 0; i < 14; i++) {
+                  const angle = Math.random() * Math.PI * 2;
+                  parts.push({
+                    el: spawn("cf-confetti", x, y, 1100),
+                    x, y,
+                    vx: Math.cos(angle) * (1.5 + Math.random() * 2.5),
+                    vy: Math.sin(angle) * 2 - 3.6,
+                    rot: Math.random() * 360,
+                    spin: (Math.random() - 0.5) * 22,
+                    progress: 0,
+                    decay: 0.022,
+                  });
+                }
+                debrisTick(parts, (p) => {
+                  p.x += p.vx;
+                  p.y += p.vy;
+                  p.vy += 0.12;
+                  p.rot += p.spin;
+                  p.el.style.transform = `translate3d(${p.x}px, ${p.y}px, 0) rotate(${p.rot}deg)`;
+                  p.el.style.opacity = p.progress < 0.5 ? "1" : String(1 - (p.progress - 0.5) * 2);
+                });
+              },
+              // ③ Emoji 爆炸
+              (x, y) => {
+                const parts = [];
+                for (let i = 0; i < 8; i++) {
+                  const angle = (i / 8) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+                  parts.push({
+                    el: spawn("cf-emoji-bit", x, y, 1100),
+                    x, y,
+                    vx: Math.cos(angle) * (1.5 + Math.random() * 1.5),
+                    vy: Math.sin(angle) * 2 - 2.6,
+                    progress: 0,
+                    decay: 0.024,
+                  });
+                  parts[i].el.textContent =
+                    EMOJI_POOL[Math.floor(Math.random() * EMOJI_POOL.length)];
+                }
+                debrisTick(parts, (p) => {
+                  p.x += p.vx;
+                  p.y += p.vy;
+                  p.vy += 0.1;
+                  p.el.style.transform = `translate3d(${p.x}px, ${p.y}px, 0) scale(${1 - p.progress * 0.4})`;
+                  p.el.style.opacity = p.progress < 0.4 ? "1" : String(1 - (p.progress - 0.4) / 0.6);
+                });
+              },
+              // ④ 双圆环涟漪
+              (x, y) => {
+                for (const delay of [0, 90]) {
+                  const parts = [];
+                  const el = spawn("cf-ripple", x, y, 700);
+                  parts.push({ el, x, y, progress: -delay / 450, decay: 0.075 });
+                  debrisTick(parts, (p) => {
+                    if (p.progress < 0) return; // 第二环延迟出现
+                    const eased = 1 - Math.pow(1 - p.progress, 2);
+                    p.el.style.transform = `translate3d(${p.x}px, ${p.y}px, 0) scale(${0.35 + eased * 1.15})`;
+                    p.el.style.opacity = String(0.9 * (1 - p.progress));
+                  });
+                }
+              },
+              // ⑤ mono 方块粒子
+              (x, y) => {
+                const parts = [];
+                for (let i = 0; i < 7; i++) {
+                  const angle = Math.random() * Math.PI * 2;
+                  parts.push({
+                    el: spawn("cf-square", x, y, 800),
+                    x, y,
+                    vx: Math.cos(angle) * (2 + Math.random() * 2.5),
+                    vy: Math.sin(angle) * 2 - 1.2,
+                    progress: 0,
+                    decay: 0.04,
+                  });
+                }
+                debrisTick(parts, (p) => {
+                  p.x += p.vx;
+                  p.y += p.vy;
+                  p.vy += 0.15;
+                  p.el.style.transform = `translate3d(${p.x}px, ${p.y}px, 0)`;
+                  p.el.style.opacity = String(1 - p.progress);
+                });
+              },
+            ];
+
+            // ---- 每次点击：触发当前特效 → 双轮换 ----
+            if (clickRotationOn || cursorRotationOn) {
+              window.addEventListener("click", (e) => {
+                if (clickRotationOn) {
+                  CLICK_FX[clickIndex](e.clientX, e.clientY);
+                  clickIndex = (clickIndex + 1) % CLICK_FX.length;
+                }
+                if (cursorRotationOn) {
+                  cursorIndex = (cursorIndex + 1) % CURSOR_STYLES.length;
+                  renderCursor();
+                }
+              });
+            }
+
+            // ---- 页面隐藏时暂停循环 ----
+            document.addEventListener("visibilitychange", () => {
+              if (!document.hidden) ensureLoop();
+              if (document.hidden && rafId) {
+                cancelAnimationFrame(rafId);
+                rafId = 0;
+              }
+            });
+          })();
+        </script>
+      )}
+    </>
+  ) : dev ? (
+    <p class="hidden">鼠标特效未启用 — 在 src/config/effects.ts 中开启</p>
+  ) : null
+}

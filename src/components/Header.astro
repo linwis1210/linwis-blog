@@ -1,0 +1,138 @@
+---
+import { SITE } from "../config/site";
+import { NAV_ITEMS } from "../config/navigation";
+
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const isActive = (href: string) =>
+  href === "/" ? path === "/" : path === href || path.startsWith(href + "/");
+---
+
+<header class="sticky top-0 z-40 border-b border-line bg-bg/85 backdrop-blur">
+  <div class="page-shell">
+    <div class="flex h-14 items-center justify-between gap-4">
+      <a href="/" class="font-mono font-bold text-[15px] tracking-tight">
+        {SITE.title}<span class="text-accent">_</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-5" aria-label="主导航">
+        {
+          NAV_ITEMS.map((item) => (
+            <a
+              href={item.href}
+              aria-current={isActive(item.href) ? "page" : undefined}
+              class:list={[
+                "nav-link text-sm transition-colors",
+                isActive(item.href)
+                  ? "text-fg font-medium"
+                  : "text-muted",
+              ]}
+            >
+              {item.label}
+            </a>
+          ))
+        }
+      </nav>
+
+      <div class="flex items-center gap-0.5">
+        <button
+          type="button"
+          data-search-open
+          class="flex items-center gap-1.5 rounded-md px-2.5 py-2.5 text-sm text-muted hover:text-fg hover:bg-accent-soft transition-colors"
+          aria-label="搜索（Ctrl+K）"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m20 20-3.5-3.5"></path>
+          </svg>
+          <span class="hidden sm:inline">搜索</span>
+          <kbd class="hidden sm:inline">Ctrl K</kbd>
+        </button>
+
+        <button
+          type="button"
+          data-theme-toggle
+          class="rounded-md p-2.5 text-muted hover:text-fg hover:bg-accent-soft transition-colors"
+          aria-label="切换主题"
+        >
+          <!-- 亮色图标（浅色主题下显示） -->
+          <svg class="dark:hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.3 11.3 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+          </svg>
+          <!-- 暗色图标（深色主题下显示） -->
+          <svg class="hidden dark:block" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"></path>
+          </svg>
+        </button>
+
+        <button
+          type="button"
+          data-mobile-toggle
+          class="md:hidden rounded-md p-2.5 text-muted hover:text-fg hover:bg-accent-soft transition-colors"
+          aria-label="打开菜单"
+          aria-expanded="false"
+          aria-controls="mobile-nav"
+        >
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <nav
+    id="mobile-nav"
+    class="md:hidden hidden border-t border-line"
+    aria-label="移动端导航"
+  >
+    <div class="page-shell py-2 flex flex-col">
+      {
+        NAV_ITEMS.map((item) => (
+          <a
+            href={item.href}
+            aria-current={isActive(item.href) ? "page" : undefined}
+            class:list={[
+              "py-2.5 text-sm border-b border-line last:border-0",
+              isActive(item.href) ? "text-fg font-medium" : "text-muted",
+            ]}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </div>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLElement>("[data-mobile-toggle]");
+  const nav = document.getElementById("mobile-nav");
+  toggle?.addEventListener("click", () => {
+    const open = nav?.classList.toggle("hidden") === false;
+    toggle.setAttribute("aria-expanded", String(open));
+    toggle.setAttribute("aria-label", open ? "关闭菜单" : "打开菜单");
+  });
+</script>
+
+<script>
+  // 主题切换：light ↔ dark，默认跟随 system（第一次点击前不写入 localStorage）
+  const btn = document.querySelector<HTMLElement>("[data-theme-toggle]");
+  btn?.addEventListener("click", () => {
+    const root = document.documentElement;
+    const stored = localStorage.getItem("theme");
+    const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const effectiveDark = stored ? stored === "dark" : systemDark;
+
+    if (stored === null) {
+      // 当前是 system 生效状态，点击后固定为与系统相反
+      const next = systemDark ? "light" : "dark";
+      root.classList.toggle("dark", next === "dark");
+      localStorage.setItem("theme", next);
+    } else {
+      const next = effectiveDark ? "light" : "dark";
+      root.classList.toggle("dark", next === "dark");
+      localStorage.setItem("theme", next);
+    }
+  });
+</script>

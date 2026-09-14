@@ -1,0 +1,69 @@
+---
+import type { MarkdownHeading } from "astro";
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+const { headings } = Astro.props;
+// rehype-autolink-headings 会在标题内追加 "#" 锚点，Astro 提取的 text 因此带上它
+const tocHeadings = headings
+  .filter((h) => h.depth === 2 || h.depth === 3)
+  .map((h) => ({ ...h, text: h.text.replace(/#\s*$/, "").trim() }));
+---
+
+{
+  tocHeadings.length > 0 && (
+    <nav aria-label="目录">
+      <p class="font-mono text-[11px] text-faint mb-2.5">TOC</p>
+      <ul class="space-y-0.5 text-sm">
+        {tocHeadings.map((h) => (
+          <li>
+            <a
+              href={`#${h.slug}`}
+              data-toc-link
+              data-depth={h.depth}
+              class="toc-link block py-1 pl-3 leading-snug"
+              class:list={[h.depth === 3 && "pl-6 text-[13px]"]}
+            >
+              {h.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<script>
+  const links = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]"),
+  );
+  if (links.length > 0) {
+    const map = new Map<string, HTMLAnchorElement>();
+    for (const link of links) {
+      const id = link.getAttribute("href")?.slice(1);
+      if (id) map.set(id, link);
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // 找到视口中最靠上的可见标题
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible.length === 0) return;
+        const id = visible[0].target.id;
+        for (const link of links) link.classList.remove("active");
+        map.get(id)?.classList.add("active");
+      },
+      // 标题进入视口上部 1/4 区域即认为「当前」
+      { rootMargin: "-72px 0px -75% 0px", threshold: 0 },
+    );
+
+    for (const id of map.keys()) {
+      const heading = document.getElementById(id);
+      if (heading) observer.observe(heading);
+    }
+  }
+</script>

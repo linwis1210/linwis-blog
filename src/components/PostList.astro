@@ -1,0 +1,95 @@
+---
+import { formatDate } from "../lib/posts";
+import { countStats } from "../lib/stats";
+import type { Post } from "../lib/posts";
+
+interface Props {
+  posts: Post[];
+  /** 首页编号列表样式（DESIGN.md §30）：01 序号 + 标题 + 元数据行 + 箭头 */
+  numbered?: boolean;
+  /** 是否显示分类 */
+  showCategory?: boolean;
+}
+
+const { posts, numbered = false, showCategory = false } = Astro.props;
+---
+
+{
+  numbered ? (
+    <ul class="divide-y divide-line">
+      {posts.map((post, i) => (
+        <li>
+          <a
+            href={`/blog/${post.id}`}
+            class="group flex items-baseline gap-4 sm:gap-6 py-5"
+          >
+            <span
+              class="font-mono text-[13px] text-faint tabular-nums shrink-0"
+              aria-hidden="true"
+            >
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <span class="min-w-0 flex-1">
+              <span class="block text-[17px] font-medium leading-snug tracking-tight group-hover:text-accent transition-colors">
+                {post.data.title}
+              </span>
+              <span class="block mt-1 text-sm text-muted leading-relaxed line-clamp-2">
+                {post.data.description}
+              </span>
+              <span class="mt-2 flex flex-wrap items-center gap-x-2.5 font-mono text-xs text-faint">
+                <time datetime={post.data.date.toISOString()}>
+                  {formatDate(post.data.date)}
+                </time>
+                <span aria-hidden="true">·</span>
+                <span>{countStats(post.body).minutes} min</span>
+                {showCategory && (
+                  <>
+                    <span aria-hidden="true">·</span>
+                    <span>{post.data.category}</span>
+                  </>
+                )}
+              </span>
+            </span>
+            <span
+              class="hidden sm:block self-center text-faint group-hover:text-accent transition-colors shrink-0"
+              aria-hidden="true"
+            >
+              →
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <ul class="divide-y divide-line/70">
+      {posts.map((post) => (
+        <li>
+          <a
+            href={`/blog/${post.id}`}
+            class="group flex gap-3 sm:gap-5 py-3.5 items-baseline"
+          >
+            <time
+              datetime={post.data.date.toISOString()}
+              class="font-mono text-[13px] text-faint tabular-nums shrink-0 w-[88px]"
+            >
+              {formatDate(post.data.date)}
+            </time>
+            <span class="min-w-0">
+              <span class="text-base font-medium group-hover:text-accent transition-colors leading-snug">
+                {post.data.title}
+                {showCategory && (
+                  <span class="ml-2 font-mono text-[11px] text-faint align-middle">
+                    {post.data.category}
+                  </span>
+                )}
+              </span>
+              <span class="block mt-1 text-sm text-muted leading-relaxed line-clamp-2">
+                {post.data.description}
+              </span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}

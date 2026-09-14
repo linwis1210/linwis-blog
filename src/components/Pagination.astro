@@ -1,0 +1,77 @@
+---
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  /** 第 1 页的路径 */
+  basePath: string;
+  /** 第 n（n>1）页的路径前缀，如 /blog/page */
+  pageBase: string;
+}
+
+const { currentPage, totalPages, basePath, pageBase } = Astro.props;
+const base = basePath.replace(/\/$/, "");
+const pageBaseTrimmed = pageBase.replace(/\/$/, "");
+
+function pageHref(n: number): string {
+  return n === 1 ? base : `${pageBaseTrimmed}/${n}`;
+}
+
+/** 页码序列：首尾恒在，当前页前后各 1 页，间隔用省略号 */
+function pageSequence(): (number | "…")[] {
+  if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
+  const set = new Set<number>([1, totalPages, currentPage - 1, currentPage, currentPage + 1]);
+  const nums = [...set].filter((n) => n >= 1 && n <= totalPages).sort((a, b) => a - b);
+  const out: (number | "…")[] = [];
+  let prev = 0;
+  for (const n of nums) {
+    if (n - prev > 1) out.push("…");
+    out.push(n);
+    prev = n;
+  }
+  return out;
+}
+
+const linkClass =
+  "min-w-8 h-8 px-2 inline-flex items-center justify-center rounded-md border border-line text-sm transition-colors";
+const idleClass = linkClass + " text-muted hover:text-fg hover:border-line-strong";
+const activeClass = linkClass + " text-accent border-accent font-medium";
+const disabledClass = linkClass + " text-faint cursor-not-allowed";
+---
+
+{
+  totalPages > 1 && (
+    <nav class="mt-10 flex items-center justify-center gap-1.5" aria-label="分页">
+      {currentPage === 1 ? (
+        <span class={disabledClass} aria-disabled="true">
+          上一页
+        </span>
+      ) : (
+        <a href={pageHref(currentPage - 1)} class={idleClass}>
+          上一页
+        </a>
+      )}
+      {pageSequence().map((p) =>
+        p === "…" ? (
+          <span class="px-1 text-faint text-sm">…</span>
+        ) : p === currentPage ? (
+          <span class={activeClass} aria-current="page">
+            {p}
+          </span>
+        ) : (
+          <a href={pageHref(p)} class={idleClass}>
+            {p}
+          </a>
+        ),
+      )}
+      {currentPage === totalPages ? (
+        <span class={disabledClass} aria-disabled="true">
+          下一页
+        </span>
+      ) : (
+        <a href={pageHref(currentPage + 1)} class={idleClass}>
+          下一页
+        </a>
+      )}
+    </nav>
+  )
+}

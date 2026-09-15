@@ -1,0 +1,15 @@
+npm warn deprecated tsconfck@3.1.6: unmaintained
+npm warn deprecated eslint@9.39.5: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+
+added 600 packages, and audited 601 packages in 4s
+
+263 packages are looking for funding
+  run `npm fund` for details
+
+4 vulnerabilities (2 low, 1 high, 1 critical)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+EXIT_CODE=0

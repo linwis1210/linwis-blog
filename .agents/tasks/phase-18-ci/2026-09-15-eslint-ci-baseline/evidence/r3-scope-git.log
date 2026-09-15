@@ -1,0 +1,29 @@
+## branch: fix/ci-npm10-lockfile  HEAD: b548292615d8e6c1b771235f4451c04def8cd7e4
+## main tip: ecbd3fc9a96e53a53131576f550a81a6c2dc03a8
+## commits main..HEAD:
+b548292 fix: regenerate package-lock with npm 10 for CI Node 22 compatibility
+
+## git diff main...HEAD --stat
+ package-lock.json | 69 ++++++++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 53 insertions(+), 16 deletions(-)
+
+## git diff main...HEAD -- package.json src/ docs/ .github/ .agents/ (expect empty)
+(end of excluded-path diff)
+
+## package.json blob hashes (main vs HEAD vs worktree)
+a7215bb8b70c83def15ebcd74bc4ceb690468833
+a7215bb8b70c83def15ebcd74bc4ceb690468833
+a7215bb8b70c83def15ebcd74bc4ceb690468833
+
+## lockfileVersion + emnapi entries
+4:  "lockfileVersion": 3,
+504:    "node_modules/@emnapi/runtime": {
+505-      "version": "1.11.3",
+506-      "resolved": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-1.11.3.tgz",
+493:    "node_modules/@emnapi/core": {
+494-      "version": "1.11.3",
+495-      "resolved": "https://registry.npmjs.org/@emnapi/core/-/core-1.11.3.tgz",
+
+## git status after all runs (expect clean)
+?? .agents/tasks/phase-18-ci/2026-09-15-eslint-ci-baseline/evidence/r3-scope-git.log
+(end status)

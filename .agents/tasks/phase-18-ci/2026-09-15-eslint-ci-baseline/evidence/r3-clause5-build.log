@@ -1,0 +1,84 @@
+
+> linwis-blog@0.1.0 build
+> astro build
+
+[2m23:12:40[22m [34m[content][39m Syncing content
+[2m23:12:40[22m [34m[content][39m Synced content
+[2m23:12:40[22m [34m[types][39m Generated [2m227ms[22m
+[2m23:12:40[22m [34m[build][39m output: [34m"static"[39m
+[2m23:12:40[22m [34m[build][39m mode: [34m"static"[39m
+[2m23:12:40[22m [34m[build][39m directory: [34mE:\WorkSpace\Personal  Project\PersonalBlog\dist\[39m
+[2m23:12:40[22m [34m[build][39m Collecting build info...
+[2m23:12:40[22m [34m[build][39m [32m✓ Completed in 247ms.[39m
+[2m23:12:40[22m [34m[build][39m Building static entrypoints...
+[2m23:12:41[22m [34m[vite][39m [32m✓ built in 611ms[39m
+[2m23:12:41[22m [34m[build][39m [32m✓ Completed in 638ms.[39m
+
+[42m[30m building client (vite) [39m[49m
+[2m23:12:41[22m [34m[vite][39m transforming...
+[2m23:12:41[22m [34m[vite][39m [32m✓[39m 10 modules transformed.
+[2m23:12:41[22m [34m[vite][39m rendering chunks...
+[2m23:12:41[22m [34m[vite][39m [32m✓ built in 33ms[39m
+
+[42m[30m generating static routes [39m[49m
+[2m23:12:41[22m [32m▶[39m src/pages/404.astro
+[2m23:12:41[22m   [34m└─[39m [2m/404.html[22m [2m(+7ms)[22m 
+[2m23:12:41[22m [32m▶[39m src/pages/about.astro
+[2m23:12:41[22m   [34m└─[39m [2m/about/index.html[22m [2m(+1ms)[22m 
+[2m23:12:41[22m [32m▶[39m src/pages/archive.astro
+[2m23:12:41[22m   [34m└─[39m [2m/archive/index.html[22m [2m(+2ms)[22m 
+[2m23:12:41[22m [32m▶[39m src/pages/blog/[slug].astro
+[2m23:12:41[22m   [34m├─[39m [2m/blog/nginx-cache-security-headers/index.html[22m [2m(+3ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/blog/github-actions-cd-to-china-server/index.html[22m [2m(+2ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/blog/deploy-astro-with-docker/index.html[22m [2m(+2ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/blog/astro-content-collections-guide/index.html[22m [2m(+1ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/blog/tailwind-v4-design-tokens/index.html[22m [2m(+2ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/blog/typescript-branded-types-notes/index.html[22m [2m(+3ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/blog/dev-workflow-notes-2026/index.html[22m [2m(+2ms)[22m 
+[2m23:12:41[22m   [34m└─[39m [2m/blog/cloudflare-dns-only-setup/index.html[22m [2m(+2ms)[22m 
+[2m23:12:41[22m [32m▶[39m src/pages/blog/category/[category].astro
+[2m23:12:41[22m   [34m├─[39m [2m/blog/category/server/index.html[22m [2m(+2ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/blog/category/frontend/index.html[22m [2m(+2ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/blog/category/devops/index.html[22m [2m(+2ms)[22m 
+[2m23:12:41[22m   [34m└─[39m [2m/blog/category/notes/index.html[22m [2m(+1ms)[22m 
+[2m23:12:41[22m [32m▶[39m src/pages/blog/index.astro
+[2m23:12:41[22m   [34m└─[39m [2m/blog/index.html[22m [2m(+3ms)[22m 
+[2m23:12:41[22m [32m▶[39m src/pages/blog/page/[page].astro
+[2m23:12:41[22m [32m▶[39m src/pages/blog/tag/[tag].astro
+[2m23:12:41[22m   [34m├─[39m [2m/blog/tag/nginx/index.html[22m [2m(+2ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/blog/tag/linux/index.html[22m [2m(+1ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/blog/tag/github%20actions/index.html[22m [2m(+1ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/blog/tag/ci%2Fcd/index.html[22m [2m(+2ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/blog/tag/docker/index.html[22m [2m(+2ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/blog/tag/astro/index.html[22m [2m(+2ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/blog/tag/typescript/index.html[22m [2m(+1ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/blog/tag/tailwind%20css/index.html[22m [2m(+1ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/blog/tag/css/index.html[22m [2m(+3ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/blog/tag/javascript/index.html[22m [2m(+3ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/blog/tag/git/index.html[22m [2m(+4ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/blog/tag/notes/index.html[22m [2m(+2ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/blog/tag/cloudflare/index.html[22m [2m(+2ms)[22m 
+[2m23:12:41[22m   [34m└─[39m [2m/blog/tag/dns/index.html[22m [2m(+1ms)[22m 
+[2m23:12:41[22m [32m▶[39m src/pages/index.astro
+[2m23:12:41[22m   [34m└─[39m [2m/index.html[22m [2m(+3ms)[22m 
+[2m23:12:41[22m [32m▶[39m src/pages/privacy.astro
+[2m23:12:41[22m   [34m└─[39m [2m/privacy/index.html[22m [2m(+1ms)[22m 
+[2m23:12:41[22m [32m▶[39m src/pages/projects/[slug].astro
+[2m23:12:41[22m   [34m├─[39m [2m/projects/course-lab-archive/index.html[22m [2m(+2ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/projects/dotfiles/index.html[22m [2m(+2ms)[22m 
+[2m23:12:41[22m   [34m├─[39m [2m/projects/link-checker/index.html[22m [2m(+2ms)[22m 
+[2m23:12:41[22m   [34m└─[39m [2m/projects/personal-blog/index.html[22m [2m(+2ms)[22m 
+[2m23:12:41[22m [32m▶[39m src/pages/projects/index.astro
+[2m23:12:41[22m   [34m└─[39m [2m/projects/index.html[22m [2m(+2ms)[22m 
+[2m23:12:42[22m [35mλ[39m src/pages/rss.xml.js
+[2m23:12:42[22m   [34m└─[39m [2m/rss.xml[22m [2m(+7ms)[22m 
+[2m23:12:42[22m [35mλ[39m src/pages/search-index.json.ts
+[2m23:12:42[22m   [34m└─[39m [2m/search-index.json[22m [2m(+1ms)[22m 
+[2m23:12:42[22m [32m▶[39m src/pages/terms.astro
+[2m23:12:42[22m   [34m└─[39m [2m/terms/index.html[22m [2m(+1ms)[22m 
+[2m23:12:42[22m [32m✓ Completed in 426ms.
+[39m
+[2m23:12:42[22m [34m[@astrojs/sitemap][39m `sitemap-index.xml` created at `dist`
+[2m23:12:42[22m [34m[build][39m 38 page(s) built in [1m1.38s[22m
+[2m23:12:42[22m [34m[build][39m [1mComplete![22m
+EXIT_CODE=0

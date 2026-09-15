@@ -10,7 +10,7 @@ export const SITE = {
   /** 上线并完成备案后填写，例如 "京ICP备xxxxxxxx号" */
   icp: "",
   /** GitHub 仓库（用于 View / Edit on GitHub 链接） */
-  repo: "linwis/linwis-blog",
+  repo: "linwis1210/linwis-blog",
   /** 内容目录在仓库中的路径 */
   contentDir: "src/content/blog",
 } as const;

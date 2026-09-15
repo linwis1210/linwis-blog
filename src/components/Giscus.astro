@@ -29,8 +29,8 @@ const dev = import.meta.env.DEV;
     <section class="border-t border-line" aria-label="评论">
       <div class="page-shell py-8">
         <p class="rounded-lg border border-dashed border-line px-4 py-6 text-center text-xs text-faint">
-          Giscus 评论未启用 — 在 src/config/social.ts 的 FEATURES.giscus 中填写
-          repo / repoId 并设 enabled: true（生产环境下此占位不渲染）
+          Giscus 评论未启用 — 在 src/config/social.ts 的 FEATURES.giscus 中填写 repo / repoId 并设
+          enabled: true（生产环境下此占位不渲染）
         </p>
       </div>
     </section>
@@ -60,16 +60,14 @@ const dev = import.meta.env.DEV;
     // 超时降级：加载失败时保留静态提示，正文不受影响
     const fallback = setTimeout(() => {
       if (!container.querySelector("iframe")) {
-        container.innerHTML =
-          '<p class="text-xs text-faint">评论加载失败，不影响文章阅读。</p>';
+        container.innerHTML = '<p class="text-xs text-faint">评论加载失败，不影响文章阅读。</p>';
       }
     }, 8000);
 
     s.addEventListener("load", () => clearTimeout(fallback));
     s.addEventListener("error", () => {
       clearTimeout(fallback);
-      container.innerHTML =
-        '<p class="text-xs text-faint">评论不可用，不影响文章阅读。</p>';
+      container.innerHTML = '<p class="text-xs text-faint">评论不可用，不影响文章阅读。</p>';
     });
 
     container.appendChild(s);

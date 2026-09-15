@@ -7,7 +7,10 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "lint": "eslint .",
+    "format:check": "prettier --check .",
+    "typecheck": "astro check"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.0",
@@ -24,9 +27,15 @@
     "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
     "@types/node": "^22.15.0",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-astro": "^1.7.0",
+    "globals": "^17.12.0",
     "prettier": "^3.5.0",
     "prettier-plugin-astro": "^0.14.1",
-    "typescript": "^5.8.0"
+    "typescript": "^5.8.0",
+    "typescript-eslint": "^8.70.0"
   }
 }

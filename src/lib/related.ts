@@ -24,10 +24,7 @@ export function relatedScore(post: Post, candidate: Post): number {
       score += WEIGHTS.perSharedTag;
     }
   }
-  if (
-    post.data.project &&
-    post.data.project === candidate.data.project
-  ) {
+  if (post.data.project && post.data.project === candidate.data.project) {
     score += WEIGHTS.sameProject;
   }
   if (post.data.series && post.data.series === candidate.data.series) {
@@ -37,18 +34,13 @@ export function relatedScore(post: Post, candidate: Post): number {
 }
 
 /** 取相关文章，按得分倒序，同分按时间倒序 */
-export function getRelatedPosts(
-  post: Post,
-  allPosts: Post[],
-  limit = 3,
-): Post[] {
+export function getRelatedPosts(post: Post, allPosts: Post[], limit = 3): Post[] {
   return allPosts
     .map((candidate) => ({ candidate, score: relatedScore(post, candidate) }))
     .filter(({ score }) => score > 0)
     .sort(
       (a, b) =>
-        b.score - a.score ||
-        b.candidate.data.date.getTime() - a.candidate.data.date.getTime(),
+        b.score - a.score || b.candidate.data.date.getTime() - a.candidate.data.date.getTime()
     )
     .slice(0, limit)
     .map(({ candidate }) => candidate);

@@ -36,9 +36,7 @@ const tocHeadings = headings
 }
 
 <script>
-  const links = Array.from(
-    document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]"),
-  );
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]"));
   if (links.length > 0) {
     const map = new Map<string, HTMLAnchorElement>();
     for (const link of links) {
@@ -58,7 +56,7 @@ const tocHeadings = headings
         map.get(id)?.classList.add("active");
       },
       // 标题进入视口上部 1/4 区域即认为「当前」
-      { rootMargin: "-72px 0px -75% 0px", threshold: 0 },
+      { rootMargin: "-72px 0px -75% 0px", threshold: 0 }
     );
 
     for (const id of map.keys()) {

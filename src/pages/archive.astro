@@ -34,7 +34,9 @@ const years = [...byYear.entries()].sort((a, b) => b[0] - a[0]);
           <h2 class="font-mono text-lg font-bold tabular-nums">{year}</h2>
           {months.map((month) => (
             <div class="mt-4">
-              <h3 class="text-xs uppercase tracking-wider text-faint font-mono">{formatMonth(month.date)}</h3>
+              <h3 class="text-xs uppercase tracking-wider text-faint font-mono">
+                {formatMonth(month.date)}
+              </h3>
               <ul class="mt-2 divide-y divide-line/70">
                 {month.posts.map((post) => (
                   <li class="flex items-baseline gap-4 py-2">
@@ -59,10 +61,6 @@ const years = [...byYear.entries()].sort((a, b) => b[0] - a[0]);
       ))
     }
 
-    {
-      posts.length === 0 && (
-        <p class="py-14 text-center text-sm text-muted">还没有已发布的文章。</p>
-      )
-    }
+    {posts.length === 0 && <p class="py-14 text-center text-sm text-muted">还没有已发布的文章。</p>}
   </div>
 </BaseLayout>

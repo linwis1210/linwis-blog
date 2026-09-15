@@ -13,7 +13,12 @@ const enabled = ga.enabled && Boolean(ga.username);
 
 {
   enabled ? (
-    <section id="github-activity" class="mt-16 lg:mt-24" data-username={ga.username} data-timeout-ms={String(ga.timeoutMs)}>
+    <section
+      id="github-activity"
+      class="mt-16 lg:mt-24"
+      data-username={ga.username}
+      data-timeout-ms={String(ga.timeoutMs)}
+    >
       <h2 class="text-sm font-semibold tracking-tight">GitHub Activity</h2>
       <ul id="github-activity-list" class="mt-3 space-y-2 text-sm" />
     </section>
@@ -21,8 +26,8 @@ const enabled = ga.enabled && Boolean(ga.username);
     <section class="mt-16 lg:mt-24">
       <h2 class="text-sm font-semibold tracking-tight">GitHub Activity</h2>
       <p class="mt-3 rounded-lg border border-dashed border-line px-4 py-6 text-center text-xs text-faint">
-        GitHub Activity 未启用 — 在 src/config/social.ts 的
-        FEATURES.githubActivity 中设 enabled: true（生产环境下此占位不渲染）
+        GitHub Activity 未启用 — 在 src/config/social.ts 的 FEATURES.githubActivity 中设 enabled:
+        true（生产环境下此占位不渲染）
       </p>
     </section>
   ) : null

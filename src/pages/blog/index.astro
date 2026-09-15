@@ -25,7 +25,7 @@ const payload = posts.map((p) => ({
   category: p.data.category,
   tags: normalizeTags(p.data.tags),
   featured: p.data.featured,
-  minutes: countStats(p.body).minutes,
+  minutes: countStats(p.body ?? "").minutes,
 }));
 
 const allTags = [...new Set(payload.flatMap((p) => p.tags))];
@@ -41,10 +41,7 @@ const allTags = [...new Set(payload.flatMap((p) => p.tags))];
           <ul class="divide-y divide-line">
             {featured.map((post) => (
               <li>
-                <a
-                  href={`/blog/${post.id}`}
-                  class="group flex gap-3 items-baseline py-3"
-                >
+                <a href={`/blog/${post.id}`} class="group flex gap-3 items-baseline py-3">
                   <span class="text-accent font-mono text-xs shrink-0 pt-0.5" aria-hidden="true">
                     ★
                   </span>
@@ -69,21 +66,35 @@ const allTags = [...new Set(payload.flatMap((p) => p.tags))];
       <div class="flex flex-col gap-2 pb-4 border-b border-line">
         <div class="flex flex-wrap items-center gap-x-1 gap-y-1.5">
           <span class="font-mono text-[11px] text-faint w-11 shrink-0">分类</span>
-          <button type="button" data-filter-category="" data-filter-active class="filter-chip">全部</button>
-          {CATEGORIES.map((c) => (
-            <button type="button" data-filter-category={c.name} class="filter-chip">{c.name}</button>
-          ))}
+          <button type="button" data-filter-category="" data-filter-active class="filter-chip"
+            >全部</button
+          >
+          {
+            CATEGORIES.map((c) => (
+              <button type="button" data-filter-category={c.name} class="filter-chip">
+                {c.name}
+              </button>
+            ))
+          }
         </div>
         <div class="flex flex-wrap items-center gap-x-1 gap-y-1.5">
           <span class="font-mono text-[11px] text-faint w-11 shrink-0">标签</span>
-          <button type="button" data-filter-tag="" data-filter-active class="filter-chip">全部</button>
-          {allTags.map((t) => (
-            <button type="button" data-filter-tag={t} class="filter-chip">{t}</button>
-          ))}
+          <button type="button" data-filter-tag="" data-filter-active class="filter-chip"
+            >全部</button
+          >
+          {
+            allTags.map((t) => (
+              <button type="button" data-filter-tag={t} class="filter-chip">
+                {t}
+              </button>
+            ))
+          }
         </div>
         <div class="flex flex-wrap items-center gap-x-1 gap-y-1.5">
           <span class="font-mono text-[11px] text-faint w-11 shrink-0">排序</span>
-          <button type="button" data-sort="date" data-filter-active class="filter-chip">发布时间</button>
+          <button type="button" data-sort="date" data-filter-active class="filter-chip"
+            >发布时间</button
+          >
           <button type="button" data-sort="updated" class="filter-chip">更新时间</button>
         </div>
       </div>
@@ -104,7 +115,8 @@ const allTags = [...new Set(payload.flatMap((p) => p.tags))];
           pageBase="/blog/page"
         />
       </div>
-      <div id="client-pagination" class="hidden mt-10 flex items-center justify-center gap-1.5"></div>
+      <div id="client-pagination" class="hidden mt-10 flex items-center justify-center gap-1.5">
+      </div>
 
       <p class="mt-6 text-xs text-faint font-mono">
         {posts.length} posts · {PAGE_SIZE} / page
@@ -119,7 +131,9 @@ const allTags = [...new Set(payload.flatMap((p) => p.tags))];
     padding: 3px 10px;
     border-radius: 6px;
     color: var(--muted);
-    transition: color 0.15s ease, background-color 0.15s ease;
+    transition:
+      color 0.15s ease,
+      background-color 0.15s ease;
   }
   .filter-chip:hover {
     color: var(--fg);
@@ -145,9 +159,7 @@ const allTags = [...new Set(payload.flatMap((p) => p.tags))];
     minutes: number;
   }
 
-  const data: Item[] = JSON.parse(
-    document.getElementById("blog-data")?.textContent ?? "[]",
-  );
+  const data: Item[] = JSON.parse(document.getElementById("blog-data")?.textContent ?? "[]");
 
   const state = { category: "", tag: "", sort: "date", page: 1 };
   const PAGE_SIZE = 10;
@@ -161,17 +173,14 @@ const allTags = [...new Set(payload.flatMap((p) => p.tags))];
     const items = data.filter(
       (p) =>
         (!state.category || p.category === state.category) &&
-        (!state.tag || p.tags.includes(state.tag)),
+        (!state.tag || p.tags.includes(state.tag))
     );
     return state.sort === "updated"
       ? items.sort(
           (a, b) =>
-            new Date(b.updated ?? b.date).getTime() -
-            new Date(a.updated ?? a.date).getTime(),
+            new Date(b.updated ?? b.date).getTime() - new Date(a.updated ?? a.date).getTime()
         )
-      : items.sort(
-          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-        );
+      : items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }
 
   function row(item: Item): string {
@@ -214,17 +223,20 @@ const allTags = [...new Set(payload.flatMap((p) => p.tags))];
 
   function pageButtons(current: number, total: number): string {
     let html = "";
-    html += current === 1
-      ? `<span class="min-w-8 h-8 px-2 inline-flex items-center justify-center rounded-md border border-line text-sm text-faint cursor-not-allowed">上一页</span>`
-      : `<button type="button" data-page="${current - 1}" class="min-w-8 h-8 px-2 inline-flex items-center justify-center rounded-md border border-line text-sm text-muted hover:text-fg hover:border-line-strong">上一页</button>`;
+    html +=
+      current === 1
+        ? `<span class="min-w-8 h-8 px-2 inline-flex items-center justify-center rounded-md border border-line text-sm text-faint cursor-not-allowed">上一页</span>`
+        : `<button type="button" data-page="${current - 1}" class="min-w-8 h-8 px-2 inline-flex items-center justify-center rounded-md border border-line text-sm text-muted hover:text-fg hover:border-line-strong">上一页</button>`;
     for (let n = 1; n <= total; n++) {
-      html += n === current
-        ? `<span class="min-w-8 h-8 px-2 inline-flex items-center justify-center rounded-md border border-accent text-sm text-accent font-medium" aria-current="page">${n}</span>`
-        : `<button type="button" data-page="${n}" class="min-w-8 h-8 px-2 inline-flex items-center justify-center rounded-md border border-line text-sm text-muted hover:text-fg hover:border-line-strong">${n}</button>`;
+      html +=
+        n === current
+          ? `<span class="min-w-8 h-8 px-2 inline-flex items-center justify-center rounded-md border border-accent text-sm text-accent font-medium" aria-current="page">${n}</span>`
+          : `<button type="button" data-page="${n}" class="min-w-8 h-8 px-2 inline-flex items-center justify-center rounded-md border border-line text-sm text-muted hover:text-fg hover:border-line-strong">${n}</button>`;
     }
-    html += current === total
-      ? `<span class="min-w-8 h-8 px-2 inline-flex items-center justify-center rounded-md border border-line text-sm text-faint cursor-not-allowed">下一页</span>`
-      : `<button type="button" data-page="${current + 1}" class="min-w-8 h-8 px-2 inline-flex items-center justify-center rounded-md border border-line text-sm text-muted hover:text-fg hover:border-line-strong">下一页</button>`;
+    html +=
+      current === total
+        ? `<span class="min-w-8 h-8 px-2 inline-flex items-center justify-center rounded-md border border-line text-sm text-faint cursor-not-allowed">下一页</span>`
+        : `<button type="button" data-page="${current + 1}" class="min-w-8 h-8 px-2 inline-flex items-center justify-center rounded-md border border-line text-sm text-muted hover:text-fg hover:border-line-strong">下一页</button>`;
     return html;
   }
 

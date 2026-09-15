@@ -6,6 +6,8 @@ import Pagination from "../../../components/Pagination.astro";
 import { getPublishedPosts } from "../../../lib/posts";
 
 export async function getStaticPaths() {
+  // 注意：Astro 会把 getStaticPaths 提升到组件闭包之外，
+  // 它无法访问 frontmatter 顶层的变量，因此这里需要独立声明。
   const PAGE_SIZE = 10;
   const { getCollection } = await import("astro:content");
   const { getPublishedPosts } = await import("../../../lib/posts");
@@ -19,6 +21,9 @@ export async function getStaticPaths() {
   }));
 }
 
+// 组件闭包内的渲染逻辑使用（与 getStaticPaths 内的声明保持同步）
+const PAGE_SIZE = 10;
+
 const all = await getCollection("blog");
 const posts = getPublishedPosts(all);
 const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
@@ -31,11 +36,6 @@ const page = Number(Astro.params.page);
     <div class="mt-10">
       <PostList posts={posts.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)} />
     </div>
-    <Pagination
-      currentPage={page}
-      totalPages={totalPages}
-      basePath="/blog"
-      pageBase="/blog/page"
-    />
+    <Pagination currentPage={page} totalPages={totalPages} basePath="/blog" pageBase="/blog/page" />
   </div>
 </BaseLayout>

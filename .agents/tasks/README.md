@@ -77,11 +77,15 @@ handoff 只指向所需活跃阶段目录；`archive/` 默认**不进入**子代
 
 ## 派发标准（运行要求）
 
-子代理运行模型：**GLM-5.3-Flash，推理强度 max**。
-执行点在 ZCode 客户端（子代理继承会话模型；Agent 工具无按次指定参数；
-`~/.zcode/v2/config.json` 中该模型 `defaultVariant` 已为 `max`）。
+角色子代理：**GLM-5.3-Flash，推理强度 max**（provider `defaultVariant` 已为 `max`）。
 
-**2026-09-15 实测记录**：Agent 工具派发的子代理实际继承了会话模型（GLM-5.3），
-客户端的 Flash 设置未对该派发路径生效（子代理 metadata 无模型字段、profile 无 model 绑定，
-结构上即「继承会话模型」）。已反馈用户核查客户端设置；在该限制解除前，
-本标准按「目标配置」对待，实际模型以客户端生效配置为准，派发记录中如实标注。
+**机制（2026-09-15 起生效）**：用户在 `~/.zcode/agents/` 定义 `builder.md` / `verifier.md`
+两个自定义 agent（`model: custom:builtin:bigmodel-coding-plan:GLM-5.3-Flash`，
+`injectAgentsMd: true`）。Leader 经 Agent 工具以 `subagent_type: "Builder" / "Verifier"`
+直接派发，模型绑定随 profile 生效，无需手动会话；角色细则由派发 prompt 指向
+`.agents/roles/*.md`。
+
+**历史实测（供参考）**：`general-purpose` / `Explore` 等无 model 绑定的类型继承会话模型
+（主会话 GLM-5.3），此前「Flash 设置未生效」的观察源于此；勘误类只读调研可继续用 `Explore`，
+与模型标准无关，唯角色派发必须走 Builder/Verifier 类型。实际运行模型以用户端确认
+（子代理 metadata 不记录模型字段）。

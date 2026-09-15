@@ -48,8 +48,8 @@ export function countStats(markdown: string): PostStats {
     Math.round(
       cjkChars / CJK_CHARS_PER_MINUTE +
         latinWords / LATIN_WORDS_PER_MINUTE +
-        codeLines / CODE_LINES_PER_MINUTE,
-    ),
+        codeLines / CODE_LINES_PER_MINUTE
+    )
   );
 
   return { words, minutes };

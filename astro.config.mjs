@@ -2,10 +2,7 @@ import { defineConfig } from "astro/config";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
-import {
-  transformerNotationDiff,
-  transformerNotationHighlight,
-} from "@shikijs/transformers";
+import { transformerNotationDiff, transformerNotationHighlight } from "@shikijs/transformers";
 import remarkDirective from "remark-directive";
 import { visit } from "unist-util-visit";
 import rehypeSlug from "rehype-slug";

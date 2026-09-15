@@ -3,7 +3,7 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import PostList from "../../../components/PostList.astro";
 import { getPublishedPosts } from "../../../lib/posts";
-import { normalizeTag, normalizeTags, tagToSlug } from "../../../lib/tags";
+import { normalizeTag, normalizeTags } from "../../../lib/tags";
 
 export async function getStaticPaths() {
   const { getCollection } = await import("astro:content");
@@ -23,7 +23,7 @@ const tag = decodeURIComponent(slug);
 
 const all = await getCollection("blog");
 const posts = getPublishedPosts(all).filter((p) =>
-  normalizeTags(p.data.tags).some((t) => normalizeTag(t) === tag),
+  normalizeTags(p.data.tags).some((t) => normalizeTag(t) === tag)
 );
 ---
 

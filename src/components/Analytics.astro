@@ -12,7 +12,12 @@ const { enabled, provider } = FEATURES.analytics;
 
 {
   enabled && provider === "umami" && (
-    <script is:inline defer src="https://analytics.example.com/script.js" data-website-id="TO-BE-CONFIGURED" />
+    <script
+      is:inline
+      defer
+      src="https://analytics.example.com/script.js"
+      data-website-id="TO-BE-CONFIGURED"
+    />
   )
 }
 {

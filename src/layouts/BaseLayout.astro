@@ -90,18 +90,16 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       // 图片 Lightbox：点击正文图片放大预览
       const lightbox = document.getElementById("lightbox") as HTMLDialogElement | null;
       const lightboxImg = lightbox?.querySelector("img");
-      document
-        .querySelectorAll<HTMLElement>(".prose img")
-        .forEach((img) => {
-          img.loading = "lazy";
-          img.style.cursor = "zoom-in";
-          img.addEventListener("click", () => {
-            if (!lightbox || !lightboxImg) return;
-            lightboxImg.src = img.src;
-            lightboxImg.alt = img.alt;
-            lightbox.showModal();
-          });
+      document.querySelectorAll<HTMLImageElement>(".prose img").forEach((img) => {
+        img.loading = "lazy";
+        img.style.cursor = "zoom-in";
+        img.addEventListener("click", () => {
+          if (!lightbox || !lightboxImg) return;
+          lightboxImg.src = img.src;
+          lightboxImg.alt = img.alt;
+          lightbox.showModal();
         });
+      });
       lightbox?.addEventListener("click", (e) => {
         if (e.target === lightbox || e.target === lightboxImg) lightbox.close();
       });

@@ -26,11 +26,7 @@ const posts = category
     <h1 class="display-lg mt-4">
       {category?.name ?? "未知分类"}
     </h1>
-    {
-      category?.description && (
-        <p class="lead mt-4">{category.description}</p>
-      )
-    }
+    {category?.description && <p class="lead mt-4">{category.description}</p>}
     <div class="mt-10">
       {
         posts.length > 0 ? (

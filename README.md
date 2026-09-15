@@ -41,16 +41,16 @@ Frontmatter 示例（只写实际需要的字段）：
 title: "文章标题"
 description: "一句话摘要。"
 date: 2026-09-03
-updated: 2026-09-05        # 可选
-category: "Server"          # 必须在 src/config/categories.ts 中登记
-tags: [Docker, Astro]       # 自由填写，自动走别名归一化
-draft: false                # true 则完全不构建
-featured: true              # 首页/博客页精选
+updated: 2026-09-05 # 可选
+category: "Server" # 必须在 src/config/categories.ts 中登记
+tags: [Docker, Astro] # 自由填写，自动走别名归一化
+draft: false # true 则完全不构建
+featured: true # 首页/博客页精选
 series: "Docker Deployment" # 可选，需配 seriesOrder
 seriesOrder: 1
-project: "personal-blog"    # 可选，项目页自动聚合相关文章
-cover: "/images/blog/x/cover.webp"   # 字段已预留，文章页暂未渲染
-redirectFrom: ["/blog/old-url"]      # 字段已预留，重定向暂未生效
+project: "personal-blog" # 可选，项目页自动聚合相关文章
+cover: "/images/blog/x/cover.webp" # 字段已预留，文章页暂未渲染
+redirectFrom: ["/blog/old-url"] # 字段已预留，重定向暂未生效
 ---
 ```
 

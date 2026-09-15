@@ -62,10 +62,7 @@ const stackGroups = [
           输出是最贵的输入。一个问题查了三天的资料，写成文章只要两小时；
           而下次再遇到，只需要搜索自己的博客。
         </p>
-        <p>
-          我也希望通过公开写作强迫自己把话说清楚——能给别人讲明白，
-          才是真的理解了。
-        </p>
+        <p>我也希望通过公开写作强迫自己把话说清楚——能给别人讲明白， 才是真的理解了。</p>
       </div>
     </section>
 
@@ -74,7 +71,12 @@ const stackGroups = [
       <ul class="mt-4 space-y-2 text-sm">
         <li>
           <span class="text-muted inline-block w-16">GitHub</span>
-          <a href={SOCIAL.github} target="_blank" rel="noopener noreferrer" class="text-accent hover:underline underline-offset-4">
+          <a
+            href={SOCIAL.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-accent hover:underline underline-offset-4"
+          >
             @{SOCIAL.github.split("/").pop()}
           </a>
         </li>
@@ -88,7 +90,12 @@ const stackGroups = [
           SOCIAL.links.map((link) => (
             <li>
               <span class="text-muted inline-block w-16">{link.label}</span>
-              <a href={link.url} target="_blank" rel="noopener noreferrer" class="text-accent hover:underline underline-offset-4">
+              <a
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-accent hover:underline underline-offset-4"
+              >
                 {link.url}
               </a>
             </li>

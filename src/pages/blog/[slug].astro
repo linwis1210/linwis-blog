@@ -24,16 +24,14 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props as { post: Post };
 const { Content, headings } = await render(post);
-const { words, minutes } = countStats(post.body);
+const { words, minutes } = countStats(post.body ?? "");
 const tags = normalizeTags(post.data.tags);
 
 const all = await getCollection("blog");
 const published = getPublishedPosts(all);
 
 // 上一篇（更早发布）/ 下一篇（更新发布），按发布时间排序
-const sortedByDate = [...published].sort(
-  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
-);
+const sortedByDate = [...published].sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 const currentIndex = sortedByDate.findIndex((p) => p.id === post.id);
 const newer = currentIndex > 0 ? sortedByDate[currentIndex - 1] : null;
 const older =
@@ -42,9 +40,7 @@ const older =
     : null;
 
 const related = getRelatedPosts(post, published, 3);
-const seriesPosts = post.data.series
-  ? getSeriesPosts(post.data.series, published)
-  : [];
+const seriesPosts = post.data.series ? getSeriesPosts(post.data.series, published) : [];
 
 const githubBlob = `https://github.com/${SITE.repo}/blob/main/${SITE.contentDir}/${post.id}.md`;
 const githubEdit = `https://github.com/${SITE.repo}/edit/main/${SITE.contentDir}/${post.id}.md`;
@@ -66,15 +62,9 @@ const githubHistory = `https://github.com/${SITE.repo}/commits/main/${SITE.conte
       </h1>
       <p class="lead mt-4">{post.data.description}</p>
 
-      <div
-        class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs text-faint"
-      >
+      <div class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs text-faint">
         <span>发布于 {formatDate(post.data.date)}</span>
-        {
-          post.data.updated && (
-            <span>更新于 {formatDate(post.data.updated)}</span>
-          )
-        }
+        {post.data.updated && <span>更新于 {formatDate(post.data.updated)}</span>}
         <span>{minutes} 分钟阅读</span>
         <span>{words} 字</span>
       </div>
@@ -99,9 +89,7 @@ const githubHistory = `https://github.com/${SITE.repo}/commits/main/${SITE.conte
     {
       headings.filter((h) => h.depth === 2 || h.depth === 3).length > 0 && (
         <details class="lg:hidden mt-8 rounded-lg border border-line bg-surface">
-          <summary class="cursor-pointer select-none px-4 py-2.5 text-sm font-medium">
-            目录
-          </summary>
+          <summary class="cursor-pointer select-none px-4 py-2.5 text-sm font-medium">目录</summary>
           <div class="px-4 pb-3">
             <TOC headings={headings} />
           </div>
@@ -113,9 +101,7 @@ const githubHistory = `https://github.com/${SITE.repo}/commits/main/${SITE.conte
     {
       post.data.series && seriesPosts.length > 1 && (
         <aside class="mt-8 rounded-lg border border-line bg-surface p-4">
-          <p class="font-mono text-[11px] text-faint">
-            系列 · {post.data.series}
-          </p>
+          <p class="font-mono text-[11px] text-faint">系列 · {post.data.series}</p>
           <ol class="mt-2.5 space-y-1.5">
             {seriesPosts.map((p, i) => (
               <li class="flex items-baseline gap-2.5 text-sm">
@@ -151,27 +137,70 @@ const githubHistory = `https://github.com/${SITE.repo}/commits/main/${SITE.conte
     <!-- 操作行：分享 / GitHub -->
     <footer class="mt-14 pt-6 border-t border-line">
       <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs">
-        <button type="button" data-copy-link class="inline-flex items-center gap-1.5 text-muted hover:text-accent transition-colors">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <button
+          type="button"
+          data-copy-link
+          class="inline-flex items-center gap-1.5 text-muted hover:text-accent transition-colors"
+        >
+          <svg
+            width="13"
+            height="13"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
             <path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"></path>
             <path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"></path>
           </svg>
           <span data-copy-link-label>复制链接</span>
         </button>
-        <button type="button" data-web-share class="hidden items-center gap-1.5 text-muted hover:text-accent transition-colors">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <button
+          type="button"
+          data-web-share
+          class="hidden items-center gap-1.5 text-muted hover:text-accent transition-colors"
+        >
+          <svg
+            width="13"
+            height="13"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
             <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
             <path d="M16 6l-4-4-4 4M12 2v13"></path>
           </svg>
           分享
         </button>
-        <a href={githubBlob} target="_blank" rel="noopener noreferrer" class="text-muted hover:text-accent transition-colors">
+        <a
+          href={githubBlob}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-muted hover:text-accent transition-colors"
+        >
           View on GitHub
         </a>
-        <a href={githubEdit} target="_blank" rel="noopener noreferrer" class="text-muted hover:text-accent transition-colors">
+        <a
+          href={githubEdit}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-muted hover:text-accent transition-colors"
+        >
           Edit on GitHub
         </a>
-        <a href={githubHistory} target="_blank" rel="noopener noreferrer" class="text-muted hover:text-accent transition-colors">
+        <a
+          href={githubHistory}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-muted hover:text-accent transition-colors"
+        >
           History
         </a>
       </div>
@@ -181,10 +210,7 @@ const githubHistory = `https://github.com/${SITE.repo}/commits/main/${SITE.conte
   <!-- 上一篇 / 下一篇 -->
   {
     (newer || older) && (
-      <nav
-        class="border-t border-line"
-        aria-label="文章导航"
-      >
+      <nav class="border-t border-line" aria-label="文章导航">
         <div class="page-shell py-8 grid sm:grid-cols-2 gap-4">
           {older ? (
             <a href={`/blog/${older.id}`} class="group">
@@ -262,7 +288,7 @@ const githubHistory = `https://github.com/${SITE.repo}/commits/main/${SITE.conte
       navigator.share({
         title: document.title,
         url: window.location.href,
-      }),
+      })
     );
   }
 </script>

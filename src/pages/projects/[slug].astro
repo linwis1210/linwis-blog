@@ -15,17 +15,8 @@ export async function getStaticPaths() {
 const { project } = Astro.props;
 const { Content } = await render(project);
 
-const {
-  title,
-  description,
-  status,
-  techStack,
-  github,
-  demo,
-  cover,
-  screenshots,
-  startedAt,
-} = project.data;
+const { title, description, status, techStack, github, demo, cover, screenshots, startedAt } =
+  project.data;
 
 const STATUS_LABEL = {
   active: "Active",
@@ -56,7 +47,9 @@ const relatedPosts = allPosts
       <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
         <h1 class="display-lg max-w-[24ch]">{title}</h1>
         <span class="flex items-center gap-1.5 font-mono text-[11px] text-muted">
-          <span class={`inline-block size-1.5 rounded-full ${STATUS_DOT[status]}`} aria-hidden="true"></span>
+          <span
+            class={`inline-block size-1.5 rounded-full ${STATUS_DOT[status]}`}
+            aria-hidden="true"></span>
           {STATUS_LABEL[status]}
         </span>
       </div>
@@ -66,7 +59,9 @@ const relatedPosts = allPosts
     {
       techStack.length > 0 && (
         <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-[11px] text-faint">
-          {techStack.map((t) => <span>{t}</span>)}
+          {techStack.map((t) => (
+            <span>{t}</span>
+          ))}
         </div>
       )
     }
@@ -75,9 +70,24 @@ const relatedPosts = allPosts
       {startedAt && <span class="font-mono text-faint">开始于 {formatDate(startedAt)}</span>}
       {
         github && (
-          <a href={github} target="_blank" rel="noopener noreferrer" class="text-muted hover:text-accent transition-colors inline-flex items-center gap-1">
+          <a
+            href={github}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-muted hover:text-accent transition-colors inline-flex items-center gap-1"
+          >
             GitHub
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
               <path d="M7 17 17 7M8 7h9v9" />
             </svg>
           </a>
@@ -85,9 +95,24 @@ const relatedPosts = allPosts
       }
       {
         demo && (
-          <a href={demo} target="_blank" rel="noopener noreferrer" class="text-muted hover:text-accent transition-colors inline-flex items-center gap-1">
+          <a
+            href={demo}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-muted hover:text-accent transition-colors inline-flex items-center gap-1"
+          >
             Demo
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
               <path d="M7 17 17 7M8 7h9v9" />
             </svg>
           </a>
@@ -95,36 +120,40 @@ const relatedPosts = allPosts
       }
     </div>
 
-    {cover && (
-      <figure class="mt-10">
-        <img
-          src={cover}
-          alt={`${title} 封面`}
-          width="1200"
-          height="630"
-          class="w-full rounded-xl border border-line"
-          loading="eager"
-        />
-      </figure>
-    )}
+    {
+      cover && (
+        <figure class="mt-10">
+          <img
+            src={cover}
+            alt={`${title} 封面`}
+            width="1200"
+            height="630"
+            class="w-full rounded-xl border border-line"
+            loading="eager"
+          />
+        </figure>
+      )
+    }
 
-    {screenshots.length > 1 && (
-      <section class="mt-6" aria-label="截图">
-        <div class="grid sm:grid-cols-2 gap-4">
-          {screenshots.map((src, i) => (
-            <img
-              src={src}
-              alt={`${title} 截图 ${i + 1}`}
-              width="1200"
-              height="630"
-              class="w-full rounded-xl border border-line cursor-zoom-in"
-              loading="lazy"
-              data-lightbox
-            />
-          ))}
-        </div>
-      </section>
-    )}
+    {
+      screenshots.length > 1 && (
+        <section class="mt-6" aria-label="截图">
+          <div class="grid sm:grid-cols-2 gap-4">
+            {screenshots.map((src, i) => (
+              <img
+                src={src}
+                alt={`${title} 截图 ${i + 1}`}
+                width="1200"
+                height="630"
+                class="w-full rounded-xl border border-line cursor-zoom-in"
+                loading="lazy"
+                data-lightbox
+              />
+            ))}
+          </div>
+        </section>
+      )
+    }
 
     <div class="prose mt-12">
       <Content />
@@ -159,14 +188,12 @@ const relatedPosts = allPosts
   // 项目截图 Lightbox（复用全局 #lightbox 对话框）
   const lightbox = document.getElementById("lightbox") as HTMLDialogElement | null;
   const lightboxImg = lightbox?.querySelector("img");
-  document
-    .querySelectorAll<HTMLElement>("[data-lightbox]")
-    .forEach((img) => {
-      img.addEventListener("click", () => {
-        if (!lightbox || !lightboxImg) return;
-        lightboxImg.setAttribute("src", (img as HTMLImageElement).src);
-        lightboxImg.setAttribute("alt", (img as HTMLImageElement).alt);
-        lightbox.showModal();
-      });
+  document.querySelectorAll<HTMLElement>("[data-lightbox]").forEach((img) => {
+    img.addEventListener("click", () => {
+      if (!lightbox || !lightboxImg) return;
+      lightboxImg.setAttribute("src", (img as HTMLImageElement).src);
+      lightboxImg.setAttribute("alt", (img as HTMLImageElement).alt);
+      lightbox.showModal();
     });
+  });
 </script>

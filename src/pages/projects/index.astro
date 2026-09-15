@@ -11,7 +11,10 @@ const projects = (await getCollection("projects")).sort((a, b) => {
 });
 ---
 
-<BaseLayout title="Projects" description="个人项目与技术复盘：背景、架构、技术决策、核心挑战与结果。">
+<BaseLayout
+  title="Projects"
+  description="个人项目与技术复盘：背景、架构、技术决策、核心挑战与结果。"
+>
   <div class="page-shell pt-12 sm:pt-16 pb-16 lg:pb-24">
     <h1 class="display-lg">Projects</h1>
     <p class="lead mt-4">

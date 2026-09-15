@@ -8,10 +8,7 @@ import { normalizeTags } from "../lib/tags";
  * draft 与未来文章不进入索引（getPublishedPosts 已过滤）。
  */
 export async function GET() {
-  const [posts, projects] = await Promise.all([
-    getCollection("blog"),
-    getCollection("projects"),
-  ]);
+  const [posts, projects] = await Promise.all([getCollection("blog"), getCollection("projects")]);
 
   const postDocs = getPublishedPosts(posts).map((post) => ({
     url: `/blog/${post.id}`,

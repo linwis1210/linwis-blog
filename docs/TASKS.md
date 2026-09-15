@@ -3,14 +3,14 @@
 > **状态说明（2026-09-14，Leader 重建）**：仓库仅有单个初始提交，Git 历史无进度信号，此前全部复选框未勾、与实际实现脱节。
 > 今日依据磁盘代码证据逐项重建：勾选 = 有实现工件；未勾 = 未实现或仅部分实现（部分项附括号说明）。
 > 判定方法与证据索引：`.agents/tasks/_meta/2026-09-14-takeover-reconciliation.md`（归档后位于 `.agents/tasks/archive/_meta/`）。
-> 总计：124 / 212 项完成（约 58%）。
+> 总计：131 / 212 项完成（约 62%）。
 
 ## Phase 0 — Repository
 
 - [x] 创建 GitHub Public Repository（2026-09-15 建立：github.com/linwis1210/linwis-blog，SSH 推送完成；遗留：src/config/site.ts 的 repo 值待同步为 linwis1210/linwis-blog）
 - [x] 初始化 Astro + TypeScript
 - [x] 配置 Tailwind CSS
-- [ ] 配置 ESLint
+- [x] 配置 ESLint
 - [x] 配置 Prettier
 - [x] 配置 EditorConfig
 - [x] 添加 MIT License
@@ -222,14 +222,14 @@
 
 ## Phase 18 — CI
 
-- [ ] GitHub Actions
-- [ ] Install
-- [ ] Format Check
-- [ ] Lint
-- [ ] Type Check
+- [x] GitHub Actions
+- [x] Install
+- [x] Format Check
+- [x] Lint
+- [x] Type Check
 - [ ] Content Validation
 - [ ] Unit Tests
-- [ ] Astro Build
+- [x] Astro Build
 - [ ] Broken Link Check
 - [ ] Playwright Smoke Test
 

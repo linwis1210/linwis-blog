@@ -1,6 +1,6 @@
 ---
 feature: ESLint + CI 质量基线
-state: FAILED_VALIDATION
+state: DONE
 date: 2026-09-15
 role-assignment:
   leader: main session
@@ -78,3 +78,7 @@ branch: feature/eslint-ci-baseline
 - 2026-09-15 条款 9 FAIL（新问题，CI 安装失败，修复尝试 1）—— 远端 run `34985384625` 于 **Install dependencies（npm ci）** 步骤 exit 1（6 秒即败，后续步骤 skipped）。远端日志需管理员权限（403），Leader 本地取证复现：CI Node 22 自带 **npm 10**，而 lockfile 由本机 **npm 11.6.2** 生成，`npx npm@10.9.3 ci` 本地同样报 `EUSAGE：Missing @emnapi/runtime@1.11.3、@emnapi/core@1.11.3 from lock file`（sharp 传递依赖）→ 根因 = **lockfile 的 npm 版本不兼容**，非代码问题。
 - 2026-09-15 Leader 修复指示（CI-install 问题，尝试 1）—— 用 `npx npm@10 install` 重新生成 `package-lock.json`（预期仅此一文件变更；package.json 不动），双版本验证（npm 10 与 npm 11 的 `ci` 均 exit 0）+ 条款 1–5 自验，新分支 `fix/ci-npm10-lockfile`。CI 保持 Node 22（合同条款 6 不变）。附带观察：actions/checkout@v4、setup-node@v4 有 Node20 弃用警告（后续小任务升级）。
 - 2026-09-15 状态 READY_FOR_VALIDATION → FAILED_VALIDATION（条款 9 未过，Feature 未完成）。
+- 2026-09-15 Builder 修复（CI-install 问题，尝试 1）—— `b548292`：`npx npm@10.9.3 install` 再生成 lockfile，diff 仅 package-lock.json（+53/−16，恰好补齐 `@emnapi/runtime@1.11.3`、`@emnapi/core@1.11.3`）；双版本 ci 自验全绿。
+- 2026-09-15 Verifier R3 复验 —— **PASS**：变更范围/排除路径/blob 哈希比对、npm 10.9.3 与 npm 11.6.2 双版本 ci、lockfile 合理性、条款 2–5 重跑全部通过。证据：`evidence/verifier-report-r3.md` + r3-*.log。
+- 2026-09-15 合并与条款 9 复核 —— R3 证据提交 `dd340be`；`fix/ci-npm10-lockfile` 合并 `c35d43e` 推送；远端 CI run **34987121003 全步骤 success**（Install / Check formatting / Lint / Type check / Build）。**合同条款 1–9 全部 PASS**。
+- 2026-09-15 状态 FAILED_VALIDATION → **DONE**。TASKS.md 同步勾选：Phase 0「配置 ESLint」+ Phase 18 六项（GitHub Actions / Install / Format Check / Lint / Type Check / Astro Build），总计 131/212。分支 feature/eslint-ci-baseline、fix/ci-npm10-lockfile 已合并并删除；tmp 中间产物已清理。遗留候选（后续独立任务）：CI 的 Content Validation / Unit Tests / Broken Link / Playwright 四项、actions v4→v5+ 升级（Node20 弃用警告）、内容文件旧仓库链接（待用户确认）、search-index 排序非确定、npm audit 4 项漏洞。

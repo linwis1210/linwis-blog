@@ -40,9 +40,7 @@ Feature 归档时同步勾选 `docs/TASKS.md` 对应项；规则本身不双写�
 | Phase 16 — Legal | `phase-16-legal` |
 | Phase 17 — Content CLI | `phase-17-content-cli` |
 | Phase 18 — CI | `phase-18-ci` |
-| Phase 19 — Docker | `phase-19-docker` |
-| Phase 20 — GHCR | `phase-20-ghcr` |
-| Phase 21 — Deployment | `phase-21-deployment` |
+| Phase 19 — Deployment（Cloudflare Pages，2026-09-15 修订） | `phase-19-deployment` |
 | Phase 22 — Scheduled Publishing | `phase-22-scheduled-publishing` |
 | Phase 23 — Production | `phase-23-production` |
 | Phase 24 — Performance | `phase-24-performance` |

@@ -3,7 +3,7 @@
 > Build. Learn. Share. — 记录开发、项目与持续学习。
 
 基于 **Astro + TypeScript + Tailwind CSS** 的静态优先个人技术博客。
-构建产物为纯静态文件，由 Nginx 直接提供服务，运行时零 Node.js。
+构建产物为纯静态文件，部署于 Cloudflare Pages（2026-09-15 起），运行时零 Node.js。
 
 ## 快速开始
 
@@ -65,6 +65,13 @@ redirectFrom: ["/blog/old-url"] # 字段已预留，重定向暂未生效
 
 Giscus 评论 / GitHub Activity / Analytics 均为渐进增强，失败不影响正文。
 统一在 `src/config/social.ts` 的 `FEATURES` 中配置并 `enabled: true`。
+
+## 部署（Cloudflare Pages）
+
+- 产物为纯静态 `dist/`：GitHub Actions 质量门（format / lint / typecheck / build）全绿后由 `wrangler pages deploy` 发布至 Cloudflare Pages。
+- 安全与缓存响应头定义在 `public/_headers`；旧文重定向由文章 frontmatter `redirectFrom` 构建时生成 `dist/_redirects`（301）。
+- 首次部署需：Cloudflare 创建 Pages 项目（直接上传模式）→ 创建 API Token（「Cloudflare Pages — Edit」模板）→ 仓库 Secrets 配置 `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`。
+- 每日定时构建自动上线未来日期文章；回滚在 Pages Dashboard 选择历史版本。
 
 ## 设计体系
 

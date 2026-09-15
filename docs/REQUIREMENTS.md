@@ -730,19 +730,17 @@ LICENSE
 CONTENT_LICENSE.md
 ```
 
-## 39. China Deployment
+## 39. Deployment（2026-09-15 修订：Cloudflare Pages）
 
-主要访问用户：中国大陆。
+部署平台：**Cloudflare Pages**（全球 CDN）。
 
-服务器：中国大陆。
+修订记录：原「中国大陆服务器 + BaoTa + ICP 备案」方案于 2026-09-15 由用户变更；已知悉并接受全球 CDN 的大陆访问延迟权衡（换来免 ICP 备案、免大陆服务器运维）。后续如大陆体验不达预期，可再评估回源方案。
 
-域名：后续购买（截至 2026-09-15 尚未确定；`astro.config.mjs` 的 `site` 为占位值 `https://linwis.dev`，域名确定后需统一替换，影响 canonical / RSS / sitemap 输出）。
+域名：后续确定（`astro.config.mjs` 的 `site` 为占位值 `https://linwis.dev`；先行使用 `<project>.pages.dev` 子域，域名确定后统一替换，影响 canonical / RSS / sitemap 输出）。
 
-DNS：Cloudflare 托管。
+DNS / CDN：Cloudflare 托管；自定义域名以代理模式绑定 Cloudflare Pages。
 
-普通 Cloudflare CDN 不作为默认大陆访问路径。
-
-正式上线：完成 ICP 备案后使用正式域名。
+回滚：Cloudflare Pages 历史部署版本一键回滚（Dashboard）。
 
 ## 40. v1.0 Out of Scope
 

@@ -40,29 +40,10 @@ dist/
 
 最终由 Nginx 提供静态资源。
 
-## 3. Container Architecture
+## 3. Container Architecture（2026-09-15 废弃）
 
-使用 Multi-stage Docker Build。
-
-```text
-Node Build Stage
-      ↓
-Astro Build
-      ↓
-dist/
-      ↓
-Nginx Runtime Stage
-```
-
-最终镜像只包含：
-
-```text
-Nginx
-+
-dist/
-```
-
-不运行 Node.js。
+原方案（Multi-stage Docker Build → Nginx Runtime）随部署目标变更为 Cloudflare Pages 而作废。
+静态产物直接发布至 Pages，无容器层。历史方案见 Git 历史。
 
 ## 4. Deployment
 
@@ -75,129 +56,59 @@ git push
     ↓
 GitHub
     ↓
-GitHub Actions
+GitHub Actions（Quality Gate：format / lint / typecheck / build）
     ↓
-Quality Gate
+Astro Build → dist/
     ↓
-Astro Build
+wrangler pages deploy
     ↓
-Docker Build
-    ↓
-GHCR
-    ↓
-Production Server
-    ↓
-docker pull
-    ↓
-docker compose
-    ↓
-Healthcheck
+Cloudflare Pages 全球边缘
 ```
 
 ## 5. Production Traffic
 
-当前服务器：中国大陆 Linux Server + 宝塔。
-
-建议：
+Cloudflare Pages 边缘直接服务静态产物：
 
 ```text
 Internet
    ↓
-Domain
+Custom Domain（待定；先行 <project>.pages.dev）
    ↓
-DNS
+Cloudflare Pages Edge（HTTPS 自动）
    ↓
-BaoTa Nginx
-   ↓
-127.0.0.1:8080
-   ↓
-Docker Nginx
-   ↓
-Astro dist
+Astro dist（含 _headers / _redirects / 404.html）
 ```
 
-宝塔 Nginx 负责：
+Cloudflare 负责：
 
-- HTTPS
-- Domain
-- Reverse Proxy
-- Certificate
-- Access Log
-
-Docker 内 Nginx 负责：
-
-- Static Files
-- Cache Headers
-- Compression
-- Security Headers
-- `/health`
+- HTTPS / 证书
+- 全球 CDN
+- `_headers`：Security Headers + Cache Policy
+- `_redirects`：301 重定向
+- 404 页自动识别
 
 ## 6. DNS
 
 DNS 托管：Cloudflare。
 
-大陆访问优先，因此普通 Cloudflare Proxy 不作为默认流量路径。
+自定义域名（待定）以代理模式绑定 Cloudflare Pages；
+大陆访问走全球边缘，延迟权衡已于 2026-09-15 由用户知情接受。
 
-默认：
+## 7. GitHub Container Registry（2026-09-15 废弃）
 
-```text
-Cloudflare DNS
-      ↓
-DNS Only
-      ↓
-China Mainland Server
-```
-
-## 7. GitHub Container Registry
-
-镜像：
-
-```text
-ghcr.io/{user}/linwis-blog
-```
-
-建议 Tags：
-
-```text
-latest
-v1.0.0
-git-{sha}
-```
+随 Docker 方案作废；镜像托管与分发由 Cloudflare Pages 取代。
 
 ## 8. Rollback
 
-部署流程：
+Cloudflare Pages 保留历史部署版本，Dashboard 可一键回滚到任意历史部署。
 
-```text
-Current Version
-      ↓
-Pull New Image
-      ↓
-Start
-      ↓
-Healthcheck
-```
-
-成功：部署完成。
-
-失败：
-
-```text
-Stop Failed Version
-      ↓
-Restore Previous Image
-      ↓
-Start
-      ↓
-Healthcheck
-```
+失败处理：部署异常 → 回滚上一版本 → 排查修复 → 重新部署。
 
 不做：
 
 - Kubernetes
 - Blue/Green Infrastructure
 - Service Mesh
-- Docker Swarm
 
 ## 9. Content Architecture
 
@@ -327,22 +238,18 @@ STOP
 
 ## 14. CD Pipeline
 
-main 通过全部 CI 后：
+main 通过全部 CI 后（同一 workflow 的 deploy job，`needs: quality`）：
 
 ```text
-Build Docker
+Astro Build
 ↓
-Push GHCR
+wrangler pages deploy（secrets：CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID）
 ↓
-SSH Server
+Cloudflare Pages
 ↓
-docker compose pull
+线上冒烟验证
 ↓
-docker compose up
-↓
-Healthcheck
-↓
-Success / Rollback
+Success / Pages 回滚
 ```
 
 ## 15. Scheduled Build
@@ -389,6 +296,8 @@ GitHub Actions 提供 Scheduled Workflow。
 - Frame Protection
 
 第三方脚本必须白名单。
+
+实现位置：`public/_headers`（Cloudflare Pages）。
 
 ## 18. Third-party Failure Strategy
 
@@ -514,25 +423,21 @@ Playwright Smoke Tests：
 
 ## 24. Deployment Portability
 
-目标：服务器不是核心资产。
+目标：部署不依赖任何特定服务器。
 
-新服务器恢复流程：
+恢复 / 迁移流程：
 
 ```text
-Install Docker
+GitHub Repository（源码 + 内容）
 ↓
-Copy compose config
+Cloudflare 账号（Pages 项目 + API Token）
 ↓
-Configure Secrets
+Actions Secrets 配置
 ↓
-Pull GHCR Image
-↓
-docker compose up
-↓
-Update DNS
+git push 触发部署
 ```
 
-因此服务器可以随时迁移。
+平台迁移仅涉及文档化配置，无服务器重建成本。
 
 ## 25. Backup
 

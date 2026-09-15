@@ -3,7 +3,8 @@
 > **状态说明（2026-09-14，Leader 重建）**：仓库仅有单个初始提交，Git 历史无进度信号，此前全部复选框未勾、与实际实现脱节。
 > 今日依据磁盘代码证据逐项重建：勾选 = 有实现工件；未勾 = 未实现或仅部分实现（部分项附括号说明）。
 > 判定方法与证据索引：`.agents/tasks/_meta/2026-09-14-takeover-reconciliation.md`（归档后位于 `.agents/tasks/archive/_meta/`）。
-> 总计：131 / 212 项完成（约 62%）。
+> 总计：130 / 194 项完成（约 67%）。
+> 2026-09-15 范围修订：Docker / GHCR / CD-SSH 条目作废（Phase 19 重写为 Cloudflare Pages 部署，20/21 置空），总数由 212 调整为 194。
 
 ## Phase 0 — Repository
 
@@ -233,52 +234,41 @@
 - [ ] Broken Link Check
 - [ ] Playwright Smoke Test
 
-## Phase 19 — Docker
+## Phase 19 — Deployment（Cloudflare Pages）
 
-- [ ] Multi-stage Dockerfile
-- [ ] Nginx Runtime
-- [ ] Nginx Config
-- [ ] Cache Headers
-- [ ] Compression
-- [ ] Security Headers
-- [ ] `/health`
-- [ ] docker-compose.yml
+> 2026-09-15 修订：部署目标由「中国服务器 + BaoTa + Docker」变更为 Cloudflare Pages（用户决策，大陆延迟权衡已知悉）。
+> 原 Phase 19（Docker）/ Phase 20（GHCR）/ Phase 21（CD-SSH）条目全部作废（Git 历史可查），由本阶段取代。
 
-## Phase 20 — GHCR
+- [ ] `public/_headers`：安全头 + 缓存策略
+- [ ] `_redirects` 生成（frontmatter `redirectFrom` → 301，构建时）
+- [ ] deploy workflow（CI 全绿后 `wrangler pages deploy`）
+- [ ] Cloudflare Pages 项目与 Secrets 配置（用户）
+- [ ] pages.dev 线上冒烟（200 / 安全头 / 缓存 / 404）
+- [ ] 定时重建（Actions schedule → build → deploy）
+- [ ] 回滚演练（Pages 历史版本回滚）
+- [ ] 自定义域名绑定（域名确定后）
 
-- [ ] GitHub Container Registry
-- [ ] latest Tag
-- [ ] Version Tag
-- [ ] Git SHA Tag
-- [ ] Release Workflow
+## Phase 20 — ~~GHCR~~（obsolete）
 
-## Phase 21 — Deployment
+> 2026-09-15 随 Docker 方案作废，无条目。
 
-- [ ] GitHub Actions CD
-- [ ] SSH Deployment
-- [ ] docker compose pull
-- [ ] docker compose up
-- [ ] Healthcheck
-- [ ] Previous Version Tracking
-- [ ] Automatic Rollback
+## Phase 21 — ~~Deployment（CD-SSH）~~（obsolete）
+
+> 2026-09-15 并入 Phase 19（Cloudflare Pages），无条目。
 
 ## Phase 22 — Scheduled Publishing
 
-- [ ] Scheduled GitHub Action
+- [ ] Scheduled GitHub Action（每日 schedule 触发）
 - [x] Future Article Filter（构建期 date 过滤已实现）
-- [ ] Automatic Rebuild
-- [ ] RSS Refresh
-- [ ] Sitemap Refresh
-- [ ] Search Index Refresh
+- [ ] Automatic Rebuild（schedule → build → deploy）
+- [ ] RSS / Sitemap / Search Index 随部署刷新（线上验证一次）
 
-## Phase 23 — Production
+## Phase 23 — Production（2026-09-15 修订）
 
-- [ ] Cloudflare DNS
-- [ ] China Server DNS Record
-- [ ] BaoTa Reverse Proxy
-- [ ] HTTPS
-- [ ] ICP Filing
-- [x] ICP Footer（见 Phase 16 注）
+> ICP 备案与宝塔反代随 CF 全球部署作废；ICP Footer 逻辑保留但无预期用途。
+
+- [ ] Cloudflare DNS 托管与解析确认（域名确定后）
+- [ ] 自定义域 HTTPS（Cloudflare 自动签发）
 - [ ] Production Smoke Test
 
 ## Phase 24 — Performance
@@ -345,10 +335,10 @@ v1.0 可以正式发布的条件：
 5. SEO / RSS / Sitemap 正常。
 6. Giscus 可用且失败不影响正文。
 7. CI 全部通过。
-8. Docker 可独立启动。
+8. Cloudflare Pages 部署成功且线上可访问。
 9. GitHub Actions 可自动部署。
-10. 部署失败可回滚。
-11. 新服务器可以快速重建。
+10. 部署失败可回滚（Pages 历史版本）。
+11. 部署不依赖特定服务器（仓库 + CF 配置即可重建）。
 12. Lighthouse 达到目标。
-13. ICP 等正式上线要求处理完成。
+13. 自定义域名绑定完成（ICP 不再适用）。
 14. `v1.0.0` GitHub Release 发布。

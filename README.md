@@ -49,8 +49,8 @@ featured: true              # 首页/博客页精选
 series: "Docker Deployment" # 可选，需配 seriesOrder
 seriesOrder: 1
 project: "personal-blog"    # 可选，项目页自动聚合相关文章
-cover: "/images/blog/x/cover.webp"
-redirectFrom: ["/blog/old-url"]
+cover: "/images/blog/x/cover.webp"   # 字段已预留，文章页暂未渲染
+redirectFrom: ["/blog/old-url"]      # 字段已预留，重定向暂未生效
 ---
 ```
 
@@ -68,13 +68,14 @@ Giscus 评论 / GitHub Activity / Analytics 均为渐进增强，失败不影响
 
 ## 设计体系
 
-- 极简白净：留白 + 1px 细线，无重阴影；Cyan 点缀
+- 极简白净：留白 + 1px 细线，无重阴影；蓝色点缀（`#0071E3` 亮 / `#58A6FF` 暗，见 DESIGN.md §4）
 - 主题：Light / Dark / System（默认跟随系统，localStorage 持久化，首帧防闪烁）
 - 系统字体栈，不依赖外部字体 CDN
 - Mobile First；键盘可访问（搜索 Command Palette `Ctrl/Cmd+K`、focus 可见、Reduced Motion）
-- 鼠标特效（轮换制）：每次点击触发当前点击特效，并让光标与特效各切到下一种，5 种循环 —
-  光标：小点 / mono 方块 / 彗星拖尾 / 「阅读」标签 / Emoji；点击：火花 / 纸屑 / Emoji 爆炸 / 涟漪 / 方块粒子。
-  卡片 spotlight 常驻。开关在 `src/config/effects.ts`，触屏与 reduced-motion 环境自动禁用
+- 鼠标特效（轮换制，默认整体关闭）：光标与点击特效各 5 种循环 — 光标：小点 / mono 方块 / 彗星拖尾 /
+  「阅读」标签 / Emoji；点击：火花 / 纸屑 / Emoji 爆炸 / 涟漪 / 方块粒子。依 DESIGN.md §23/§24 克制原则
+  默认 `enabled: false`；卡片 spotlight 样式已备但当前无卡片挂载。开关在 `src/config/effects.ts`，
+  触屏与 reduced-motion 环境自动禁用
 
 ## License
 

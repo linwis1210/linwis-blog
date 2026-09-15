@@ -33,7 +33,7 @@
 - Light Tech
 - Developer-oriented
 
-Accent Color：`Cyan`
+Accent Color：蓝 `#0071E3`（亮）/ `#58A6FF`（暗），以 `DESIGN.md` §4 为权威，不引入第二品牌 accent。（2026-09-14 用户裁决，修正早期「Cyan」表述）
 
 首页 Logo：`linwis_`
 
@@ -736,7 +736,7 @@ CONTENT_LICENSE.md
 
 服务器：中国大陆。
 
-域名：后续购买。
+域名：后续购买（截至 2026-09-15 尚未确定；`astro.config.mjs` 的 `site` 为占位值 `https://linwis.dev`，域名确定后需统一替换，影响 canonical / RSS / sitemap 输出）。
 
 DNS：Cloudflare 托管。
 

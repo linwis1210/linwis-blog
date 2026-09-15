@@ -1,6 +1,6 @@
 ---
 feature: Cloudflare Pages 部署基线
-state: ACTIVE
+state: READY_FOR_VALIDATION
 date: 2026-09-15
 role-assignment:
   leader: main session
@@ -60,3 +60,5 @@ branch: feature/cloudflare-pages-deploy
 
 - 2026-09-15 ACTIVE —— Leader 修订基线文档（`18fce23`）后创建记录，派发 Builder。
 - 2026-09-15 Builder 首轮上报机制阻塞（正确未擅改）：Astro 排除 `src/pages` 下划线前缀文件，原定 `_redirects.ts` 无构建产物（证据：路由清单缺失 + 同字节非下划线探针对照产出 + 官方文档）。**Leader 裁定**：①采纳方案 A——`redirects.ts` 产出 `dist/redirects`，`astro.config.mjs` 内联 integration 于 `astro:build:done` 重命名为 `dist/_redirects`（此修改正式纳入范围）；②`_headers` 布局翻转——wrangler@4 实测为**合并语义**（修正本记录原「首条命中」的错误假设）：`/*` 全安全头在前、`/_astro-v2/*` 仅 `Cache-Control: immutable` 在后，消除重复头。**Validation Contract 条款不变**。Builder 首轮已交付 `public/_headers` 与 ci.yml deploy job（`88d1f07`），自验除被阻塞的 `_redirects` 相关项外全 PASS。
+- 2026-09-15 Builder 续作完成 —— `2dcf856`：redirects.ts + 重命名钩子落地，`_headers` 翻转；自验条款 1–5 全 PASS（含 404 body 与产物逐字节一致、资产头零重复、fixture 301/draft 过滤/清理、`_astro-v2` immutable）。Leader 追加 `8891d40`（`.wrangler/` 入 .gitignore，采纳 Builder 观察项）。分支共 3 commits（`88d1f07`/`2dcf856`/`8891d40`）。
+- 2026-09-15 状态 ACTIVE → READY_FOR_VALIDATION（派发 Verifier 条款 1–5；合并与条款 6–8 **以用户完成 CF Pages 项目 + Secrets 配置为先决**，否则 deploy job 必败推红 main）。

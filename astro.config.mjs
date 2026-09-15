@@ -7,6 +7,7 @@ import remarkDirective from "remark-directive";
 import { visit } from "unist-util-visit";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import { existsSync, renameSync } from "node:fs";
 
 /** :::note[标题] 等 callout 容器 → aside.callout */
 function remarkCallouts() {
@@ -28,9 +29,22 @@ function remarkCallouts() {
   };
 }
 
+/** 构建后把 endpoint 产物 dist/redirects 重命名为 dist/_redirects（下划线前缀文件不参与 Astro 路由）。 */
+function renameRedirects() {
+  return {
+    name: "rename-redirects",
+    hooks: {
+      "astro:build:done": ({ dir }) => {
+        const from = new URL("redirects", dir);
+        if (existsSync(from)) renameSync(from, new URL("_redirects", dir));
+      },
+    },
+  };
+}
+
 export default defineConfig({
   site: "https://linwis.dev",
-  integrations: [mdx(), sitemap()],
+  integrations: [mdx(), sitemap(), renameRedirects()],
   build: {
     // 资源目录改名以绕过浏览器对旧 CSS 文件名的顽固缓存
     assets: "_astro-v2",

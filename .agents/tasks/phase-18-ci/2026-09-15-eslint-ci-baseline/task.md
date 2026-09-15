@@ -67,3 +67,4 @@ branch: feature/eslint-ci-baseline
 - 2026-09-15 Leader 分支核查通过 —— 基点正确、无越权改动（docs/ 与 .agents/tasks/ 未动）、变更规模与报告一致。
 - 2026-09-15 派发标准偏差记录 —— 用户观察 Builder 子代理实际运行 GLM-5.3（要求 GLM-5.3-Flash）；子代理 metadata 无模型字段，结构证据指向「Agent 工具派发继承会话模型」，客户端 Flash 设置未覆盖该路径。影响：成本与设置意图不符；不影响验证客观性（Verifier 依合同独立执行命令与比对）。Verifier 派发待用户对模型配置的决定。
 - 2026-09-15 状态 ACTIVE → READY_FOR_VALIDATION。
+- 2026-09-15 用户决定 —— Verifier 派发挂起，待用户先行核查/修正客户端子代理模型设置（要求 Flash 生效）；收到就绪信号后 Leader 立即派发。Builder 分支（4 commits）无时效风险。

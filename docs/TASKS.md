@@ -7,7 +7,7 @@
 
 ## Phase 0 — Repository
 
-- [ ] 创建 GitHub Public Repository（本地无 remote）
+- [x] 创建 GitHub Public Repository（2026-09-15 建立：github.com/linwis1210/linwis-blog，SSH 推送完成；遗留：src/config/site.ts 的 repo 值待同步为 linwis1210/linwis-blog）
 - [x] 初始化 Astro + TypeScript
 - [x] 配置 Tailwind CSS
 - [ ] 配置 ESLint

@@ -20,7 +20,7 @@ branch: feature/cloudflare-pages-deploy
 ## 目标
 
 1. `public/_headers`：安全头 + 缓存策略（Astro 构建原样拷入 dist）。
-2. `src/pages/_redirects.ts`：静态 endpoint，遍历 blog 集合 `redirectFrom` 生成 301 行（无重定向时输出空文件）；模式同 `src/pages/rss.xml.js`。**完成后同步满足 TASKS Phase 13「RedirectFrom」项**。
+2. `src/pages/redirects.ts` + `astro.config.mjs` 内联 integration（2026-09-15 机制修订，见流转记录）：endpoint 产出 `dist/redirects`，integration 于 `astro:build:done` 将其重命名为 `dist/_redirects`（源产物缺失时跳过）。遍历 blog 集合 `redirectFrom` 生成 301 行（含草稿/未来日期过滤，复用 `src/lib/posts.ts`）；无重定向时输出空文件。**完成后同步满足 TASKS Phase 13「RedirectFrom」项**。
 3. `.github/workflows/ci.yml` 扩展 `deploy` job：`needs: quality`；条件 push→main 或 schedule；步骤 checkout → Node 22 → npm ci → build → `npx wrangler@4 pages deploy dist --project-name=linwis-blog --branch=main`；触发器新增 `schedule`（建议 cron `30 16 * * *`，UTC 16:30 = 北京 00:30，利于未来日期文章刚跨日上线）；PR 仍只跑 quality；permissions `contents: read`；secrets `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`。
 4. 404 零改动（dist/404.html 已存在，Pages 自动识别，仅验证）。
 
@@ -59,3 +59,4 @@ branch: feature/cloudflare-pages-deploy
 ## 状态流转记录
 
 - 2026-09-15 ACTIVE —— Leader 修订基线文档（`18fce23`）后创建记录，派发 Builder。
+- 2026-09-15 Builder 首轮上报机制阻塞（正确未擅改）：Astro 排除 `src/pages` 下划线前缀文件，原定 `_redirects.ts` 无构建产物（证据：路由清单缺失 + 同字节非下划线探针对照产出 + 官方文档）。**Leader 裁定**：①采纳方案 A——`redirects.ts` 产出 `dist/redirects`，`astro.config.mjs` 内联 integration 于 `astro:build:done` 重命名为 `dist/_redirects`（此修改正式纳入范围）；②`_headers` 布局翻转——wrangler@4 实测为**合并语义**（修正本记录原「首条命中」的错误假设）：`/*` 全安全头在前、`/_astro-v2/*` 仅 `Cache-Control: immutable` 在后，消除重复头。**Validation Contract 条款不变**。Builder 首轮已交付 `public/_headers` 与 ci.yml deploy job（`88d1f07`），自验除被阻塞的 `_redirects` 相关项外全 PASS。

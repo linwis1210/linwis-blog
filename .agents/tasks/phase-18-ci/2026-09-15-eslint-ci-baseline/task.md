@@ -1,6 +1,6 @@
 ---
 feature: ESLint + CI 质量基线
-state: FAILED_VALIDATION
+state: READY_FOR_VALIDATION
 date: 2026-09-15
 role-assignment:
   leader: main session
@@ -72,3 +72,5 @@ branch: feature/eslint-ci-baseline
 - 2026-09-15 Leader 修复指示（修复尝试 1/3）—— 方向定为 **`.gitattributes` 强制 LF**（`* text=auto eol=lf`）+ renormalize + Windows 工作树刷新；`.prettierrc` 保持默认 `lf` 不动（对齐 Linux CI，消除环境分歧，顺带终结全天出现的 LF/CRLF 警告）。备选方案 `endOfLine: "auto"` 被否：它让检查结果依赖本地检出风格，弱化基线。修复后 Verifier 须重跑条款 1–8 全量。
 - 2026-09-15 合同外观察项记录（Verifier，不入本合同）—— ① 内容文件存在旧仓库链接（`projects/personal-blog.md:15`、两篇博文的 `ghcr.io/linwis/linwis-blog`），属内容修正，待用户确认后另立任务；② `search-index.json` projects 段构建间顺序非确定（建议后续加显式排序）；③ DESIGN.md 被 prettier 表格对齐（Leader 知悉，保持）；④ npm 安装含 eslint deprecated 警告（噪声）。
 - 2026-09-15 状态 READY_FOR_VALIDATION → FAILED_VALIDATION；repair-count 0 → 1。
+- 2026-09-15 修复尝试 1/3 完成 —— Builder（自定义 agent 直派）新增 `97d85ac`：仅 `.gitattributes` 一行（`* text=auto eol=lf`）；renormalize 确认 no-op；工作树刷新后 `git ls-files --eol` 全 96 文件 LF / 0 CRLF；自验条款 1–5 全部 exit 0（条款 2 由 1→0）。派发机制升级：用户建立 `~/.zcode/agents/` 自定义 Builder/Verifier（模型绑定 GLM-5.3-Flash，metadata 已实证记录），此后角色派发经 `subagent_type` 直派，标准写入 `.agents/tasks/README.md`（main `4cd388f`）。
+- 2026-09-15 状态 FAILED_VALIDATION → READY_FOR_VALIDATION（复验轮 R2，Verifier 重跑条款 1–8 全量）。

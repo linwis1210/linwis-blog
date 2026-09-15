@@ -1,0 +1,13 @@
+npm warn deprecated tsconfck@3.1.6: unmaintained
+
+added 401 packages, and audited 402 packages in 3s
+
+210 packages are looking for funding
+  run `npm fund` for details
+
+4 vulnerabilities (2 low, 1 high, 1 critical)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.

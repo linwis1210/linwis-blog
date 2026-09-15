@@ -1,6 +1,6 @@
 ---
 feature: ESLint + CI 质量基线
-state: READY_FOR_VALIDATION
+state: FAILED_VALIDATION
 date: 2026-09-15
 role-assignment:
   leader: main session
@@ -74,3 +74,7 @@ branch: feature/eslint-ci-baseline
 - 2026-09-15 状态 READY_FOR_VALIDATION → FAILED_VALIDATION；repair-count 0 → 1。
 - 2026-09-15 修复尝试 1/3 完成 —— Builder（自定义 agent 直派）新增 `97d85ac`：仅 `.gitattributes` 一行（`* text=auto eol=lf`）；renormalize 确认 no-op；工作树刷新后 `git ls-files --eol` 全 96 文件 LF / 0 CRLF；自验条款 1–5 全部 exit 0（条款 2 由 1→0）。派发机制升级：用户建立 `~/.zcode/agents/` 自定义 Builder/Verifier（模型绑定 GLM-5.3-Flash，metadata 已实证记录），此后角色派发经 `subagent_type` 直派，标准写入 `.agents/tasks/README.md`（main `4cd388f`）。
 - 2026-09-15 状态 FAILED_VALIDATION → READY_FOR_VALIDATION（复验轮 R2，Verifier 重跑条款 1–8 全量）。
+- 2026-09-15 Verifier R2 复验 —— **条款 1–8 全部 PASS**（R1 唯一 FAIL 的条款 2 经 `97d85ac` 修复后转绿；其余条款独立重跑）。证据：`evidence/verifier-report-r2.md` + r2-*.log。随后 Leader 合并 `c24e687` 推送，触发仓库首次 CI。
+- 2026-09-15 条款 9 FAIL（新问题，CI 安装失败，修复尝试 1）—— 远端 run `34985384625` 于 **Install dependencies（npm ci）** 步骤 exit 1（6 秒即败，后续步骤 skipped）。远端日志需管理员权限（403），Leader 本地取证复现：CI Node 22 自带 **npm 10**，而 lockfile 由本机 **npm 11.6.2** 生成，`npx npm@10.9.3 ci` 本地同样报 `EUSAGE：Missing @emnapi/runtime@1.11.3、@emnapi/core@1.11.3 from lock file`（sharp 传递依赖）→ 根因 = **lockfile 的 npm 版本不兼容**，非代码问题。
+- 2026-09-15 Leader 修复指示（CI-install 问题，尝试 1）—— 用 `npx npm@10 install` 重新生成 `package-lock.json`（预期仅此一文件变更；package.json 不动），双版本验证（npm 10 与 npm 11 的 `ci` 均 exit 0）+ 条款 1–5 自验，新分支 `fix/ci-npm10-lockfile`。CI 保持 Node 22（合同条款 6 不变）。附带观察：actions/checkout@v4、setup-node@v4 有 Node20 弃用警告（后续小任务升级）。
+- 2026-09-15 状态 READY_FOR_VALIDATION → FAILED_VALIDATION（条款 9 未过，Feature 未完成）。

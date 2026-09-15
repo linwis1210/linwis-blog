@@ -2,6 +2,7 @@ node_modules/
 dist/
 .astro/
 .zcode/
+.agents/tmp/
 npm-debug.log*
 .DS_Store
 *.local

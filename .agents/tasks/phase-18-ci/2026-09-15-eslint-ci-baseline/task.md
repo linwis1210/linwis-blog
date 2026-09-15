@@ -1,13 +1,13 @@
 ---
 feature: ESLint + CI 质量基线
-state: READY_FOR_VALIDATION
+state: FAILED_VALIDATION
 date: 2026-09-15
 role-assignment:
   leader: main session
-  builder: subagent (GLM-5.3-Flash / max)
-  verifier: independent subagent (GLM-5.3-Flash / max)
+  builder: subagent (GLM-5.3-Flash / max，目标配置；实测 2026-09-15 Agent 派发继承会话模型 GLM-5.3)
+  verifier: 独立子代理（用户手动派发，2026-09-15）
 risk: 2
-repair-count: 0
+repair-count: 1
 branch: feature/eslint-ci-baseline
 ---
 
@@ -68,3 +68,7 @@ branch: feature/eslint-ci-baseline
 - 2026-09-15 派发标准偏差记录 —— 用户观察 Builder 子代理实际运行 GLM-5.3（要求 GLM-5.3-Flash）；子代理 metadata 无模型字段，结构证据指向「Agent 工具派发继承会话模型」，客户端 Flash 设置未覆盖该路径。影响：成本与设置意图不符；不影响验证客观性（Verifier 依合同独立执行命令与比对）。Verifier 派发待用户对模型配置的决定。
 - 2026-09-15 状态 ACTIVE → READY_FOR_VALIDATION。
 - 2026-09-15 用户决定 —— Verifier 派发挂起，待用户先行核查/修正客户端子代理模型设置（要求 Flash 生效）；收到就绪信号后 Leader 立即派发。Builder 分支（4 commits）无时效风险。
+- 2026-09-15 Verifier 独立验证（用户手动派发）—— **总判定 FAIL**：条款 2（format:check）FAIL，条款 1、3–8 全 PASS。根因：`core.autocrlf=true` 的 Windows 检出为 CRLF，Prettier 3 默认 `endOfLine: lf` → 36 文件判定不合规；反证实验（HEAD 仓库字节过 prettier = exit 0）证明仓库内容本身合规，失败由检出环境引起。证据：`evidence/verifier-report.md` + raw 日志。
+- 2026-09-15 Leader 修复指示（修复尝试 1/3）—— 方向定为 **`.gitattributes` 强制 LF**（`* text=auto eol=lf`）+ renormalize + Windows 工作树刷新；`.prettierrc` 保持默认 `lf` 不动（对齐 Linux CI，消除环境分歧，顺带终结全天出现的 LF/CRLF 警告）。备选方案 `endOfLine: "auto"` 被否：它让检查结果依赖本地检出风格，弱化基线。修复后 Verifier 须重跑条款 1–8 全量。
+- 2026-09-15 合同外观察项记录（Verifier，不入本合同）—— ① 内容文件存在旧仓库链接（`projects/personal-blog.md:15`、两篇博文的 `ghcr.io/linwis/linwis-blog`），属内容修正，待用户确认后另立任务；② `search-index.json` projects 段构建间顺序非确定（建议后续加显式排序）；③ DESIGN.md 被 prettier 表格对齐（Leader 知悉，保持）；④ npm 安装含 eslint deprecated 警告（噪声）。
+- 2026-09-15 状态 READY_FOR_VALIDATION → FAILED_VALIDATION；repair-count 0 → 1。

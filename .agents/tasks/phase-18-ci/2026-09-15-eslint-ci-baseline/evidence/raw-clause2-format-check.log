@@ -1,0 +1,42 @@
+
+> linwis-blog@0.1.0 format:check
+> prettier --check .
+
+Checking formatting...
+[[33mwarn[39m] .github/workflows/ci.yml
+[[33mwarn[39m] astro.config.mjs
+[[33mwarn[39m] DESIGN.md
+[[33mwarn[39m] eslint.config.mjs
+[[33mwarn[39m] package-lock.json
+[[33mwarn[39m] package.json
+[[33mwarn[39m] README.md
+[[33mwarn[39m] src/components/Analytics.astro
+[[33mwarn[39m] src/components/Footer.astro
+[[33mwarn[39m] src/components/Giscus.astro
+[[33mwarn[39m] src/components/GitHubActivity.astro
+[[33mwarn[39m] src/components/Header.astro
+[[33mwarn[39m] src/components/Pagination.astro
+[[33mwarn[39m] src/components/PostList.astro
+[[33mwarn[39m] src/components/ProjectCard.astro
+[[33mwarn[39m] src/components/SearchDialog.astro
+[[33mwarn[39m] src/components/TOC.astro
+[[33mwarn[39m] src/config/site.ts
+[[33mwarn[39m] src/layouts/BaseLayout.astro
+[[33mwarn[39m] src/lib/related.ts
+[[33mwarn[39m] src/lib/stats.ts
+[[33mwarn[39m] src/pages/404.astro
+[[33mwarn[39m] src/pages/about.astro
+[[33mwarn[39m] src/pages/archive.astro
+[[33mwarn[39m] src/pages/blog/[slug].astro
+[[33mwarn[39m] src/pages/blog/category/[category].astro
+[[33mwarn[39m] src/pages/blog/index.astro
+[[33mwarn[39m] src/pages/blog/page/[page].astro
+[[33mwarn[39m] src/pages/blog/tag/[tag].astro
+[[33mwarn[39m] src/pages/index.astro
+[[33mwarn[39m] src/pages/privacy.astro
+[[33mwarn[39m] src/pages/projects/[slug].astro
+[[33mwarn[39m] src/pages/projects/index.astro
+[[33mwarn[39m] src/pages/search-index.json.ts
+[[33mwarn[39m] src/pages/terms.astro
+[[33mwarn[39m] src/styles/global.css
+[[33mwarn[39m] Code style issues found in 36 files. Run Prettier with --write to fix.

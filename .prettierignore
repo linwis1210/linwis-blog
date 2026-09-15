@@ -1,0 +1,11 @@
+# Content collections are writing, not code: prettier would reformat prose,
+# markdown tables and fenced code blocks (changing rendered <pre> text).
+src/content/
+
+# prettier-plugin-astro 0.14 cannot parse <script define:vars> (known plugin
+# limitation); this component keeps hand formatting.
+src/components/CursorEffects.astro
+
+# Leader-maintained records and governance docs are not formatted by Builder
+.agents/
+docs/

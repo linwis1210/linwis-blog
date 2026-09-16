@@ -21,7 +21,7 @@ export const FEATURES = {
   /** 首页 GitHub Activity */
   githubActivity: {
     enabled: false,
-    username: "linwis",
+    username: "linwis1210",
     /** 拉取失败时的静默降级：直接隐藏 */
     timeoutMs: 6000,
   },

@@ -1,0 +1,8 @@
+=== G1: linwis/linwis-blog ===
+G1 exit=1 (1=no hits)
+=== G2: ghcr.io/linwis/ ===
+G2 exit=1 (1=no hits)
+=== G3: github.com/linwis[^1] ===
+src/\content\projects\dotfiles.md:11:github: "https://github.com/linwis/dotfiles"
+src/\content\projects\link-checker.md:12:github: "https://github.com/linwis/link-checker"
+G3 exit=0

@@ -1,0 +1,10 @@
+html files scanned: 38
+pages containing ld+json: 38
+ld+json blocks total: 54
+JSON.parse failures (BAD): 0
+WebSite pages: 38 ["404.html","about/index.html","archive/index.html","blog/astro-content-collections-guide/index.html","blog/category/devops/index.html","blog/category/frontend/index.html","blog/category/notes/index.html","blog/category/server/index.html","blog/cloudflare-dns-only-setup/index.html","blog/deploy-astro-with-docker/index.html","blog/dev-workflow-notes-2026/index.html","blog/github-actions-cd-to-china-server/index.html","blog/index.html","blog/nginx-cache-security-headers/index.html","blog/tag/astro/index.html","blog/tag/ci%2Fcd/index.html","blog/tag/cloudflare/index.html","blog/tag/css/index.html","blog/tag/dns/index.html","blog/tag/docker/index.html","blog/tag/git/index.html","blog/tag/github%20actions/index.html","blog/tag/javascript/index.html","blog/tag/linux/index.html","blog/tag/nginx/index.html","blog/tag/notes/index.html","blog/tag/tailwind%20css/index.html","blog/tag/typescript/index.html","blog/tailwind-v4-design-tokens/index.html","blog/typescript-branded-types-notes/index.html","index.html","privacy/index.html","projects/course-lab-archive/index.html","projects/dotfiles/index.html","projects/index.html","projects/link-checker/index.html","projects/personal-blog/index.html","terms/index.html"]
+Article/BlogPosting pages: 8
+BreadcrumbList pages: 8
+blog article pages in dist: 8
+article pages MISSING Article JSON-LD: []
+article pages MISSING BreadcrumbList JSON-LD: []

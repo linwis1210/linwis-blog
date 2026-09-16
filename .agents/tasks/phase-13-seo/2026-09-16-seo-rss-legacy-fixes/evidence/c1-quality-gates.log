@@ -1,0 +1,8 @@
+# branch: feature/seo-rss-legacy-fixes @ d440ee7, 2026-09-16
+[format:check] exit=0 (last line: All matched files use Prettier code style!)
+[lint] exit=0 (last line: )
+[typecheck] exit=0 (last line: )
+[build] exit=0
+[2m22:02:13[22m [34m[@astrojs/sitemap][39m `sitemap-index.xml` created at `dist`
+[2m22:02:13[22m [34m[build][39m 38 page(s) built in [1m1.08s[22m
+[2m22:02:13[22m [34m[build][39m [1mComplete![22m

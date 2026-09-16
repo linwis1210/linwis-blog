@@ -1,0 +1,13 @@
+== entity-decoded content:encoded check (8/8 items) ==
+nginx-cache-security-headers: len=6937 <p>=true block=true closingTags=true
+github-actions-cd-to-china-server: len=11193 <p>=true block=true closingTags=true
+deploy-astro-with-docker: len=11252 <p>=true block=true closingTags=true
+astro-content-collections-guide: len=8970 <p>=true block=true closingTags=true
+tailwind-v4-design-tokens: len=5097 <p>=true block=true closingTags=true
+typescript-branded-types-notes: len=10027 <p>=true block=true closingTags=true
+dev-workflow-notes-2026: len=2809 <p>=true block=true closingTags=true
+cloudflare-dns-only-setup: len=2306 <p>=true block=true closingTags=true
+BAD items = 0 / 8
+== exclusions ==
+excludes draft docker-network-troubleshooting: true
+excludes future blog-2026-roadmap: true

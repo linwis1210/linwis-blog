@@ -1,0 +1,18 @@
+===== MAIN =====
+--- index.html
+<link rel="canonical" href="https://linwis.dev/"
+<meta property="og:url" content="https://linwis.dev/"
+<meta property="og:type" content="website"
+--- blog/deploy-astro-with-docker/index.html
+<link rel="canonical" href="https://linwis.dev/blog/deploy-astro-with-docker/"
+<meta property="og:url" content="https://linwis.dev/blog/deploy-astro-with-docker/"
+<meta property="og:type" content="website"
+===== FEATURE =====
+--- index.html
+<link rel="canonical" href="https://linwis.dev/"
+<meta property="og:url" content="https://linwis.dev/"
+<meta property="og:type" content="website"
+--- blog/deploy-astro-with-docker/index.html
+<link rel="canonical" href="https://linwis.dev/blog/deploy-astro-with-docker/"
+<meta property="og:url" content="https://linwis.dev/blog/deploy-astro-with-docker/"
+<meta property="og:type" content="article"

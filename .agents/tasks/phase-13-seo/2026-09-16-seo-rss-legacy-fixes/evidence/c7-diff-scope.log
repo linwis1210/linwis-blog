@@ -1,0 +1,10 @@
+ src/config/site.ts                                 |  4 ++
+ src/config/social.ts                               |  6 +--
+ src/content/blog/deploy-astro-with-docker.md       |  2 +-
+ .../blog/github-actions-cd-to-china-server.md      |  2 +-
+ src/content/projects/personal-blog.md              |  2 +-
+ src/layouts/BaseLayout.astro                       | 45 +++++++++++++++++++++-
+ src/pages/blog/[slug].astro                        | 42 +++++++++++++++++++-
+ src/pages/rss.xml.js                               |  4 ++
+ 8 files changed, 98 insertions(+), 9 deletions(-)
+file count: 8 (expected 8)

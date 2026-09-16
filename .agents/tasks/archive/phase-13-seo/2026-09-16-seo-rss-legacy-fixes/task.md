@@ -1,6 +1,6 @@
 ---
 feature: SEO/RSS 收尾与仓库链接修正
-state: READY_FOR_VALIDATION
+state: DONE
 date: 2026-09-16
 role-assignment:
   leader: main session
@@ -57,3 +57,6 @@ branch: feature/seo-rss-legacy-fixes
 - 2026-09-16 派发备注 —— 首次 Builder 派发 10 分钟无输出超时，零残留（无 commit/工作树干净），原样重派成功，不计修复次数。
 - 2026-09-16 Builder 完成（3 commits：`3307a7e` 链接修正 / `9ff9cc9` RSS 全文 / `f3cd38c` 结构化数据），自验条款 1–7 除 G3 两处死链外全 PASS。**Leader 裁决**：①RSS 机制偏离接受——Builder 实证 Astro 5.18.2 `render()` 无 html 输出（runtime.js:549-555），改用 `post.rendered.html`（与页面渲染同源、零依赖），条款 3 结果达成；②G3 两个项目死链（dotfiles/link-checker，两账号均 404）非旧账号引用，合同条款 2 措辞修订（见上表），移交用户决策；③`githubActivity.username` 旧账号名由 Leader 顺手修正（`d440ee7`，social.ts 本在清单内，功能关闭态零风险）。
 - 2026-09-16 状态 ACTIVE → READY_FOR_VALIDATION（分支 4 commits，派发 Verifier 条款 1–7）。
+- 2026-09-16 Verifier R1 —— **条款 1–7 全部 PASS**（54 个 ld+json 块 JSON.parse 零失败；8/8 文章 RSS 全文；og:type 以 main 对照构建逐字节核验；diff 恰 8 文件无越界）。证据：`evidence/verifier-report.md` + c1–c7 日志。
+- 2026-09-16 合并与条款 8 —— 证据提交 `37e21f1`；合并 `2191793` 推送；Actions **success**；CF Git 集成自动部署上线后线上实测：rss.xml 含 9 处 `content:encoded` 全文；文章页恰好 3 个 ld+json（WebSite + Article + BreadcrumbList）；`og:type=article`。**合同条款 1–8 全部通过，零修复循环**。
+- 2026-09-16 状态 → **DONE**。TASKS.md 勾选 +5（RSS Full Feed / Structured Data / Article Schema / Breadcrumb / 验证占位，141/194 约 73%）；Open Graph 注记更新（仅缺 og:image）。遗留移交用户：`dotfiles.md` / `link-checker.md` 两个项目死链的归宿决策。分支已删，tmp 已清。

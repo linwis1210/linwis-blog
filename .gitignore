@@ -3,6 +3,7 @@ dist/
 .astro/
 .zcode/
 .agents/tmp/
+.wrangler/
 npm-debug.log*
 .DS_Store
 *.local

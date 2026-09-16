@@ -1,0 +1,16 @@
+# Cloudflare Pages 头部规则：wrangler@4 为合并语义，更具体的块继承通配块的头，同名头以更具体块为准。
+# 布局：/* 全部安全头在前；/_astro-v2/* 仅追加 immutable 缓存头在后，避免安全头逐条重复。
+
+# 全站默认：安全头。
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.github.com; frame-src https://giscus.app; object-src 'none'; base-uri 'self'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  X-Frame-Options: SAMEORIGIN
+  Strict-Transport-Security: max-age=31536000
+
+# 构建产物（带内容哈希，永久缓存）。Astro 的 assets 目录已改为 _astro-v2。
+# 安全头由 /* 块合并提供，此处仅声明缓存头。
+/_astro-v2/*
+  Cache-Control: public, max-age=31536000, immutable

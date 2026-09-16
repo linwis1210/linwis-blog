@@ -21,7 +21,7 @@ branch: feature/cloudflare-pages-deploy
 
 1. `public/_headers`：安全头 + 缓存策略（Astro 构建原样拷入 dist）。
 2. `src/pages/redirects.ts` + `astro.config.mjs` 内联 integration（2026-09-15 机制修订，见流转记录）：endpoint 产出 `dist/redirects`，integration 于 `astro:build:done` 将其重命名为 `dist/_redirects`（源产物缺失时跳过）。遍历 blog 集合 `redirectFrom` 生成 301 行（含草稿/未来日期过滤，复用 `src/lib/posts.ts`）；无重定向时输出空文件。**完成后同步满足 TASKS Phase 13「RedirectFrom」项**。
-3. `.github/workflows/ci.yml` 扩展 `deploy` job：`needs: quality`；条件 push→main 或 schedule；步骤 checkout → Node 22 → npm ci → build → `npx wrangler@4 pages deploy dist --project-name=linwis-blog --branch=main`；触发器新增 `schedule`（建议 cron `30 16 * * *`，UTC 16:30 = 北京 00:30，利于未来日期文章刚跨日上线）；PR 仍只跑 quality；permissions `contents: read`；secrets `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`。
+3. ~~`.github/workflows/ci.yml` 扩展 `deploy` job~~（**2026-09-16 架构再修订，见流转记录**：部署通道改为用户已建立的 **Cloudflare Pages Git 集成**（push → CF 自动构建部署），Actions 回归纯质量门（`72aadf7` 撤销 deploy job 与 schedule，恢复为 ESLint 基线期已验证的形态）。质量门内嵌至 CF 构建命令由用户在 Dashboard 配置（见用户前置）。GitHub Secrets 不再需要。定时发布（TASKS Phase 22）移出本 Feature，后续以 Deploy Hook 方案独立实施。
 4. 404 零改动（dist/404.html 已存在，Pages 自动识别，仅验证）。
 
 ## 范围外
@@ -37,9 +37,9 @@ branch: feature/cloudflare-pages-deploy
 | 3 | 重定向生成正确 | 临时 fixture（带 `redirectFrom`，**不入库**，验证后删除并重建）核对 `_redirects` 行；无重定向时输出空文件 | 逐行对应 |
 | 4 | 本地 Pages 行为 | `npx wrangler@4 pages dev dist`（本地模式免登录）+ curl：`/` 200；`/_astro-v2/*` 响应含 immutable Cache-Control 与全部安全头；不存在路径 → 404 且返回 404 页内容；fixture 重定向 301 | 全部符合 |
 | 5 | CSP 审查 | `_headers` 逐项核对：`script-src 'self' 'unsafe-inline'`（Astro 内联脚本）、`connect-src 'self' https://api.github.com`、`frame-src https://giscus.app`、`object-src 'none'`、无 `unsafe-eval`、无多余来源 | 符合清单 |
-| 6 | 远端部署绿 | Leader 合并推送后 Actions run（quality + deploy）全绿（前置：用户已配置 CF 项目与 Secrets） | success |
-| 7 | 线上验证 | curl `https://linwis-blog.pages.dev`：200 + 安全头 + 缓存头 + 404 行为 | 全部符合 |
-| 8 | 定时重建配置 | workflow `schedule` 语法与 deploy 条件路径审查 | 正确 |
+| 6 | 部署接通 | Leader 合并推送后，CF Pages Git 集成对合并 commit 自动构建部署成功（Dashboard 可见新 deployment = success）（2026-09-16 修订：原 Actions wrangler 路径作废） | success |
+| 7 | 线上验证 | curl `https://linwis.pages.dev`：200 + 完整六安全头 + `/_astro-v2/*` immutable 缓存 + 404 行为（线上暂无 redirectFrom 内容，301 以本地条款 3/4 证据为准） | 全部符合 |
+| 8 | ~~定时重建配置~~ | 移出本 Feature（Phase 22 后续，Deploy Hook 方案） | — |
 
 证据：本目录 `evidence/`（条款 1–5 归 Verifier，6–8 归 Leader 合并后）。
 
@@ -50,11 +50,14 @@ branch: feature/cloudflare-pages-deploy
 - 中间产物放 `.agents/tmp/phase-19-deployment/2026-09-15-cloudflare-pages-deploy/`。
 - 同一问题修复上限 3 次。
 
-## 用户前置（与 Builder 并行，条款 6–7 的先决）
+## 用户前置（2026-09-16 修订：Git 集成已建立，Secrets 路径作废）
 
-1. Cloudflare 控制台创建 Pages 项目 `linwis-blog`（直接上传模式，无需 Git 集成）；
-2. 创建 API Token（模板「Cloudflare Pages — Edit」）；
-3. GitHub 仓库 Secrets 添加 `CLOUDFLARE_API_TOKEN`、`CLOUDFLARE_ACCOUNT_ID`。
+已完成：CF Pages 项目 `linwis` 以 **Git 集成** 连接本仓库（main 每 push 自动构建部署）。
+
+剩余（CF Dashboard → linwis 项目 → Settings → Builds & deployments）：
+
+1. **Build command** 改为：`npm run format:check && npm run lint && npm run typecheck && npm run build`（把质量门嵌进 CF 构建——Git 集成默认不等 Actions 结果，此步恢复「检查不过 = 不部署」）；
+2. **Environment variable** 添加 `NODE_VERSION = 22`（对齐 CI 与 lockfile 所需的 npm 10，避免重蹈 npm 版本不兼容）。
 
 ## 状态流转记录
 
@@ -65,3 +68,4 @@ branch: feature/cloudflare-pages-deploy
 - 2026-09-16 Verifier R1 独立验证 —— **条款 1–5 全部 PASS**：质量门全绿；dist 产物七件齐全（`_redirects` 0 字节）；fixture 三阶段（已发布→恰一行 301 / draft→空 / 删除→空）且全程未入库；本地 Pages 实测（安全头各 1 次、资产 immutable 零重复、404 body 与产物 cmp 逐字节一致、301+Location 正确）；diff 范围仅允许的 5 文件，CSP/ci.yml 逐项符合。wrangler 进程链与 `.wrangler/` 已清理。证据：`evidence/verifier-report.md` + clause*.log + full-diff.patch。
 - 2026-09-16 当前状态：条款 1–5 已过，**合并挂起等待用户 CF 三步配置**（Pages 项目 `linwis-blog` / API Token / 仓库 Secrets），完成后 Leader 合并推送并复核条款 6–8。
 - 2026-09-16 用户已完成 CF 侧部署 —— 实际项目名为 **`linwis`**（线上 https://linwis.pages.dev）。Leader 探测：200、title 正确、404 行为正常；响应仅含 nosniff / referrer-policy 两头（CF Pages 平台自动安全头），无本 Feature 的完整六头 → 判定用户上传的是 **main 分支构建产物**（不含 `_headers`/`_redirects`），待自动部署接通后自然解决。据此 Leader 修订（`2161728`）：ci.yml `--project-name` 由 `linwis-blog` 改为 `linwis`（一字符串配置修正，format:check 过；该值的最强验证即合并后的真实部署）。合同中项目名引用以本条为准。待确认项：① GitHub Secrets（`CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`）是否已配置；② `linwis` 项目 production branch 是否为 main（若非，部署会落在 preview 别名，届时在 Dashboard 修正）。
+- 2026-09-16 架构再修订（用户发现 + 决策）—— 用户以截图证实 `linwis` 项目为 **CF Pages Git 集成**（main 每 push 自动构建，Dashboard 列出全部 commit 的成功部署）。**Secrets 不再需要**；Leader 执行 `72aadf7`：ci.yml 撤销 deploy job 与 schedule（恢复 ESLint 基线期已验证的纯质量门形态，format:check 过）；合同条款 6/7/8 相应修订（6 = CF 构建部署成功；7 = 线上 curl 完整验证；8 = 移出至 Phase 22 后续 Deploy Hook 方案）。质量门以「CF 构建命令内嵌」方式保留（用户前置 2 项设置）。ARCHITECTURE §4/§14 与 README 部署节同步修订。合并前置：用户完成 CF 两项设置。

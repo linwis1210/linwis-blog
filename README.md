@@ -68,10 +68,10 @@ Giscus 评论 / GitHub Activity / Analytics 均为渐进增强，失败不影响
 
 ## 部署（Cloudflare Pages）
 
-- 产物为纯静态 `dist/`：GitHub Actions 质量门（format / lint / typecheck / build）全绿后由 `wrangler pages deploy` 发布至 Cloudflare Pages。
+- 部署通道为 **Cloudflare Pages Git 集成**（项目 `linwis`，https://linwis.pages.dev ）：push 到 main 后 CF 自动构建部署，无需部署 Secrets。
+- 质量门内嵌于 CF 构建命令（`format:check && lint && typecheck && build`，`NODE_VERSION=22`），任何检查不过即不部署；GitHub Actions 作为独立质量信号并行运行。
 - 安全与缓存响应头定义在 `public/_headers`；旧文重定向由文章 frontmatter `redirectFrom` 构建时生成 `dist/_redirects`（301）。
-- 首次部署需：Cloudflare 创建 Pages 项目（直接上传模式）→ 创建 API Token（「Cloudflare Pages — Edit」模板）→ 仓库 Secrets 配置 `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`。
-- 每日定时构建自动上线未来日期文章；回滚在 Pages Dashboard 选择历史版本。
+- 回滚在 Pages Dashboard 选择历史版本一键恢复；定时发布（未来日期文章自动上线）见 docs/TASKS.md Phase 22 规划。
 
 ## 设计体系
 

@@ -47,23 +47,25 @@ dist/
 
 ## 4. Deployment
 
-完整链路：
+部署通道：**Cloudflare Pages Git 集成**（2026-09-16 修订，项目 `linwis`）。
 
 ```text
 Developer
     ↓
-git push
+git push → GitHub
     ↓
-GitHub
-    ↓
-GitHub Actions（Quality Gate：format / lint / typecheck / build）
-    ↓
-Astro Build → dist/
-    ↓
-wrangler pages deploy
+GitHub Actions（质量门，独立信号）
+    ↓（同时）
+Cloudflare Pages Git 集成自动构建
+  · Install：npm ci
+  · Build：format:check && lint && typecheck && build（质量门内嵌）
+  · 产物 dist/ 含 _headers / _redirects
     ↓
 Cloudflare Pages 全球边缘
 ```
+
+质量保证方式：检查命令内嵌于 CF 构建命令，任何一步失败即构建失败、不部署。
+（wrangler deploy 路径已于 2026-09-16 废弃，Git 集成取代。）
 
 ## 5. Production Traffic
 
@@ -238,19 +240,23 @@ STOP
 
 ## 14. CD Pipeline
 
-main 通过全部 CI 后（同一 workflow 的 deploy job，`needs: quality`）：
+push 到 main → Cloudflare Pages Git 集成自动构建部署：
 
 ```text
-Astro Build
+npm ci
 ↓
-wrangler pages deploy（secrets：CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID）
+format:check / lint / typecheck / build（内嵌质量门，任一失败即中止）
 ↓
-Cloudflare Pages
+dist/（含 _headers / _redirects / 404.html）
+↓
+Cloudflare Pages 生产部署
 ↓
 线上冒烟验证
 ↓
-Success / Pages 回滚
+Success / Pages 历史版本回滚
 ```
+
+无部署 Secrets（Git 集成授权）；GitHub Actions 仅作独立质量信号与 PR 检查。
 
 ## 15. Scheduled Build
 

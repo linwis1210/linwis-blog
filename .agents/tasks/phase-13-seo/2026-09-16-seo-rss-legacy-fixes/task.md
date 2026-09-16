@@ -1,6 +1,6 @@
 ---
 feature: SEO/RSS 收尾与仓库链接修正
-state: ACTIVE
+state: READY_FOR_VALIDATION
 date: 2026-09-16
 role-assignment:
   leader: main session
@@ -37,7 +37,7 @@ branch: feature/seo-rss-legacy-fixes
 | # | 条款 | 验证方法 | 通过条件 |
 |---|---|---|---|
 | 1 | 质量门不回退 | format:check / lint / typecheck / build | 全 exit 0 |
-| 2 | 旧标识清零 | 上述 grep 兜底模式（含 social.ts） | src/ public/ 零命中且 linwis1210 值未被误改 |
+| 2 | 旧标识清零 | 上述 grep 兜底模式（含 social.ts） | G1/G2 零命中且 linwis1210 值未误改；G3 零命中**除**两个已知项目死链（`projects/dotfiles.md`、`link-checker.md`——两账号下均 404，属项目死链非旧账号引用，2026-09-16 Leader 修订移交用户决策） |
 | 3 | RSS 全文 | dist/rss.xml 抽样 ≥1 篇：item 含正文 HTML（content:encoded 或等价）；存在 draft 文章且不出现在 RSS | 全符合 |
 | 4 | 结构化数据 | 首页含 WebSite JSON-LD；任一文章页含 Article + BreadcrumbList JSON-LD；全部为合法 JSON（可解析） | 全符合 |
 | 5 | og:type 正确 | 文章页 `og:type=article`、首页 `website`；canonical/og:url 不变 | 全符合 |
@@ -54,3 +54,6 @@ branch: feature/seo-rss-legacy-fixes
 ## 状态流转记录
 
 - 2026-09-16 ACTIVE —— Leader 创建记录（用户指示执行遗留项 2/3/4，Phase 22 定时发布不在本轮），派发 Builder。
+- 2026-09-16 派发备注 —— 首次 Builder 派发 10 分钟无输出超时，零残留（无 commit/工作树干净），原样重派成功，不计修复次数。
+- 2026-09-16 Builder 完成（3 commits：`3307a7e` 链接修正 / `9ff9cc9` RSS 全文 / `f3cd38c` 结构化数据），自验条款 1–7 除 G3 两处死链外全 PASS。**Leader 裁决**：①RSS 机制偏离接受——Builder 实证 Astro 5.18.2 `render()` 无 html 输出（runtime.js:549-555），改用 `post.rendered.html`（与页面渲染同源、零依赖），条款 3 结果达成；②G3 两个项目死链（dotfiles/link-checker，两账号均 404）非旧账号引用，合同条款 2 措辞修订（见上表），移交用户决策；③`githubActivity.username` 旧账号名由 Leader 顺手修正（`d440ee7`，social.ts 本在清单内，功能关闭态零风险）。
+- 2026-09-16 状态 ACTIVE → READY_FOR_VALIDATION（分支 4 commits，派发 Verifier 条款 1–7）。

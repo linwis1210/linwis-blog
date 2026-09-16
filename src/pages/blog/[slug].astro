@@ -27,6 +27,39 @@ const { Content, headings } = await render(post);
 const { words, minutes } = countStats(post.body ?? "");
 const tags = normalizeTags(post.data.tags);
 
+// SEO 结构化数据（JSON-LD）
+const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const datePublished = post.data.date.toISOString();
+const dateModified = (post.data.updated ?? post.data.date).toISOString();
+const coverUrl = post.data.cover ? new URL(post.data.cover, Astro.site).toString() : null;
+
+const articleJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished,
+  dateModified,
+  author: { "@type": "Person", name: SITE.author, url: SITE.url },
+  mainEntityOfPage: pageUrl,
+  ...(coverUrl ? { image: coverUrl } : {}),
+};
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Blog",
+      item: new URL("/blog", Astro.site).toString(),
+    },
+    { "@type": "ListItem", position: 3, name: post.data.title, item: pageUrl },
+  ],
+};
+
 const all = await getCollection("blog");
 const published = getPublishedPosts(all);
 
@@ -47,7 +80,14 @@ const githubEdit = `https://github.com/${SITE.repo}/edit/main/${SITE.contentDir}
 const githubHistory = `https://github.com/${SITE.repo}/commits/main/${SITE.contentDir}/${post.id}.md`;
 ---
 
-<BaseLayout title={post.data.title} description={post.data.description}>
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  ogType="article"
+  publishedTime={datePublished}
+  modifiedTime={dateModified}
+  jsonLd={[articleJsonLd, breadcrumbJsonLd]}
+>
   <article class="page-shell pt-12 sm:pt-16 pb-16 lg:pb-24">
     <!-- 文章头部 -->
     <header>

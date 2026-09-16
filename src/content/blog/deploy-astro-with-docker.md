@@ -48,7 +48,7 @@ EXPOSE 80
 ```yaml
 services:
   blog:
-    image: ghcr.io/linwis/linwis-blog:latest
+    image: ghcr.io/linwis1210/linwis-blog:latest
     ports:
       - "127.0.0.1:8080:80"
     restart: unless-stopped

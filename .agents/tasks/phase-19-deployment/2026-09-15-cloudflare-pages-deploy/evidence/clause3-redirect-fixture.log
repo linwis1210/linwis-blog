@@ -1,0 +1,16 @@
+# Clause 3 redirect generation via fixture (never staged: git status showed only '??' before deletion)
+
+== Stage 1: fixture published with redirectFrom ['/blog/verify-old'] ==
+build exit=0 (log: clause3-build-fixture.log)
+dist/_redirects (cat -A, 1 line, 46 bytes):
+/blog/verify-old /blog/zz-verify-redirect 301$
+
+== Stage 2: fixture draft:true, rebuild ==
+build exit=0 (log: clause3-build-draft.log)
+dist/_redirects bytes: 0 (empty)
+fixture page in dist/blog/: none (draft filtered from site too)
+
+== Stage 3: fixture deleted, rebuild ==
+build exit=0 (log: clause3-build-cleanup.log)
+dist/_redirects bytes: 0
+git status after: clean (fixture never committed/staged)

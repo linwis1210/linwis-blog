@@ -1,0 +1,42 @@
+# Clause 1 quality gates (verifier run 2026-09-16, branch feature/cloudflare-pages-deploy @ 8891d40)
+
+== npm run format-check ==
+exit=0
+
+> linwis-blog@0.1.0 format:check
+> prettier --check .
+...
+
+Checking formatting...
+All matched files use Prettier code style!
+
+== npm run lint ==
+exit=0
+
+> linwis-blog@0.1.0 lint
+> eslint .
+...
+> linwis-blog@0.1.0 lint
+> eslint .
+
+
+== npm run typecheck ==
+exit=0
+
+> linwis-blog@0.1.0 typecheck
+> astro check
+...
+- 0 warnings
+- 2 hints
+
+
+== npm run build ==
+exit=0
+
+> linwis-blog@0.1.0 build
+> astro build
+...
+[2m20:02:57[22m [34m[@astrojs/sitemap][39m `sitemap-index.xml` created at `dist`
+[2m20:02:57[22m [34m[build][39m 38 page(s) built in [1m1.10s[22m
+[2m20:02:57[22m [34m[build][39m [1mComplete![22m
+

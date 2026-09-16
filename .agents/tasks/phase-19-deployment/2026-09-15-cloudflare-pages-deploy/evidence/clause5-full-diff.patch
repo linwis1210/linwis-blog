@@ -1,0 +1,147 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 88b5d2e..48adf76 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -5,6 +5,9 @@ on:
+     branches: [main]
+   pull_request:
+     branches: [main]
++  # UTC 16:30 = 北京时间次日 00:30：定时重建使未来日期文章跨日自动上线。
++  schedule:
++    - cron: "30 16 * * *"
+ 
+ jobs:
+   quality:
+@@ -34,3 +37,33 @@ jobs:
+ 
+       - name: Build
+         run: npm run build
++
++  deploy:
++    name: Deploy to Cloudflare Pages
++    # PR 只跑 quality；push 到 main 或定时触发时在 quality 通过后部署。
++    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'schedule'
++    needs: quality
++    runs-on: ubuntu-latest
++    permissions:
++      contents: read
++    steps:
++      - name: Checkout
++        uses: actions/checkout@v4
++
++      - name: Setup Node
++        uses: actions/setup-node@v4
++        with:
++          node-version: 22
++          cache: npm
++
++      - name: Install dependencies
++        run: npm ci
++
++      - name: Build
++        run: npm run build
++
++      - name: Deploy to Cloudflare Pages
++        run: npx --yes wrangler@4 pages deploy dist --project-name=linwis-blog --branch=main
++        env:
++          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
++          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+diff --git a/.gitignore b/.gitignore
+index 6e663df..db4d11e 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -3,6 +3,7 @@ dist/
+ .astro/
+ .zcode/
+ .agents/tmp/
++.wrangler/
+ npm-debug.log*
+ .DS_Store
+ *.local
+diff --git a/astro.config.mjs b/astro.config.mjs
+index 4afdcc9..bf207a0 100644
+--- a/astro.config.mjs
++++ b/astro.config.mjs
+@@ -7,6 +7,7 @@ import remarkDirective from "remark-directive";
+ import { visit } from "unist-util-visit";
+ import rehypeSlug from "rehype-slug";
+ import rehypeAutolinkHeadings from "rehype-autolink-headings";
++import { existsSync, renameSync } from "node:fs";
+ 
+ /** :::note[标题] 等 callout 容器 → aside.callout */
+ function remarkCallouts() {
+@@ -28,9 +29,22 @@ function remarkCallouts() {
+   };
+ }
+ 
++/** 构建后把 endpoint 产物 dist/redirects 重命名为 dist/_redirects（下划线前缀文件不参与 Astro 路由）。 */
++function renameRedirects() {
++  return {
++    name: "rename-redirects",
++    hooks: {
++      "astro:build:done": ({ dir }) => {
++        const from = new URL("redirects", dir);
++        if (existsSync(from)) renameSync(from, new URL("_redirects", dir));
++      },
++    },
++  };
++}
++
+ export default defineConfig({
+   site: "https://linwis.dev",
+-  integrations: [mdx(), sitemap()],
++  integrations: [mdx(), sitemap(), renameRedirects()],
+   build: {
+     // 资源目录改名以绕过浏览器对旧 CSS 文件名的顽固缓存
+     assets: "_astro-v2",
+diff --git a/public/_headers b/public/_headers
+new file mode 100644
+index 0000000..90f1dc6
+--- /dev/null
++++ b/public/_headers
+@@ -0,0 +1,16 @@
++# Cloudflare Pages 头部规则：wrangler@4 为合并语义，更具体的块继承通配块的头，同名头以更具体块为准。
++# 布局：/* 全部安全头在前；/_astro-v2/* 仅追加 immutable 缓存头在后，避免安全头逐条重复。
++
++# 全站默认：安全头。
++/*
++  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.github.com; frame-src https://giscus.app; object-src 'none'; base-uri 'self'
++  X-Content-Type-Options: nosniff
++  Referrer-Policy: strict-origin-when-cross-origin
++  Permissions-Policy: camera=(), microphone=(), geolocation=()
++  X-Frame-Options: SAMEORIGIN
++  Strict-Transport-Security: max-age=31536000
++
++# 构建产物（带内容哈希，永久缓存）。Astro 的 assets 目录已改为 _astro-v2。
++# 安全头由 /* 块合并提供，此处仅声明缓存头。
++/_astro-v2/*
++  Cache-Control: public, max-age=31536000, immutable
+diff --git a/src/pages/redirects.ts b/src/pages/redirects.ts
+new file mode 100644
+index 0000000..9ef5504
+--- /dev/null
++++ b/src/pages/redirects.ts
+@@ -0,0 +1,23 @@
++import { getCollection } from "astro:content";
++import { getPublishedPosts } from "../lib/posts";
++
++/**
++ * 构建期生成 Cloudflare Pages 的重定向清单（endpoint 产物 `dist/redirects`）。
++ * 遍历已发布文章 frontmatter 的 `redirectFrom`，逐项输出 `旧路径 新路径 301` 行；
++ * 无任何重定向时输出空文件。草稿与未来日期文章不参与（getPublishedPosts 已过滤）。
++ * 下划线前缀文件不参与 Astro 路由，故由 astro.config.mjs 的内联 integration
++ * 在 astro:build:done 阶段把产物重命名为 Pages 约定的 `dist/_redirects`。
++ */
++export async function GET() {
++  const posts = getPublishedPosts(await getCollection("blog"));
++
++  const lines = posts.flatMap((post) =>
++    post.data.redirectFrom.map((from) => `${from} /blog/${post.id} 301`)
++  );
++
++  const body = lines.length > 0 ? `${lines.join("\n")}\n` : "";
++
++  return new Response(body, {
++    headers: { "Content-Type": "text/plain; charset=utf-8" },
++  });
++}

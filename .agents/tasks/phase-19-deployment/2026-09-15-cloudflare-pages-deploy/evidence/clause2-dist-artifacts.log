@@ -1,0 +1,11 @@
+# Clause 2 dist artifacts (after clause1 build)
+OK dist/_headers (990 bytes)
+OK dist/_redirects (0 bytes)
+OK dist/404.html (16697 bytes)
+OK dist/rss.xml (3847 bytes)
+OK dist/sitemap-index.xml (181 bytes)
+OK dist/search-index.json (17370 bytes)
+OK dist/robots.txt (70 bytes)
+dist/redirects residue: none
+
+# final rebuild (after fixture removal): exit=0, _redirects bytes: 0

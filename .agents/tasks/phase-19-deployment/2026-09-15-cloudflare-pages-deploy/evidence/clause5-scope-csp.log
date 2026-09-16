@@ -1,0 +1,71 @@
+# Clause 5 change scope + CSP + ci.yml review (git diff 57902f4...HEAD)
+
+== changed files (git diff --name-status) ==
+M	.github/workflows/ci.yml
+M	.gitignore
+M	astro.config.mjs
+A	public/_headers
+A	src/pages/redirects.ts
+out-of-scope files: none
+
+== CSP check (public/_headers) ==
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.github.com; frame-src https://giscus.app; object-src 'none'; base-uri 'self'
+
+PASS: contains [script-src 'self' 'unsafe-inline']
+PASS: contains [style-src 'self' 'unsafe-inline']
+PASS: contains [connect-src 'self' https://api.github.com]
+PASS: contains [frame-src https://giscus.app]
+PASS: contains [object-src 'none']
+PASS: contains [base-uri 'self']
+PASS: no unsafe-eval
+== all https origins in CSP (expect only api.github.com + giscus.app) ==
+https://api.github.com
+https://giscus.app
+
+== _headers full content ==
+# Cloudflare Pages 头部规则：wrangler@4 为合并语义，更具体的块继承通配块的头，同名头以更具体块为准。
+# 布局：/* 全部安全头在前；/_astro-v2/* 仅追加 immutable 缓存头在后，避免安全头逐条重复。
+
+# 全站默认：安全头。
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.github.com; frame-src https://giscus.app; object-src 'none'; base-uri 'self'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  X-Frame-Options: SAMEORIGIN
+  Strict-Transport-Security: max-age=31536000
+
+# 构建产物（带内容哈希，永久缓存）。Astro 的 assets 目录已改为 _astro-v2。
+# 安全头由 /* 块合并提供，此处仅声明缓存头。
+/_astro-v2/*
+  Cache-Control: public, max-age=31536000, immutable
+
+== /* block headers (six security headers) ==
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.github.com; frame-src https://giscus.app; object-src 'none'; base-uri 'self'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  X-Frame-Options: SAMEORIGIN
+  Strict-Transport-Security: max-age=31536000
+(all six present exactly once; Cache-Control belongs only to the /_astro-v2/* block, see full content above)
+
+== ci.yml deploy job key lines ==
+9:  schedule:
+10:    - cron: "30 16 * * *"
+23:          node-version: 22
+41:  deploy:
+44:    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'schedule'
+45:    needs: quality
+47:    permissions:
+48:      contents: read
+56:          node-version: 22
+66:        run: npx --yes wrangler@4 pages deploy dist --project-name=linwis-blog --branch=main
+68:          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+69:          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+== .gitignore addition ==
++++ b/.gitignore
++.wrangler/
+
+== redirectFrom schema default ==
+27:      redirectFrom: z.array(z.string()).default([]),

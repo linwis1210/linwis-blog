@@ -1,0 +1,37 @@
+# Clause 4 wrangler pages dev (npx --yes wrangler@4 pages dev dist --port 8789)
+
+== startup (log excerpt) ==
+✨ Parsed 1 valid redirect rule.
+✨ Parsed 2 valid header rules.
+[wrangler:info] Ready on http://127.0.0.1:8789
+
+== GET / ==
+HTTP=200
+security header counts (each must be 1):
+  content-security-policy: 1
+  x-content-type-options: 1
+  referrer-policy: 1
+  permissions-policy: 1
+  x-frame-options: 1
+  strict-transport-security: 1
+Cache-Control: Cache-Control: public, max-age=0, must-revalidate
+
+== GET /_astro-v2/about.CDLEo0iY.css ==
+HTTP=200
+Cache-Control: Cache-Control: public, max-age=31536000, immutable
+security header counts (dedupe, each 1):
+  content-security-policy: 1
+  x-content-type-options: 1
+  referrer-policy: 1
+  permissions-policy: 1
+  x-frame-options: 1
+  strict-transport-security: 1
+
+== GET /no-such-path ==
+HTTP/1.1 404 Not Found
+body byte-identical to dist/404.html: IDENTICAL (cmp, 16677 bytes)
+body title: <title>404 — linwis_</title>
+
+== GET /blog/verify-old (fixture present) ==
+HTTP/1.1 301 Moved Permanently
+Location: /blog/zz-verify-redirect

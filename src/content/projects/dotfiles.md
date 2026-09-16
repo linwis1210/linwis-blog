@@ -8,7 +8,7 @@ screenshots:
 techStack:
   - Shell
   - Git
-github: "https://github.com/linwis/dotfiles"
+github: "https://github.com/linwis1210/linwis-blog" # 临时展示占位，项目仓库建立后替换
 startedAt: 2025-11-20
 ---
 

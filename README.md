@@ -50,7 +50,7 @@ series: "Docker Deployment" # 可选，需配 seriesOrder
 seriesOrder: 1
 project: "personal-blog" # 可选，项目页自动聚合相关文章
 cover: "/images/blog/x/cover.webp" # 字段已预留，文章页暂未渲染
-redirectFrom: ["/blog/old-url"] # 字段已预留，重定向暂未生效
+redirectFrom: ["/blog/old-url"] # 构建时生成 301 重定向（dist/_redirects）
 ---
 ```
 

@@ -1,6 +1,6 @@
 ---
 feature: Cloudflare Pages 部署基线
-state: READY_FOR_VALIDATION
+state: DONE
 date: 2026-09-15
 role-assignment:
   leader: main session
@@ -69,3 +69,6 @@ branch: feature/cloudflare-pages-deploy
 - 2026-09-16 当前状态：条款 1–5 已过，**合并挂起等待用户 CF 三步配置**（Pages 项目 `linwis-blog` / API Token / 仓库 Secrets），完成后 Leader 合并推送并复核条款 6–8。
 - 2026-09-16 用户已完成 CF 侧部署 —— 实际项目名为 **`linwis`**（线上 https://linwis.pages.dev）。Leader 探测：200、title 正确、404 行为正常；响应仅含 nosniff / referrer-policy 两头（CF Pages 平台自动安全头），无本 Feature 的完整六头 → 判定用户上传的是 **main 分支构建产物**（不含 `_headers`/`_redirects`），待自动部署接通后自然解决。据此 Leader 修订（`2161728`）：ci.yml `--project-name` 由 `linwis-blog` 改为 `linwis`（一字符串配置修正，format:check 过；该值的最强验证即合并后的真实部署）。合同中项目名引用以本条为准。待确认项：① GitHub Secrets（`CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`）是否已配置；② `linwis` 项目 production branch 是否为 main（若非，部署会落在 preview 别名，届时在 Dashboard 修正）。
 - 2026-09-16 架构再修订（用户发现 + 决策）—— 用户以截图证实 `linwis` 项目为 **CF Pages Git 集成**（main 每 push 自动构建，Dashboard 列出全部 commit 的成功部署）。**Secrets 不再需要**；Leader 执行 `72aadf7`：ci.yml 撤销 deploy job 与 schedule（恢复 ESLint 基线期已验证的纯质量门形态，format:check 过）；合同条款 6/7/8 相应修订（6 = CF 构建部署成功；7 = 线上 curl 完整验证；8 = 移出至 Phase 22 后续 Deploy Hook 方案）。质量门以「CF 构建命令内嵌」方式保留（用户前置 2 项设置）。ARCHITECTURE §4/§14 与 README 部署节同步修订。合并前置：用户完成 CF 两项设置。
+- 2026-09-16 用户前置完成（截图核验：构建命令内嵌四道检查逐字一致、NODE_VERSION=22 文本变量；生产分支 main）→ Leader 合并 `25c9658` 推送。
+- 2026-09-16 条款 6/7 复核通过 —— Actions（merge commit）**success**；CF Git 集成自动构建部署成功（线上响应切换为新产物）；线上验证：`/` 200 六安全头各一次、`/_astro-v2/about.CDLEo0iY.css` 200 + `immutable` 一年缓存 + 头零重复、404 状态与页面正确。证据：`evidence/leader-online-verification.md`。
+- 2026-09-16 状态 READY_FOR_VALIDATION → **DONE**（合同条款 1–7 全部通过，条款 8 移出；全程零修复循环）。TASKS.md 同步：Phase 13 RedirectFrom ✓ + Phase 19 五项 ✓（136/194，约 70%）；Phase 22 定时发布改 Deploy Hook 方案。README redirectFrom 注记更新。分支已合并删除，tmp 清理。遗留：回滚演练、自定义域名绑定、Phase 22 定时重建、301 线上首验（待首篇使用 redirectFrom 的文章）。

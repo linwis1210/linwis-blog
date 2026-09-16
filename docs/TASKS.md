@@ -3,7 +3,7 @@
 > **状态说明（2026-09-14，Leader 重建）**：仓库仅有单个初始提交，Git 历史无进度信号，此前全部复选框未勾、与实际实现脱节。
 > 今日依据磁盘代码证据逐项重建：勾选 = 有实现工件；未勾 = 未实现或仅部分实现（部分项附括号说明）。
 > 判定方法与证据索引：`.agents/tasks/_meta/2026-09-14-takeover-reconciliation.md`（归档后位于 `.agents/tasks/archive/_meta/`）。
-> 总计：130 / 194 项完成（约 67%）。
+> 总计：136 / 194 项完成（约 70%）。
 > 2026-09-15 范围修订：Docker / GHCR / CD-SSH 条目作废（Phase 19 重写为 Cloudflare Pages 部署，20/21 置空），总数由 212 调整为 194。
 
 ## Phase 0 — Repository
@@ -184,7 +184,7 @@
 - [x] robots.txt
 - [x] sitemap.xml
 - [ ] RSS Full Feed（现为摘要输出，无正文）
-- [ ] RedirectFrom（schema 有字段，无任何消费者）
+- [x] RedirectFrom（构建时生成 `dist/_redirects` 301；线上首篇文章使用后自然生效）
 - [ ] Google/Bing verification placeholders
 
 ## Phase 14 — PWA
@@ -239,12 +239,12 @@
 > 2026-09-15 修订：部署目标由「中国服务器 + BaoTa + Docker」变更为 Cloudflare Pages（用户决策，大陆延迟权衡已知悉）。
 > 原 Phase 19（Docker）/ Phase 20（GHCR）/ Phase 21（CD-SSH）条目全部作废（Git 历史可查），由本阶段取代。
 
-- [ ] `public/_headers`：安全头 + 缓存策略
-- [ ] `_redirects` 生成（frontmatter `redirectFrom` → 301，构建时）
-- [ ] deploy workflow（CI 全绿后 `wrangler pages deploy`）
-- [ ] Cloudflare Pages 项目与 Secrets 配置（用户）
-- [ ] pages.dev 线上冒烟（200 / 安全头 / 缓存 / 404）
-- [ ] 定时重建（Actions schedule → build → deploy）
+- [x] `public/_headers`：安全头 + 缓存策略
+- [x] `_redirects` 生成（frontmatter `redirectFrom` → 301，构建时）
+- [x] 部署通道：CF Pages Git 集成自动构建，质量门内嵌于 CF 构建命令（原 wrangler 方案作废，2026-09-16）
+- [x] Cloudflare Pages 项目与构建设置（用户完成；Secrets 路径随 Git 集成作废）
+- [x] pages.dev 线上冒烟（2026-09-16 通过：六安全头零重复 / 资产 immutable / 404 正常）
+- [ ] 定时重建（移至 Phase 22，Deploy Hook 方案实施）
 - [ ] 回滚演练（Pages 历史版本回滚）
 - [ ] 自定义域名绑定（域名确定后）
 
@@ -258,9 +258,9 @@
 
 ## Phase 22 — Scheduled Publishing
 
-- [ ] Scheduled GitHub Action（每日 schedule 触发）
+- [ ] 每日定时重建触发（CF Deploy Hook，方案定于 2026-09-16）
 - [x] Future Article Filter（构建期 date 过滤已实现）
-- [ ] Automatic Rebuild（schedule → build → deploy）
+- [ ] Automatic Rebuild（hook 触发 CF 重建部署）
 - [ ] RSS / Sitemap / Search Index 随部署刷新（线上验证一次）
 
 ## Phase 23 — Production（2026-09-15 修订）

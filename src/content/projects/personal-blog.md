@@ -12,7 +12,7 @@ techStack:
   - Tailwind CSS
   - Docker
   - Nginx
-github: "https://github.com/linwis/linwis-blog"
+github: "https://github.com/linwis1210/linwis-blog"
 startedAt: 2026-07-01
 ---
 

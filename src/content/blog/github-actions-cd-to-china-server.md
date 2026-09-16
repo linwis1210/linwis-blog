@@ -22,7 +22,7 @@ git push
   ↓
 GitHub Actions: lint + type check + build
   ↓
-docker build → push ghcr.io/linwis/linwis-blog:{sha,latest}
+docker build → push ghcr.io/linwis1210/linwis-blog:{sha,latest}
   ↓
 ssh 服务器: docker compose pull && up -d
   ↓

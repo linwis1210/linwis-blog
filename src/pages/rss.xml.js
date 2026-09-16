@@ -16,6 +16,10 @@ export async function GET(context) {
       pubDate: post.data.date,
       categories: [post.data.category],
       link: `/blog/${post.id}`,
+      // 全文正文：content layer 构建期编译好的 HTML，与文章页渲染同源
+      // （Astro 5.18 的 render() 返回 { Content, headings, remarkPluginFrontmatter }，
+      //   其内部即取 entry.rendered.html，此处直接复用同一份编译产物）
+      content: post.rendered?.html,
     })),
     customData: "<language>zh-CN</language>",
     trailingSlash: false,

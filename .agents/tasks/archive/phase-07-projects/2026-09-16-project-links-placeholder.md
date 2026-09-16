@@ -26,7 +26,8 @@ GitHub 账号为 `linwis1210`；两个项目链接**暂时展示**博客仓库 `
 ## 验证
 
 - `grep -rn "github.com/linwis[^1]" src/ public/` → 零命中（旧账号引用彻底清零）
-- format:check / build 通过；线上部署后项目页链接复核
+- format:check / build 通过
+- 线上（`88caa35` 部署后实测）：`/projects/dotfiles/` 与 `/projects/link-checker/` 详情页 github 链接均为 `github.com/linwis1210/linwis-blog` ✓；`/projects/` 列表卡片与首页按既有设计不渲染仓库链接（Header/Footer 仅有 `github.com/linwis1210` 主页链接），非回归。
 
 ## 后续
 

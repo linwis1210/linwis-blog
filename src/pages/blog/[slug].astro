@@ -32,6 +32,7 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
 const datePublished = post.data.date.toISOString();
 const dateModified = (post.data.updated ?? post.data.date).toISOString();
 const coverUrl = post.data.cover ? new URL(post.data.cover, Astro.site).toString() : null;
+const ogImageUrl = new URL(`/og/${post.id}.png`, Astro.site).toString();
 
 const articleJsonLd = {
   "@context": "https://schema.org",
@@ -42,7 +43,7 @@ const articleJsonLd = {
   dateModified,
   author: { "@type": "Person", name: SITE.author, url: SITE.url },
   mainEntityOfPage: pageUrl,
-  ...(coverUrl ? { image: coverUrl } : {}),
+  image: coverUrl ?? ogImageUrl,
 };
 
 const breadcrumbJsonLd = {
@@ -86,6 +87,7 @@ const githubHistory = `https://github.com/${SITE.repo}/commits/main/${SITE.conte
   ogType="article"
   publishedTime={datePublished}
   modifiedTime={dateModified}
+  ogImage={`/og/${post.id}.png`}
   jsonLd={[articleJsonLd, breadcrumbJsonLd]}
 >
   <article class="page-shell pt-12 sm:pt-16 pb-16 lg:pb-24">

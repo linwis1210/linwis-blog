@@ -1,6 +1,6 @@
 ---
 feature: og:image 自动生成
-state: READY_FOR_VALIDATION
+state: DONE
 repair-count: 1
 date: 2026-09-16
 role-assignment:
@@ -57,3 +57,6 @@ og:image 对占位域名 linwis.dev 的最终域名替换（随域名 Feature �
 - 2026-09-17 状态 READY_FOR_VALIDATION → FAILED_VALIDATION。
 - 2026-09-17 Builder 修复完成（`9d8a41d`，1 commit / 3 文件）—— sharp 替换落地；**根因修正（Leader 采纳）**：emnapi 链非 resvg 所有，属 `@tailwindcss/oxide-wasm32-wasi` 与 `@img/sharp-wasm32` 的 wasm32 兜底链，npm 11 生成 lock 会剪掉、npm 10 解析要求存在（main 的 lock 同样缺失，为真实失败原因；d9ce540 当时 CI 通过系 runner bundled npm 较旧行为差异）。必要偏离获准：lock 由 `npx npm@10.9.3 install --package-lock-only` 重生成——同时满足 npm 10/11 双解析（Gate A npm 11 实装干净重装 exit 0；Gate B npm 10 linux dry-run 由 FAIL 转 0；附加 4 种 flag 组合对照实验）。条款 1–6 重验全 PASS，含 sharp vs resvg A/B 目视（无可辨退化）与 sha256 确定性。**运维约束（记录）**：观察期内本仓库一律用 `npm ci`；任何人以 npm 11 跑 `npm install` 会再度剪掉 emnapi 条目使 Linux npm 10 解析复 FAIL。
 - 2026-09-17 状态 FAILED_VALIDATION → READY_FOR_VALIDATION（复验轮 R2，Verifier 条款 1–6 全量重跑）。
+- 2026-09-17 Verifier R2 —— **条款 1–6 全部 PASS**：双解析门槛转绿（npm 10 linux dry-run 修复前 EUSAGE → exit 0）；9 张 PNG 1200×630；5 张目视无退化（sharp vs resvg A/B 亦无可辨差异）；sha256 确定；script 计数 275=275；范围恰 3 文件。证据：`evidence/verifier-report-r2.md` + r2-*。随后合并 `df5c9e8` 推送。
+- 2026-09-17 条款 7 —— Actions **success**（修复前必败步骤转绿）；CF 构建部署成功；线上：`/og/default.png` 与 `/og/<slug>.png` 200 image/png、文章页 og:image 自指 + twitter:card + JSON-LD image、首页兜底 default。证据：`evidence/leader-online-verification.md`。
+- 2026-09-17 状态 → **DONE**（合同条款 1–7 全部通过；1 次修复循环，根因为 npm 11/10 lock 生成与解析差异，非 og 方案本身）。TASKS.md：Phase 6「Auto OG Image」✓ + Phase 13「Open Graph」✓（143/194 约 74%）。运维约束：仓库一律 `npm ci`（npm 11 install 会剪掉 wasm32 兜底链条目致 Linux npm 10 解析 FAIL）。分支已删，tmp 已清。

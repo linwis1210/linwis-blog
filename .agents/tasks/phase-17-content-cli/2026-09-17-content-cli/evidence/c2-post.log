@@ -1,0 +1,9 @@
+
+> linwis-blog@0.1.0 new:post
+> node scripts/new-post.mjs --title V Test --slug v-test-post --category DevOps --tags Astro, CI
+
+已创建: src\content\blog\v-test-post.md
+  title: V Test
+  category: DevOps
+  tags: Astro, CI
+  draft: true

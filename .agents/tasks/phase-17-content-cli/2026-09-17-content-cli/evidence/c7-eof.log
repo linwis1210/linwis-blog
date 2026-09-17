@@ -1,0 +1,5 @@
+
+> linwis-blog@0.1.0 new:post
+> node scripts/new-post.mjs
+
+Title（标题）: 错误: stdin 已结束，无法读取交互输入 —— 请补齐命令行参数，或通过管道提供剩余答案

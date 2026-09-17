@@ -1,0 +1,5 @@
+
+> linwis-blog@0.1.0 new:post
+> node scripts/new-post.mjs --title T --slug has space --category DevOps
+
+错误: slug 不合法: "has space"（规则: ^[a-z0-9]+(-[a-z0-9]+)*$）

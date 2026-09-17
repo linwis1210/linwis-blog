@@ -1,0 +1,8 @@
+
+> linwis-blog@0.1.0 new:project
+> node scripts/new-project.mjs --title V Proj Min --slug v-test-proj-min --status active
+
+已创建: src\content\projects\v-test-proj-min.md
+  title: V Proj Min
+  status: active
+  featured: false

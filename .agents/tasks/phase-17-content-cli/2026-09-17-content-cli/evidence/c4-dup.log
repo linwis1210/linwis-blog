@@ -1,0 +1,5 @@
+
+> linwis-blog@0.1.0 new:post
+> node scripts/new-post.mjs --title Dup Again --slug v-dup --category Notes
+
+错误: 目标文件已存在，拒绝覆盖: E:\WorkSpace\Personal  Project\PersonalBlog\src\content\blog\v-dup.md

@@ -1,0 +1,5 @@
+
+> linwis-blog@0.1.0 new:post
+> node scripts/new-post.mjs --title T --slug v-cat-nope --category Nope
+
+错误: category "Nope" 不在清单中（来源: src/config/categories.ts） —— 可用值: Server | Frontend | DevOps | Notes

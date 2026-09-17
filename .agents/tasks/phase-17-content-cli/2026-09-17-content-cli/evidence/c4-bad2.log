@@ -1,0 +1,5 @@
+
+> linwis-blog@0.1.0 new:post
+> node scripts/new-post.mjs --title T --slug 中文 --category DevOps
+
+错误: slug 不合法: "中文"（规则: ^[a-z0-9]+(-[a-z0-9]+)*$）

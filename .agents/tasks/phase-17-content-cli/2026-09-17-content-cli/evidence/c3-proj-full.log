@@ -1,0 +1,11 @@
+
+> linwis-blog@0.1.0 new:project
+> node scripts/new-project.mjs --title V Proj Full --slug v-test-proj-full --status completed --techStack Astro, Node --github https://github.com/v/test --demo https://v.test
+
+已创建: src\content\projects\v-test-proj-full.md
+  title: V Proj Full
+  status: completed
+  techStack: Astro, Node
+  github: https://github.com/v/test
+  demo: https://v.test
+  featured: false

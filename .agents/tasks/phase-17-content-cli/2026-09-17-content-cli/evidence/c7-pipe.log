@@ -1,0 +1,9 @@
+
+> linwis-blog@0.1.0 new:post
+> node scripts/new-post.mjs
+
+Title（标题）: Slug （标题含非 ASCII 字符，请手动输入）: Category（可选: Server | Frontend | DevOps | Notes）: Tags（可选，逗号分隔）: Series（可选，回车跳过）: Draft（回车 = true，输入 false 则立即发布）: 已创建: src\content\blog\v-pipe-post.md
+  title: 验证管道文章
+  category: DevOps
+  tags: Astro, CI
+  draft: true

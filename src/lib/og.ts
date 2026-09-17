@@ -2,9 +2,10 @@
  * OG 图片渲染管线（构建期专用，零客户端 JS）。
  *
  * satori：受严格子集约束的元素树 → SVG（根节点需显式 width/height，
- * 多子节点容器需显式 display: flex）；@resvg/resvg-js：SVG → PNG。
- * 字体只加载仓库内 Noto Sans SC Regular（区域子集，OFL 许可），且
- * resvg 关闭系统字体加载，保证任意环境下同名输入产出字节一致的 PNG。
+ * 多子节点容器需显式 display: flex；文字以矢量路径内嵌，不依赖系统字体）；
+ * sharp（libvips）：SVG → PNG，72 DPI 光栅化并强制输出 1200×630。
+ * 字体只加载仓库内 Noto Sans SC Regular（区域子集，OFL 许可），
+ * 保证任意环境下同名输入产出字节一致的 PNG。
  *
  * 视觉遵循 DESIGN.md「Quiet Engineering」：近白底、墨色标题、
  * 单一蓝色 accent（品牌下划线符、竖向标记、分类），无渐变无装饰堆砌。
@@ -12,7 +13,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import satori from "satori";
-import { Resvg } from "@resvg/resvg-js";
+import sharp from "sharp";
 import { SITE } from "../config/site";
 
 export const OG_WIDTH = 1200;
@@ -138,14 +139,16 @@ async function renderToPng(tree: OgNode): Promise<Uint8Array<ArrayBuffer>> {
     height: OG_HEIGHT,
     fonts: [{ name: FONT_FAMILY, data: fontData(), weight: 400, style: "normal" }],
   });
-  const resvg = new Resvg(svg, {
-    fitTo: { mode: "width", value: OG_WIDTH },
-    // 只用仓库内字体：不随系统字体变化，保证渲染确定性
-    font: { loadSystemFonts: false },
-  });
-  // asPng() 的返回类型为 ArrayBufferLike 视图，拷贝为 ArrayBuffer-backed
+  // satori 产出的 SVG width/height 即 1200/630，libvips 默认 72 DPI 光栅化
+  // 得 1:1 像素图；resize 兜底保证输出严格为 1200×630。文字为矢量路径，
+  // 光栅化不依赖系统字体，同名输入产出字节一致。
+  const png = await sharp(Buffer.from(svg), { density: 72 })
+    .resize(OG_WIDTH, OG_HEIGHT)
+    .png()
+    .toBuffer();
+  // toBuffer() 返回 ArrayBufferLike 视图，拷贝为 ArrayBuffer-backed
   // 以满足 Response BodyInit（BufferSource）的类型要求
-  return new Uint8Array(resvg.render().asPng());
+  return new Uint8Array(png);
 }
 
 /** 文章 OG 图：品牌行 + 居中大标题（自动换行/截断）+ 分类与域名 */

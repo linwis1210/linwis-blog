@@ -1,6 +1,6 @@
 ---
 feature: og:image 自动生成
-state: FAILED_VALIDATION
+state: READY_FOR_VALIDATION
 repair-count: 1
 date: 2026-09-16
 role-assignment:
@@ -55,3 +55,5 @@ og:image 对占位域名 linwis.dev 的最终域名替换（随域名 Feature �
 - 2026-09-17 条款 7/远端 FAIL（新问题，修复尝试 1）—— 合并后 Actions **Install dependencies（npm ci）6 秒失败**，CF Pages 构建同步失败（线上 404 = 旧部署仍在服务）。无日志权限，Leader 本地复现钉死根因：`npm ci --os=linux` 在 **npm 10**（Actions Node 22 与 CF 均为 npm 10）报 `EUSAGE: Missing @emnapi/runtime@1.11.3, @emnapi/core@1.11.3 from lock file`（resvg-js 平台二进制的 emnapi 依赖链在 Linux 理想树中的解析，npm 11 已修复、npm 10 无修复）；npm 11 同命令 dry-run 通过。
 - 2026-09-17 Leader 修复指示（尝试 1）—— **以 sharp 替换 @resvg/resvg-js 做光栅化**：sharp（libvips）已在依赖树（Astro 图像管线），其平台图已被本仓 d9ce540 的成功 CI（npm 10）验证；satori 输出 SVG 文字为矢量路径，光栅化无需系统字体。实现：`src/lib/og.ts` 移除 resvg 调用改 `sharp(Buffer.from(svg)).resize(1200).png()` 或等效；package.json 移除 resvg 两依赖后重生成 lock；**验证门槛升级：npm 11 与 `npx npm@10.9.3 ci --os=linux --cpu=x64 --libc=glibc --dry-run` 双解析通过 + 条款 1–6 全量重验（视觉必须重做——光栅器更换）**。备选否决：CI 装 npm 11（管不了 CF）、resvg-wasm（新依赖形态）、重生成 lock（跨平台打地鼠）。分支 `fix/og-sharp-raster`。
 - 2026-09-17 状态 READY_FOR_VALIDATION → FAILED_VALIDATION。
+- 2026-09-17 Builder 修复完成（`9d8a41d`，1 commit / 3 文件）—— sharp 替换落地；**根因修正（Leader 采纳）**：emnapi 链非 resvg 所有，属 `@tailwindcss/oxide-wasm32-wasi` 与 `@img/sharp-wasm32` 的 wasm32 兜底链，npm 11 生成 lock 会剪掉、npm 10 解析要求存在（main 的 lock 同样缺失，为真实失败原因；d9ce540 当时 CI 通过系 runner bundled npm 较旧行为差异）。必要偏离获准：lock 由 `npx npm@10.9.3 install --package-lock-only` 重生成——同时满足 npm 10/11 双解析（Gate A npm 11 实装干净重装 exit 0；Gate B npm 10 linux dry-run 由 FAIL 转 0；附加 4 种 flag 组合对照实验）。条款 1–6 重验全 PASS，含 sharp vs resvg A/B 目视（无可辨退化）与 sha256 确定性。**运维约束（记录）**：观察期内本仓库一律用 `npm ci`；任何人以 npm 11 跑 `npm install` 会再度剪掉 emnapi 条目使 Linux npm 10 解析复 FAIL。
+- 2026-09-17 状态 FAILED_VALIDATION → READY_FOR_VALIDATION（复验轮 R2，Verifier 条款 1–6 全量重跑）。

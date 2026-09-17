@@ -1,0 +1,12 @@
+[2m20:56:43[22m   [34m└─[39m [2m/redirects[22m [2m(+1ms)[22m 
+[2m20:56:43[22m [35mλ[39m src/pages/rss.xml.js
+[2m20:56:43[22m   [34m└─[39m [2m/rss.xml[22m [2m(+8ms)[22m 
+[2m20:56:43[22m [35mλ[39m src/pages/search-index.json.ts
+[2m20:56:43[22m   [34m└─[39m [2m/search-index.json[22m [2m(+2ms)[22m 
+[2m20:56:43[22m [32m▶[39m src/pages/terms.astro
+[2m20:56:43[22m   [34m└─[39m [2m/terms/index.html[22m [2m(+1ms)[22m 
+[2m20:56:43[22m [32m✓ Completed in 421ms.
+[39m
+[2m20:56:43[22m [34m[@astrojs/sitemap][39m `sitemap-index.xml` created at `dist`
+[2m20:56:43[22m [34m[build][39m 38 page(s) built in [1m1.38s[22m
+[2m20:56:43[22m [34m[build][39m [1mComplete![22m

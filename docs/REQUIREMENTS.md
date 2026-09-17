@@ -736,7 +736,7 @@ CONTENT_LICENSE.md
 
 修订记录：原「中国大陆服务器 + BaoTa + ICP 备案」方案于 2026-09-15 由用户变更；已知悉并接受全球 CDN 的大陆访问延迟权衡（换来免 ICP 备案、免大陆服务器运维）。后续如大陆体验不达预期，可再评估回源方案。
 
-域名：后续确定（`astro.config.mjs` 的 `site` 为占位值 `https://linwis.dev`；先行使用 `<project>.pages.dev` 子域，域名确定后统一替换，影响 canonical / RSS / sitemap 输出）。
+域名：**`linwis.pages.dev`（2026-09-17 用户确定为最终域名）**，不另行购买自定义域；`astro.config.mjs` 的 `site`、canonical / RSS / sitemap / og 绝对 URL 均已对齐。HTTPS 由 Cloudflare Pages 自动提供。
 
 DNS / CDN：Cloudflare 托管；自定义域名以代理模式绑定 Cloudflare Pages。
 

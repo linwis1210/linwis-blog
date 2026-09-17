@@ -43,7 +43,7 @@ function renameRedirects() {
 }
 
 export default defineConfig({
-  site: "https://linwis.dev",
+  site: "https://linwis.pages.dev",
   integrations: [mdx(), sitemap(), renameRedirects()],
   build: {
     // 资源目录改名以绕过浏览器对旧 CSS 文件名的顽固缓存

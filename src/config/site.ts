@@ -4,7 +4,7 @@ export const SITE = {
   subtitle: "记录开发、项目与持续学习。",
   description:
     "linwis_ 的个人技术博客：记录开发实践、项目复盘与持续学习，涉及 Docker、Astro、TypeScript、Nginx 等技术栈。",
-  url: "https://linwis.dev",
+  url: "https://linwis.pages.dev",
   author: "linwis_",
   locale: "zh-CN",
   /** 上线并完成备案后填写，例如 "京ICP备xxxxxxxx号" */

@@ -3,7 +3,7 @@
 > **状态说明（2026-09-14，Leader 重建）**：仓库仅有单个初始提交，Git 历史无进度信号，此前全部复选框未勾、与实际实现脱节。
 > 今日依据磁盘代码证据逐项重建：勾选 = 有实现工件；未勾 = 未实现或仅部分实现（部分项附括号说明）。
 > 判定方法与证据索引：`.agents/tasks/_meta/2026-09-14-takeover-reconciliation.md`（归档后位于 `.agents/tasks/archive/_meta/`）。
-> 总计：149 / 194 项完成（约 77%）。
+> 总计：149 / 191 项完成（约 78%）。2026-09-17 二次修订：3 项域名绑定条目随「pages.dev 为最终域名」裁决作废。
 > 2026-09-15 范围修订：Docker / GHCR / CD-SSH 条目作废（Phase 19 重写为 Cloudflare Pages 部署，20/21 置空），总数由 212 调整为 194。
 
 ## Phase 0 — Repository
@@ -246,7 +246,7 @@
 - [x] pages.dev 线上冒烟（2026-09-16 通过：六安全头零重复 / 资产 immutable / 404 正常）
 - [ ] 定时重建（移至 Phase 22，Deploy Hook 方案实施）
 - [ ] 回滚演练（Pages 历史版本回滚）
-- [ ] 自定义域名绑定（域名确定后）
+- ~~自定义域名绑定~~（N/A：2026-09-17 用户裁决以 linwis.pages.dev 为最终域名）
 
 ## Phase 20 — ~~GHCR~~（obsolete）
 
@@ -267,8 +267,8 @@
 
 > ICP 备案与宝塔反代随 CF 全球部署作废；ICP Footer 逻辑保留但无预期用途。
 
-- [ ] Cloudflare DNS 托管与解析确认（域名确定后）
-- [ ] 自定义域 HTTPS（Cloudflare 自动签发）
+- ~~Cloudflare DNS 托管与解析确认~~（N/A：同上，pages.dev 由 CF 直接服务）
+- ~~自定义域 HTTPS~~（N/A：pages.dev 自带 CF HTTPS）
 - [ ] Production Smoke Test
 
 ## Phase 24 — Performance

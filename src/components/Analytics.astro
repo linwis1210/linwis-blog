@@ -22,6 +22,11 @@ const { enabled, provider } = FEATURES.analytics;
 }
 {
   enabled && provider === "plausible" && (
-    <script is:inline defer data-domain="linwis.dev" src="https://plausible.io/js/script.js" />
+    <script
+      is:inline
+      defer
+      data-domain="linwis.pages.dev"
+      src="https://plausible.io/js/script.js"
+    />
   )
 }

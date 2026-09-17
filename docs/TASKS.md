@@ -3,7 +3,7 @@
 > **状态说明（2026-09-14，Leader 重建）**：仓库仅有单个初始提交，Git 历史无进度信号，此前全部复选框未勾、与实际实现脱节。
 > 今日依据磁盘代码证据逐项重建：勾选 = 有实现工件；未勾 = 未实现或仅部分实现（部分项附括号说明）。
 > 判定方法与证据索引：`.agents/tasks/_meta/2026-09-14-takeover-reconciliation.md`（归档后位于 `.agents/tasks/archive/_meta/`）。
-> 总计：143 / 194 项完成（约 74%）。
+> 总计：149 / 194 项完成（约 77%）。
 > 2026-09-15 范围修订：Docker / GHCR / CD-SSH 条目作废（Phase 19 重写为 Cloudflare Pages 部署，20/21 置空），总数由 212 调整为 194。
 
 ## Phase 0 — Repository
@@ -214,12 +214,12 @@
 
 ## Phase 17 — Content CLI
 
-- [ ] `npm run new:post`
-- [ ] `npm run new:project`
-- [ ] Slug Suggestion
-- [ ] Frontmatter Generation
-- [ ] Category Validation
-- [ ] Default Draft
+- [x] `npm run new:post`（2026-09-17）
+- [x] `npm run new:project`（2026-09-17）
+- [x] Slug Suggestion
+- [x] Frontmatter Generation
+- [x] Category Validation（动态读 categories.ts）
+- [x] Default Draft
 
 ## Phase 18 — CI
 

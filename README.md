@@ -32,7 +32,14 @@ src/
 
 ## 写作
 
-新建文章：在 `src/content/blog/` 创建 `my-post-slug.md`（英文小写连字符文件名即永久 URL `/blog/my-post-slug`，禁止日期/分类前缀）。
+新建文章推荐用脚手架（交互式，也支持参数/管道自动化）：
+
+```bash
+npm run new:post     # 文章：Title → Slug 建议 → Category 校验 → Tags → 默认 draft: true
+npm run new:project  # 项目复盘：status / techStack / github / demo
+```
+
+也可手动在 `src/content/blog/` 创建 `my-post-slug.md`（英文小写连字符文件名即永久 URL `/blog/my-post-slug`，禁止日期/分类前缀）。
 
 Frontmatter 示例（只写实际需要的字段）：
 

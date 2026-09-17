@@ -1,6 +1,6 @@
 ---
 feature: 内容 CLI（new:post / new:project）
-state: READY_FOR_VALIDATION
+state: DONE
 date: 2026-09-17
 role-assignment:
   leader: main session
@@ -56,3 +56,5 @@ snippet 脚手架（v1 不展示）、tag 别名归一化入 CLI、CI 中运行 
 - 2026-09-17 ACTIVE —— Leader 裁定优先级后创建记录，派发 Builder。
 - 2026-09-17 Builder 完成（`84e4e6e`：scripts/ 三文件 + package.json scripts 两行，+544 行零新依赖），自验条款 1–7 全 PASS（含 11 个 fixture 全清理、防覆盖 md5 前后一致、category 清单无硬编码 grep 证明、管道/参数/混合三模式实测）。**Leader 采纳四处偏离**（均有 Builder 实证）：①弃 node:readline（Windows 管道 question() 只读一行，最小复现在案）改自写 stdin 行读取器，TTY/管道同路径；②argv 模式下可选字段取默认不询问（否则全参数用法挂死）；③`--draft` 四写法兼容（parseArgs boolean 拒绝 `--flag=false`）；④winpty 真 TTY 环境不可用，以三模式覆盖且代码无 TTY 分支。分支核查通过（1 commit、无 fixture 残留）。
 - 2026-09-17 状态 ACTIVE → READY_FOR_VALIDATION（派发 Verifier 条款 1–7）。
+- 2026-09-17 Verifier R1 —— **条款 1–7 全部 PASS**：参数/最小参数/管道交互三模式生成正确（draft:true、date 当日、可选字段整段省略）；非法 slug 与伪造 category 全拒（清单与 categories.ts 四项一致、脚本零硬编码）；防覆盖 md5 前后一致；EOF 报错不挂死；范围恰 4 文件。**流程卫生记录**：发现 Builder 自验残留 2 个未跟踪 fixture（与「11 个全清理」记录不符），Verifier 保全 md5 证据后删除；所有条款判定在清理后干净工作树复测，不受影响。证据：`evidence/verifier-report.md` + 日志 17 份。
+- 2026-09-17 合并与收尾 —— 证据提交 `3362a28`；合并 `db7962a` 推送（纯开发工具，CI/线上行为零变化）。TASKS.md Phase 17 六项全勾（149/194 约 77%）；README 写作节更新（推荐 new:post/new:project 入口）。状态 → **DONE**（零修复循环）。分支已删，tmp 已清。

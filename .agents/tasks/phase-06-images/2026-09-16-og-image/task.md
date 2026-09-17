@@ -1,6 +1,6 @@
 ---
 feature: og:image 自动生成
-state: ACTIVE
+state: READY_FOR_VALIDATION
 date: 2026-09-16
 role-assignment:
   leader: main session
@@ -48,3 +48,5 @@ og:image 对占位域名 linwis.dev 的最终域名替换（随域名 Feature �
 ## 状态流转记录
 
 - 2026-09-16 ACTIVE —— 用户搁置 Phase 22 定时发布（降级低优先级）后指示继续；Leader 按 TASKS 优先级选择本项，创建记录，派发 Builder。
+- 2026-09-16 Builder 完成（2 commits：`ff56018` satori+resvg 管线 / `e903031` meta 接线），自验条款 1–6 全 PASS：9 张 PNG（8 文章 + default）1200×630、4 张目视无豆腐块、`<script>` 计数与 main 逐页一致、双构建 sha256 一致、字体 Noto Sans SC 7.9MiB（SIL OFL，LICENSE 随附）。Leader 分支核查通过（基点 = main tip、范围 10 文件、树干净）。备注：Builder 合理地以 `git show main:` 替代分支切换读取文档；TS TypedArray 泛型一轮类型收窄属预期修复非方案变更。
+- 2026-09-17 状态 ACTIVE → READY_FOR_VALIDATION（派发 Verifier 条款 1–6；条款 7 线上复核归 Leader 合并后）。

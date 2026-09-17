@@ -8,6 +8,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "new:post": "node scripts/new-post.mjs",
+    "new:project": "node scripts/new-project.mjs",
     "lint": "eslint .",
     "format:check": "prettier --check .",
     "typecheck": "astro check"

@@ -1,0 +1,5 @@
+ README.md                   | 24 ++++++++++++++-
+ astro.config.mjs            |  8 ++++-
+ src/lib/remark-figure.mjs   | 44 ++++++++++++++++++++++++++++
+ src/pages/blog/[slug].astro | 71 ++++++++++++++++++++++++++++++++++++++++++++-
+ 4 files changed, 144 insertions(+), 3 deletions(-)

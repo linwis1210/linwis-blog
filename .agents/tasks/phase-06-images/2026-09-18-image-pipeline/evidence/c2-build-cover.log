@@ -1,0 +1,129 @@
+
+> linwis-blog@0.1.0 build
+> astro build
+
+[2m09:03:47[22m [34m[content][39m Syncing content
+[33m[1m09:03:47[22m [WARN] [glob-loader][39m Duplicate id "v-cover" found in E:\WorkSpace\Personal  Project\PersonalBlog\src\content\blog\v-cover.md. Later items with the same id will overwrite earlier ones.
+[2m09:03:47[22m [34m[content][39m Synced content
+[2m09:03:47[22m [34m[types][39m Generated [2m268ms[22m
+[2m09:03:47[22m [34m[build][39m output: [34m"static"[39m
+[2m09:03:47[22m [34m[build][39m mode: [34m"static"[39m
+[2m09:03:47[22m [34m[build][39m directory: [34mE:\WorkSpace\Personal  Project\PersonalBlog\dist\[39m
+[2m09:03:47[22m [34m[build][39m Collecting build info...
+[2m09:03:47[22m [34m[build][39m [32m✓ Completed in 287ms.[39m
+[2m09:03:47[22m [34m[build][39m Building static entrypoints...
+[2m09:03:48[22m [34m[vite][39m [32m✓ built in 600ms[39m
+[2m09:03:48[22m [34m[build][39m [32m✓ Completed in 619ms.[39m
+
+[42m[30m building client (vite) [39m[49m
+[2m09:03:48[22m [34m[vite][39m transforming...
+[2m09:03:48[22m [34m[vite][39m [32m✓[39m 10 modules transformed.
+[2m09:03:48[22m [34m[vite][39m rendering chunks...
+[2m09:03:48[22m [34m[vite][39m [32m✓ built in 25ms[39m
+
+[42m[30m generating static routes [39m[49m
+[2m09:03:48[22m [32m▶[39m src/pages/404.astro
+[2m09:03:48[22m   [34m└─[39m [2m/404.html[22m [2m(+7ms)[22m 
+[2m09:03:48[22m [32m▶[39m src/pages/about.astro
+[2m09:03:48[22m   [34m└─[39m [2m/about/index.html[22m [2m(+1ms)[22m 
+[2m09:03:48[22m [32m▶[39m src/pages/archive.astro
+[2m09:03:48[22m   [34m└─[39m [2m/archive/index.html[22m [2m(+2ms)[22m 
+[2m09:03:48[22m [32m▶[39m src/pages/blog/[slug].astro
+[2m09:03:48[22m   [34m├─[39m [2m/blog/nginx-cache-security-headers/index.html[22m [2m(+3ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/github-actions-cd-to-china-server/index.html[22m [2m(+2ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/deploy-astro-with-docker/index.html[22m [2m(+2ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/v-cover/index.html[22m [2m(+6ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/astro-content-collections-guide/index.html[22m [2m(+3ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/tailwind-v4-design-tokens/index.html[22m [2m(+3ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/typescript-branded-types-notes/index.html[22m [2m(+2ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/dev-workflow-notes-2026/index.html[22m [2m(+2ms)[22m 
+[2m09:03:48[22m   [34m└─[39m [2m/blog/cloudflare-dns-only-setup/index.html[22m [2m(+2ms)[22m 
+[2m09:03:48[22m [32m▶[39m src/pages/blog/category/[category].astro
+[2m09:03:48[22m   [34m├─[39m [2m/blog/category/server/index.html[22m [2m(+2ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/category/frontend/index.html[22m [2m(+2ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/category/devops/index.html[22m [2m(+1ms)[22m 
+[2m09:03:48[22m   [34m└─[39m [2m/blog/category/notes/index.html[22m [2m(+2ms)[22m 
+[2m09:03:48[22m [32m▶[39m src/pages/blog/index.astro
+[2m09:03:48[22m   [34m└─[39m [2m/blog/index.html[22m [2m(+3ms)[22m 
+[2m09:03:48[22m [32m▶[39m src/pages/blog/page/[page].astro
+[2m09:03:48[22m [32m▶[39m src/pages/blog/tag/[tag].astro
+[2m09:03:48[22m   [34m├─[39m [2m/blog/tag/nginx/index.html[22m [2m(+2ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/tag/linux/index.html[22m [2m(+2ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/tag/github%20actions/index.html[22m [2m(+5ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/tag/ci%2Fcd/index.html[22m [2m(+2ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/tag/docker/index.html[22m [2m(+2ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/tag/astro/index.html[22m [2m(+2ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/tag/testing/index.html[22m [2m(+17ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/tag/typescript/index.html[22m [2m(+2ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/tag/tailwind%20css/index.html[22m [2m(+2ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/tag/css/index.html[22m [2m(+2ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/tag/javascript/index.html[22m [2m(+2ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/tag/git/index.html[22m [2m(+1ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/tag/notes/index.html[22m [2m(+1ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/blog/tag/cloudflare/index.html[22m [2m(+1ms)[22m 
+[2m09:03:48[22m   [34m└─[39m [2m/blog/tag/dns/index.html[22m [2m(+2ms)[22m 
+[2m09:03:48[22m [32m▶[39m src/pages/index.astro
+[2m09:03:48[22m   [34m└─[39m [2m/index.html[22m [2m(+3ms)[22m 
+[2m09:03:48[22m [35mλ[39m src/pages/og/[slug].png.ts
+[2m09:03:48[22m   [34m├─[39m [2m/og/nginx-cache-security-headers.png[22m [2m(+87ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/og/github-actions-cd-to-china-server.png[22m [2m(+11ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/og/deploy-astro-with-docker.png[22m [2m(+10ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/og/v-cover.png[22m [2m(+10ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/og/astro-content-collections-guide.png[22m [2m(+10ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/og/tailwind-v4-design-tokens.png[22m [2m(+10ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/og/typescript-branded-types-notes.png[22m [2m(+10ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/og/dev-workflow-notes-2026.png[22m [2m(+9ms)[22m 
+[2m09:03:48[22m   [34m└─[39m [2m/og/cloudflare-dns-only-setup.png[22m [2m(+10ms)[22m 
+[2m09:03:48[22m [35mλ[39m src/pages/og/default.png.ts
+[2m09:03:48[22m   [34m└─[39m [2m/og/default.png[22m [2m(+8ms)[22m 
+[2m09:03:48[22m [32m▶[39m src/pages/privacy.astro
+[2m09:03:48[22m   [34m└─[39m [2m/privacy/index.html[22m [2m(+1ms)[22m 
+[2m09:03:48[22m [32m▶[39m src/pages/projects/[slug].astro
+[2m09:03:48[22m   [34m├─[39m [2m/projects/course-lab-archive/index.html[22m [2m(+1ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/projects/link-checker/index.html[22m [2m(+1ms)[22m 
+[2m09:03:48[22m   [34m├─[39m [2m/projects/dotfiles/index.html[22m [2m(+1ms)[22m 
+[2m09:03:48[22m   [34m└─[39m [2m/projects/personal-blog/index.html[22m [2m(+1ms)[22m 
+[2m09:03:48[22m [32m▶[39m src/pages/projects/index.astro
+[2m09:03:48[22m   [34m└─[39m [2m/projects/index.html[22m [2m(+2ms)[22m 
+[2m09:03:48[22m [35mλ[39m src/pages/redirects.ts
+[2m09:03:48[22m   [34m└─[39m [2m/redirects[22m [2m(+1ms)[22m 
+[2m09:03:48[22m [35mλ[39m src/pages/rss.xml.js
+[2m09:03:48[22m   [34m└─[39m [2m/rss.xml[22m [2m(+6ms)[22m 
+[2m09:03:48[22m [35mλ[39m src/pages/search-index.json.ts
+[2m09:03:48[22m   [34m└─[39m [2m/search-index.json[22m [2m(+1ms)[22m 
+[2m09:03:48[22m [32m▶[39m src/pages/terms.astro
+[2m09:03:48[22m   [34m└─[39m [2m/terms/index.html[22m [2m(+1ms)[22m 
+[2m09:03:48[22m [32m✓ Completed in 419ms.
+[39m
+[42m[30m generating optimized images [39m[49m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/cover.DkX3It2N_r2NCt.jpg [2m(before: 18kB, after: 17kB)[22m [2m(+12ms)[22m [2m(1/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/plain.Vnh51S-s_Z1rP3pQ.webp [2m(before: 11kB, after: 1kB)[22m [2m(+21ms)[22m [2m(2/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/cover.DkX3It2N_ZdyMwp.jpg [2m(before: 18kB, after: 4kB)[22m [2m(+9ms)[22m [2m(3/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/cover.DkX3It2N_2u0AYf.jpg [2m(before: 18kB, after: 5kB)[22m [2m(+13ms)[22m [2m(4/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/plain.Vnh51S-s_drdm7.webp [2m(before: 11kB, after: 1kB)[22m [2m(+17ms)[22m [2m(5/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/flow.Furg-Umh_sTirT.webp [2m(before: 23kB, after: 2kB)[22m [2m(+42ms)[22m [2m(6/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/cover.DkX3It2N_25fO8v.jpg [2m(before: 18kB, after: 6kB)[22m [2m(+11ms)[22m [2m(7/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/cover.DkX3It2N_Z1SRFWH.jpg [2m(before: 18kB, after: 8kB)[22m [2m(+9ms)[22m [2m(8/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/plain.Vnh51S-s_Z1k26YO.webp [2m(before: 11kB, after: 1kB)[22m [2m(+20ms)[22m [2m(9/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/flow.Furg-Umh_Zl3y12.webp [2m(before: 23kB, after: 1kB)[22m [2m(+21ms)[22m [2m(10/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/cover.DkX3It2N_1ur7Om.jpg [2m(before: 18kB, after: 11kB)[22m [2m(+11ms)[22m [2m(11/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/flow.Furg-Umh_rFH1v.webp [2m(before: 23kB, after: 1kB)[22m [2m(+34ms)[22m [2m(12/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/flow.Furg-Umh_Z2f571i.webp [2m(before: 23kB, after: 1kB)[22m [2m(+36ms)[22m [2m(13/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/cover.DkX3It2N_1Ic8pY.avif [2m(before: 18kB, after: 3kB)[22m [2m(+88ms)[22m [2m(14/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/flow.Furg-Umh_Z2uOPud.webp [2m(before: 23kB, after: 2kB)[22m [2m(+37ms)[22m [2m(15/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/cover.DkX3It2N_Z1O6UD5.avif [2m(before: 18kB, after: 1kB)[22m [2m(+32ms)[22m [2m(16/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/cover.DkX3It2N_SssRz.avif [2m(before: 18kB, after: 1kB)[22m [2m(+28ms)[22m [2m(17/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/cover.DkX3It2N_tHG1P.avif [2m(before: 18kB, after: 1kB)[22m [2m(+32ms)[22m [2m(18/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/cover.DkX3It2N_ZBImac.avif [2m(before: 18kB, after: 1kB)[22m [2m(+56ms)[22m [2m(19/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/cover.DkX3It2N_Z2iAGc4.avif [2m(before: 18kB, after: 2kB)[22m [2m(+76ms)[22m [2m(20/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/cover.DkX3It2N_1gL9wb.webp [2m(before: 18kB, after: 9kB)[22m [2m(+58ms)[22m [2m(21/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/cover.DkX3It2N_s5zUt.webp [2m(before: 18kB, after: 2kB)[22m [2m(+18ms)[22m [2m(22/26)[22m
+[2m09:03:48[22m   [32m▶[39m /_astro-v2/cover.DkX3It2N_Z1Tw9mN.webp [2m(before: 18kB, after: 3kB)[22m [2m(+20ms)[22m [2m(23/26)[22m
+[2m09:03:49[22m   [32m▶[39m /_astro-v2/cover.DkX3It2N_Z2jgVdx.webp [2m(before: 18kB, after: 3kB)[22m [2m(+21ms)[22m [2m(24/26)[22m
+[2m09:03:49[22m   [32m▶[39m /_astro-v2/cover.DkX3It2N_Z149l40.webp [2m(before: 18kB, after: 5kB)[22m [2m(+31ms)[22m [2m(25/26)[22m
+[2m09:03:49[22m   [32m▶[39m /_astro-v2/cover.DkX3It2N_2kasI4.webp [2m(before: 18kB, after: 6kB)[22m [2m(+42ms)[22m [2m(26/26)[22m
+[2m09:03:49[22m [32m✓ Completed in 571ms.
+[39m
+[2m09:03:49[22m [34m[@astrojs/sitemap][39m `sitemap-index.xml` created at `dist`
+[2m09:03:49[22m [34m[build][39m 40 page(s) built in [1m1.95s[22m
+[2m09:03:49[22m [34m[build][39m [1mComplete![22m

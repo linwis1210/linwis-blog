@@ -1,5 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
+import { getImage, Picture } from "astro:assets";
+import type { ImageMetadata } from "astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import TOC from "../../components/TOC.astro";
 import Giscus from "../../components/Giscus.astro";
@@ -27,11 +29,52 @@ const { Content, headings } = await render(post);
 const { words, minutes } = countStats(post.body ?? "");
 const tags = normalizeTags(post.data.tags);
 
+// 封面双模式：
+// 1. 文件名形式（如 "cover.jpg"）→ 查 src/assets/blog/<slug>/ 下的优化资源，
+//    <Picture> 产出 AVIF/WebP 响应式 picture（LCP：eager + 高优先级）；
+// 2. "/" 开头 → public 资产，原样输出普通 <img>（固定宽高比容器防 CLS）。
+const coverValue = post.data.cover;
+const isPublicCover = coverValue?.startsWith("/") ?? false;
+
+const blogImages = import.meta.glob<{ default: ImageMetadata }>(
+  "/src/assets/blog/**/*.{webp,avif,jpg,jpeg,png}",
+  { eager: true }
+);
+let coverImage: ImageMetadata | null = null;
+let coverFallbackSrc: string | null = null;
+if (coverValue && !isPublicCover) {
+  const coverKey = `/src/assets/blog/${post.id}/${coverValue}`;
+  const found = blogImages[coverKey];
+  if (!found?.default) {
+    throw new Error(
+      `[cover] 文章 "${post.id}" 的 cover "${coverValue}" 未找到：` +
+        `src/assets/blog/${post.id}/${coverValue} 不存在。` +
+        `请把封面图片放进该目录（frontmatter 写文件名），或改用 / 开头的 public 路径。`
+    );
+  }
+  coverImage = found.default;
+  // 与 <Picture> 的 fallback <img>（原图格式）用同一组参数调 getImage，
+  // 取到同一个优化产物 URL，供 Article JSON-LD image 使用。
+  // fit/position 是 Picture 响应式模式注入的默认值（cover/center），参与产物哈希
+  const fallbackFormat = ["gif", "svg", "jpg", "jpeg"].includes(coverImage.format)
+    ? coverImage.format
+    : "png";
+  const coverFallback = await getImage({
+    src: coverImage,
+    format: fallbackFormat,
+    layout: "constrained",
+    fit: "cover",
+    position: "center",
+  });
+  coverFallbackSrc = new URL(coverFallback.src, Astro.site).toString();
+}
+
 // SEO 结构化数据（JSON-LD）
 const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
 const datePublished = post.data.date.toISOString();
 const dateModified = (post.data.updated ?? post.data.date).toISOString();
-const coverUrl = post.data.cover ? new URL(post.data.cover, Astro.site).toString() : null;
+const coverUrl =
+  coverFallbackSrc ?? (coverValue ? new URL(coverValue, Astro.site).toString() : null);
 const ogImageUrl = new URL(`/og/${post.id}.png`, Astro.site).toString();
 
 const articleJsonLd = {
@@ -126,6 +169,32 @@ const githubHistory = `https://github.com/${SITE.repo}/commits/main/${SITE.conte
         )
       }
     </header>
+
+    {
+      /* 封面（LCP：优化路径 eager + 高优先级；public 回退固定宽高比防 CLS） */
+      coverImage ? (
+        <figure class="mt-8">
+          <Picture
+            src={coverImage}
+            formats={["avif", "webp"]}
+            layout="constrained"
+            loading="eager"
+            fetchpriority="high"
+            alt={post.data.title}
+          />
+        </figure>
+      ) : isPublicCover && coverValue ? (
+        <figure class="mt-8 aspect-[1200/630] overflow-hidden rounded-lg border border-line">
+          <img
+            src={coverValue}
+            alt={post.data.title}
+            loading="eager"
+            decoding="async"
+            class="h-full w-full object-cover"
+          />
+        </figure>
+      ) : null
+    }
 
     <!-- 移动端折叠 TOC -->
     {

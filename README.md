@@ -56,7 +56,7 @@ featured: true # 首页/博客页精选
 series: "Docker Deployment" # 可选，需配 seriesOrder
 seriesOrder: 1
 project: "personal-blog" # 可选，项目页自动聚合相关文章
-cover: "/images/blog/x/cover.webp" # 字段已预留，文章页暂未渲染
+cover: "cover.jpg" # 可选封面：文件名或 public 路径，见下方「配图指南」
 redirectFrom: ["/blog/old-url"] # 构建时生成 301 重定向（dist/_redirects）
 ---
 ```
@@ -67,6 +67,28 @@ redirectFrom: ["/blog/old-url"] # 构建时生成 301 重定向（dist/_redirect
 - **Category**：单选，集中配置于 `src/config/categories.ts`，schema 校验。
 - **Tag**：多选自由输入，别名映射见 `src/config/tagAliases.ts`（如 `JS → JavaScript`）。
 - **Markdown 增强**：代码高亮（明暗双主题）、`// [!code highlight]`、diff、copy 按钮、`:::note[标题]` callout、脚注、表格、任务清单、标题锚点。
+
+### 配图指南
+
+**封面**：图片放 `src/assets/blog/<slug>/`（slug 与文章文件名一致），frontmatter 写文件名：
+
+```yaml
+cover: "cover.jpg" # 支持 webp / avif / jpg / jpeg / png
+```
+
+文章页会自动生成 AVIF/WebP 响应式 `<picture>`（LCP 优先，eager + 高优先级加载）。也可以用 `/` 开头的 public 路径（如 `cover: "/images/cover.webp"`，放 `public/` 目录），按原样渲染普通 `<img>`。文件名形式但文件不存在时构建期直接报错。
+
+**正文图**：图片与文章 md 放同一目录（`src/content/blog/`），Markdown 里用相对路径引用，构建时自动走优化管线（WebP/AVIF 副本 + srcset + 懒加载）：
+
+```md
+![流程图](./flow.png)
+```
+
+**题注**：链接加 title 文字即生成 `<figure>` 图注（figcaption 居中小字）；无 title 不包裹：
+
+```md
+![流程图](./flow.png "部署流程全图")
+```
 
 ## 第三方功能开关
 

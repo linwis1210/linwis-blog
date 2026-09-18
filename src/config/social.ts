@@ -12,11 +12,11 @@ export const FEATURES = {
     provider: "" as "umami" | "plausible" | "" /* 接入时填写并实现对应 loader */,
   },
   giscus: {
-    enabled: false,
-    repo: "" /* 例如 "linwis1210/linwis-blog" */,
-    repoId: "",
+    enabled: true,
+    repo: "linwis1210/linwis-blog",
+    repoId: "R_kgDOUb-9Xw",
     category: "Announcements",
-    categoryId: "",
+    categoryId: "DIC_kwDOUb-9X84DF5BQ",
   },
   /** 首页 GitHub Activity */
   githubActivity: {

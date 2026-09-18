@@ -56,3 +56,7 @@ Lightbox 多图切换、项目 SVG 封面迁移、Lighthouse（Phase 24）、真
 - 2026-09-18 Verifier R1 —— **条款 1–6 全部 PASS**：cover 优化路径（avif/webp 各 6 档 srcset + eager/fetchpriority）、回退路径、正文图 webp 副本 + 题注 figure 结构、JSON-LD/og 联动、script 计数 275=275、恰 4 文件零新依赖。备注两条：①md 相对路径按 md 位置解析——`./flow.png` 指 content 目录（与 md 同目录共置写法，Verifier 实测走通优化管线）；README 采「正文图与 md 同目录 / 封面走 assets 目录」双规则（Leader 裁定：各单一最简，ARCHITECTURE §21 由 cover 实现落地，约定记档）；②验证中 junction 摘除失误致 node_modules 清空，`npm ci` 精确还原（lock 零变化），判定证据取自事故前有效构建。证据：`evidence/verifier-report.md`。
 - 2026-09-18 合并与条款 7 —— 证据提交 `72d70ba`；合并 `5745b6e` 推送；Actions **success**；线上零回归：首页/既有文章（无 cover，无 picture 块）/og 图/rss/sitemap 全部 200 正常。**合同条款 1–7 全部通过，零修复循环**。
 - 2026-09-18 状态 → **DONE**。TASKS.md Phase 6 四项全勾（153/191 约 80%）——至此 Phase 6 仅剩真实配图后的体验复核（轻量）。分支已删，tmp 已清（含 Builder 遗留 8 项）。
+
+## 事后补记（2026-09-18，DONE 后）
+
+用户发现项目外泄漏目录 `E:\WorkSpace\Personal  Project\src\assets\blog\v-cover\`（cover.jpg/flow.png/plain.png，时间戳=Verifier R1 运行窗口）。根因：Verifier 的 fixture 生成脚本以错误 cwd 解析相对路径，在项目外多写一份副本；其自述清理了另一处误建（`E:\WorkSpace\Personal  Project\..\src` 一类）但漏检此路径。Leader 已删除泄漏目录并核实 `E:\WorkSpace\Personal  Project\` 下仅余 PersonalBlog、`E:\WorkSpace\src` 不存在。**流程教训（记档不加规则）**：涉及「生成文件到项目内路径」的 fixture 脚本必须从项目根解析绝对路径；验证收尾检查应包含项目外工作目录一层。项目内清理与全部合同判定不受影响（该泄漏不影响仓库与构建产物）。

@@ -14,7 +14,6 @@
 import path from "node:path";
 import {
   ROOT_DIR,
-  SLUG_RE,
   askBool,
   askChoice,
   askSlug,
@@ -24,6 +23,7 @@ import {
   fail,
   isValidUrl,
   parseCliArgs,
+  resolveArgvSlug,
   splitList,
   toBool,
   writeContentFile,
@@ -59,8 +59,8 @@ try {
   let slug = args.slug?.trim();
   if (slug === undefined) {
     slug = await askSlug(prompter, title);
-  } else if (!SLUG_RE.test(slug)) {
-    fail(`slug 不合法: "${slug}"（规则: ^[a-z0-9]+(-[a-z0-9]+)*$）`);
+  } else {
+    slug = resolveArgvSlug(slug);
   }
 
   // status（纯交互下回车默认 active）

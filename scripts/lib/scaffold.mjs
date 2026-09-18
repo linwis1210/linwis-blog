@@ -67,6 +67,29 @@ export function suggestSlug(title) {
 }
 
 /**
+ * 手输 slug 规范化（post / project 共用）：
+ * trim → 小写 → 空格与下划线连续段折叠为单个 - → 去首尾 -。
+ * 仅处理可无害纠正的格式；其余非法字符（标点、非 ASCII 等）留给 SLUG_RE 拒绝。
+ */
+export function normalizeSlug(raw) {
+  return raw
+    .trim()
+    .toLowerCase()
+    .replace(/[ _]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/** argv 提供的 slug：规范化后校验，非法按原输入报错退出；规范化改变时回显结果 */
+export function resolveArgvSlug(raw) {
+  const normalized = normalizeSlug(raw);
+  if (!SLUG_RE.test(normalized)) {
+    fail(`slug 不合法: "${raw}"（规则: ^[a-z0-9]+(-[a-z0-9]+)*$）`);
+  }
+  if (normalized !== raw) console.log(`slug 已规范化: ${normalized}`);
+  return normalized;
+}
+
+/**
  * 从 src/config/categories.ts 动态解析合法 category 清单。
  * 做法：截取源码中 CATEGORIES 数组块，正则提取其中的 name: "..." 字符串字面量。
  * 清单值完全来自该文件，脚本内不硬编码。
@@ -171,13 +194,19 @@ export async function askTitle(prompter) {
   }
 }
 
-/** 交互循环：slug 建议（纯 ASCII 标题回车即用建议；含中文要求手输），非法重询 */
+/**
+ * 交互循环：slug 建议（纯 ASCII 标题回车即用建议；含中文要求手输，提示附格式示例）。
+ * 手输先规范化再校验：可纠正的大小写/空格/下划线直接接受并回显规范化结果，
+ * 仍含非 ASCII / 非法字符才按原报错重询。
+ */
 export async function askSlug(prompter, title) {
   const suggestion = suggestSlug(title);
-  const hint = suggestion ? `（回车 = ${suggestion}）` : "（标题含非 ASCII 字符，请手动输入）";
+  const hint = suggestion
+    ? `（回车 = ${suggestion}）`
+    : "（URL 文件名，英文小写连字符，如 what-is-claude-code）";
   for (;;) {
     const answer = await prompter.ask(`Slug ${hint}: `);
-    const candidate = answer || suggestion;
+    const candidate = answer ? normalizeSlug(answer) : suggestion;
     if (!candidate) {
       console.error("slug 不能为空。");
       continue;
@@ -186,6 +215,7 @@ export async function askSlug(prompter, title) {
       console.error(`slug 不合法: "${candidate}"（规则: ^[a-z0-9]+(-[a-z0-9]+)*$）`);
       continue;
     }
+    if (answer && candidate !== answer) console.log(`slug 已规范化: ${candidate}`);
     return candidate;
   }
 }

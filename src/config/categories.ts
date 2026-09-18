@@ -24,6 +24,10 @@ export const CATEGORIES: Category[] = [
     description: "开发效率与工程文化：自动化、监控、云服务与工作流。",
   },
   {
+    name: "AI",
+    description: "AI 辅助开发：编码智能体、提示工程、模型应用与实践笔记。",
+  },
+  {
     name: "Notes",
     description: "不成体系的随手记：工具、配置、踩坑与阶段小结。",
   },

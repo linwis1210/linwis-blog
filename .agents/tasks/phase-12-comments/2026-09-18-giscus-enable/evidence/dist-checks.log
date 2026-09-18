@@ -1,0 +1,59 @@
+### dist checks — feature/giscus-enable @ a255c8c, dist rebuilt by verifier 2026-09-19
+
+== article pages (excluding category/tag) ==
+dist/blog/astro-content-collections-guide/index.html
+dist/blog/cloudflare-dns-only-setup/index.html
+dist/blog/deploy-astro-with-docker/index.html
+dist/blog/dev-workflow-notes-2026/index.html
+dist/blog/github-actions-cd-to-china-server/index.html
+dist/blog/nginx-cache-security-headers/index.html
+dist/blog/tailwind-v4-design-tokens/index.html
+dist/blog/typescript-branded-types-notes/index.html
+dist/blog/what-is-claude-code/index.html
+
+== per-page four params (repo/repoid/category/categoryid) ==
+dist/blog/astro-content-collections-guide/index.html container=1 repo=1 repoid=1 cat=1 catid=1
+dist/blog/cloudflare-dns-only-setup/index.html container=1 repo=1 repoid=1 cat=1 catid=1
+dist/blog/deploy-astro-with-docker/index.html container=1 repo=1 repoid=1 cat=1 catid=1
+dist/blog/dev-workflow-notes-2026/index.html container=1 repo=1 repoid=1 cat=1 catid=1
+dist/blog/github-actions-cd-to-china-server/index.html container=1 repo=1 repoid=1 cat=1 catid=1
+dist/blog/nginx-cache-security-headers/index.html container=1 repo=1 repoid=1 cat=1 catid=1
+dist/blog/tailwind-v4-design-tokens/index.html container=1 repo=1 repoid=1 cat=1 catid=1
+dist/blog/typescript-branded-types-notes/index.html container=1 repo=1 repoid=1 cat=1 catid=1
+dist/blog/what-is-claude-code/index.html container=1 repo=1 repoid=1 cat=1 catid=1
+
+== whole-dist giscus-container scan (should be exactly the 9 article files) ==
+dist\blog\astro-content-collections-guide\index.html
+dist\blog\cloudflare-dns-only-setup\index.html
+dist\blog\deploy-astro-with-docker\index.html
+dist\blog\dev-workflow-notes-2026\index.html
+dist\blog\github-actions-cd-to-china-server\index.html
+dist\blog\nginx-cache-security-headers\index.html
+dist\blog\tailwind-v4-design-tokens\index.html
+dist\blog\typescript-branded-types-notes\index.html
+dist\blog\what-is-claude-code\index.html
+count: 9 / total html: 43
+
+== preferred_color_scheme in dist (expect no output = 0 hits) ==
+0 hits
+
+== bundled giscus setAttribute params (article page sample) ==
+      1 setAttribute("data-emit-metadata","0")
+      1 setAttribute("data-input-position","bottom")
+      1 setAttribute("data-lang","zh-CN")
+      1 setAttribute("data-loading","lazy")
+      1 setAttribute("data-mapping","pathname")
+      1 setAttribute("data-reactions-enabled","1")
+      1 setAttribute("data-strict","0")
+
+== theme sync in bundle ==
+== theme sync / injection / fallback in built bundle (fixed-string greps, article page sample) ==
+postMessage({giscus:{setConfig:{theme : 1}
+"https://giscus.app"               : 1
+matchMedia("(prefers-color-scheme: dark)") : 3
+MutationObserver                    : 1
+localStorage.getItem("theme")       : 4
+appendChild(                        : 2
+8s timeout literal (8e3)            : 1
+addEventListener("error")           : 1
+addEventListener("load")            : 1

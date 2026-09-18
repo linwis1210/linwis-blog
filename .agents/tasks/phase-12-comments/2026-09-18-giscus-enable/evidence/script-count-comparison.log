@@ -1,0 +1,33 @@
+### script count comparison — feature/giscus-enable vs main@8532fa4 worktree build
+verifier builds, 2026-09-19
+
+main worktree: npm ci exit=0, npm run build exit=0 (logs: npm-ci.log / main-build.log in tmp, tails below)
+
+== feature branch dist (HEAD a255c8c) ==
+<script> occurrences in all 43 HTML: 310
+article page sample (what-is-claude-code): 11
+giscus.app/client.js pages: 9
+
+== main 8532fa4 worktree dist ==
+<script> occurrences in all 43 HTML: 310
+article page sample (what-is-claude-code): 11
+giscus.app/client.js pages: 9
+
+== source <script> block count ==
+HEAD  Giscus.astro: 1
+base  Giscus.astro: 1
+
+== main build log tails ==
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+[2m00:04:31[22m   [32m▶[39m /_astro-v2/Claude_code.B5_0s-T6_11wvHn.webp [2m(before: 2502kB, after: 110kB)[22m [2m(+61ms)[22m [2m(20/22)[22m
+[2m00:04:31[22m   [32m▶[39m /_astro-v2/Claude_code.B5_0s-T6_ZulpIO.webp [2m(before: 2502kB, after: 168kB)[22m [2m(+85ms)[22m [2m(21/22)[22m
+[2m00:04:31[22m   [32m▶[39m /_astro-v2/Claude_code.B5_0s-T6_fsRVb.webp [2m(before: 2502kB, after: 211kB)[22m [2m(+106ms)[22m [2m(22/22)[22m
+[2m00:04:31[22m [32m✓ Completed in 2.33s.
+[39m
+[2m00:04:31[22m [34m[@astrojs/sitemap][39m `sitemap-index.xml` created at `dist`
+[2m00:04:31[22m [34m[build][39m 43 page(s) built in [1m5.48s[22m
+[2m00:04:31[22m [34m[build][39m [1mComplete![22m

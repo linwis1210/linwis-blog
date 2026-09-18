@@ -1,0 +1,55 @@
+diff --git a/src/components/Giscus.astro b/src/components/Giscus.astro
+index f85661d..278cfe4 100644
+--- a/src/components/Giscus.astro
++++ b/src/components/Giscus.astro
+@@ -52,11 +52,48 @@ const dev = import.meta.env.DEV;
+     s.setAttribute("data-strict", "0");
+     s.setAttribute("data-reactions-enabled", "1");
+     s.setAttribute("data-emit-metadata", "0");
+-    s.setAttribute("data-input-position", "top");
+-    s.setAttribute("data-theme", "preferred_color_scheme");
++    s.setAttribute("data-input-position", "bottom");
+     s.setAttribute("data-lang", "zh-CN");
+     s.setAttribute("data-loading", "lazy");
+ 
++    // 主题同步：复用 BaseLayout 既有主题机制（localStorage "theme" 键 + System 媒体查询），
++    // 不新增状态源。站点切换只改 html class、不派发事件，故用 MutationObserver 观察。
++    const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
++    const resolveTheme = (): "light" | "dark" => {
++      const stored = localStorage.getItem("theme");
++      if (stored) return stored === "dark" ? "dark" : "light";
++      return systemDark.matches ? "dark" : "light";
++    };
++    let giscusTheme = resolveTheme();
++    s.setAttribute("data-theme", giscusTheme);
++
++    const syncGiscusTheme = (theme: "light" | "dark") => {
++      if (theme === giscusTheme) return;
++      giscusTheme = theme;
++      const iframe = container.querySelector("iframe");
++      if (iframe?.contentWindow) {
++        iframe.contentWindow.postMessage(
++          { giscus: { setConfig: { theme } } },
++          "https://giscus.app"
++        );
++      } else {
++        // iframe 尚未创建（懒加载中）：更新属性供 giscus 初始化时读取
++        s.setAttribute("data-theme", theme);
++      }
++    };
++
++    // 站内 light/dark 切换（Header 写入 localStorage 并切换 html class）
++    const themeObserver = new MutationObserver(() => syncGiscusTheme(resolveTheme()));
++    themeObserver.observe(document.documentElement, {
++      attributes: true,
++      attributeFilter: ["class"],
++    });
++
++    // System 态（localStorage 无记录）下跟随系统深浅色变化
++    systemDark.addEventListener("change", () => {
++      if (localStorage.getItem("theme") === null) syncGiscusTheme(resolveTheme());
++    });
++
+     // 超时降级：加载失败时保留静态提示，正文不受影响
+     const fallback = setTimeout(() => {
+       if (!container.querySelector("iframe")) {

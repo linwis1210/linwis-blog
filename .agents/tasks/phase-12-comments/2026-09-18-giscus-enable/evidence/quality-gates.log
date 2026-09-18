@@ -1,0 +1,25 @@
+### quality gates — feature/giscus-enable @ a255c8c, verifier run 2026-09-19
+npm run format:check exit=0
+npm run lint         exit=0
+npm run typecheck    exit=0
+npm run build        exit=0
+
+== log tails ==
+--- format:check
+
+Checking formatting...
+All matched files use Prettier code style!
+--- lint
+> linwis-blog@0.1.0 lint
+> eslint .
+
+--- typecheck
+- 0 warnings
+- 2 hints
+
+--- build
+[2m00:01:35[22m [32m✓ Completed in 11ms.
+[39m
+[2m00:01:35[22m [34m[@astrojs/sitemap][39m `sitemap-index.xml` created at `dist`
+[2m00:01:35[22m [34m[build][39m 43 page(s) built in [1m1.43s[22m
+[2m00:01:35[22m [34m[build][39m [1mComplete![22m

@@ -3,7 +3,7 @@
 > **状态说明（2026-09-14，Leader 重建）**：仓库仅有单个初始提交，Git 历史无进度信号，此前全部复选框未勾、与实际实现脱节。
 > 今日依据磁盘代码证据逐项重建：勾选 = 有实现工件；未勾 = 未实现或仅部分实现（部分项附括号说明）。
 > 判定方法与证据索引：`.agents/tasks/_meta/2026-09-14-takeover-reconciliation.md`（归档后位于 `.agents/tasks/archive/_meta/`）。
-> 总计：149 / 191 项完成（约 78%）。2026-09-17 二次修订：3 项域名绑定条目随「pages.dev 为最终域名」裁决作废。
+> 总计：153 / 191 项完成（约 80%）。2026-09-17 二次修订：3 项域名绑定条目作废；2026-09-18 Phase 6 图片体系四项完成。
 > 2026-09-15 范围修订：Docker / GHCR / CD-SSH 条目作废（Phase 19 重写为 Cloudflare Pages 部署，20/21 置空），总数由 212 调整为 194。
 
 ## Phase 0 — Repository
@@ -93,13 +93,13 @@
 
 ## Phase 6 — Images
 
-- [ ] Responsive Image（无 astro:assets `<Image>`/srcset）
+- [x] Responsive Image（markdown 相对路径自动 srcset；封面 `<Picture>` constrained，2026-09-18）
 - [x] Lazy Loading（运行时 JS 注入 loading=lazy）
-- [ ] WebP / AVIF
-- [ ] Caption（仅 CSS 预留，无内容使用）
+- [x] WebP / AVIF（sharp 管线：正文图 WebP、封面 AVIF+WebP 双源，2026-09-18）
+- [x] Caption（remark-figure：title 属性 → figure+figcaption，2026-09-18）
 - [x] Lightbox
 - [x] Mobile Zoom
-- [ ] Article Optional Cover（schema 有字段，文章页未渲染）
+- [x] Article Optional Cover（双模式渲染：assets 优化 / public 回退，2026-09-18）
 - [x] Project Cover
 - [x] Auto OG Image（satori+sharp 构建期生成 1200×630，2026-09-17）
 

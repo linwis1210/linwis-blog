@@ -1,6 +1,6 @@
 ---
 feature: Phase 6 图片体系收尾（Responsive / WebP·AVIF / Caption / Article Cover）
-state: READY_FOR_VALIDATION
+state: DONE
 date: 2026-09-18
 role-assignment:
   leader: main session
@@ -53,3 +53,6 @@ Lightbox 多图切换、项目 SVG 封面迁移、Lighthouse（Phase 24）、真
 - 2026-09-18 ACTIVE —— 用户指示开发 Phase 6 其余项，Leader 出计划获批，派发 Builder。
 - 2026-09-18 Builder 完成（`0799b0d` feature + `18795c4` docs，恰 4 文件零新依赖），自验条款 1–6 全 PASS。**Leader 采纳全部偏离**（均有验证支撑）：①新增 `image:{layout:"constrained"}` 全局配置——markdown 正文图 srcset 的必要开关（Astro 5.10+ 官方响应式图片特性，现无既有 astro:assets 用法故零副作用）；②JSON-LD 取 Picture fallback 需带 fit/position 参数参与哈希对齐；③无 cover 文章页 diff 的现实下界 = 新增 Tailwind 类致 CSS hash 1 行 + 条件槽位空白（结构性零变化）；④search-index 顺序非确定为既有已知项。防呆增强获认可：cover 文件缺失 → 构建报错 exit≠0。分支核查通过。
 - 2026-09-18 状态 ACTIVE → READY_FOR_VALIDATION（派发 Verifier 条款 1–6）。
+- 2026-09-18 Verifier R1 —— **条款 1–6 全部 PASS**：cover 优化路径（avif/webp 各 6 档 srcset + eager/fetchpriority）、回退路径、正文图 webp 副本 + 题注 figure 结构、JSON-LD/og 联动、script 计数 275=275、恰 4 文件零新依赖。备注两条：①md 相对路径按 md 位置解析——`./flow.png` 指 content 目录（与 md 同目录共置写法，Verifier 实测走通优化管线）；README 采「正文图与 md 同目录 / 封面走 assets 目录」双规则（Leader 裁定：各单一最简，ARCHITECTURE §21 由 cover 实现落地，约定记档）；②验证中 junction 摘除失误致 node_modules 清空，`npm ci` 精确还原（lock 零变化），判定证据取自事故前有效构建。证据：`evidence/verifier-report.md`。
+- 2026-09-18 合并与条款 7 —— 证据提交 `72d70ba`；合并 `5745b6e` 推送；Actions **success**；线上零回归：首页/既有文章（无 cover，无 picture 块）/og 图/rss/sitemap 全部 200 正常。**合同条款 1–7 全部通过，零修复循环**。
+- 2026-09-18 状态 → **DONE**。TASKS.md Phase 6 四项全勾（153/191 约 80%）——至此 Phase 6 仅剩真实配图后的体验复核（轻量）。分支已删，tmp 已清（含 Builder 遗留 8 项）。

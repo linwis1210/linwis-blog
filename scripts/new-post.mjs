@@ -14,7 +14,6 @@
 import path from "node:path";
 import {
   ROOT_DIR,
-  SLUG_RE,
   askBool,
   askChoice,
   askSlug,
@@ -24,6 +23,7 @@ import {
   fail,
   getCategoryNames,
   parseCliArgs,
+  resolveArgvSlug,
   resolveChoice,
   splitList,
   toBool,
@@ -56,12 +56,12 @@ try {
   let title = args.title?.trim();
   if (!title) title = await askTitle(prompter);
 
-  // Slug（argv 提供 → 校验非法即退出；未提供 → 建议 + 重询）
+  // Slug（argv 提供 → 规范化 + 校验非法即退出；未提供 → 建议 + 重询）
   let slug = args.slug?.trim();
   if (slug === undefined) {
     slug = await askSlug(prompter, title);
-  } else if (!SLUG_RE.test(slug)) {
-    fail(`slug 不合法: "${slug}"（规则: ^[a-z0-9]+(-[a-z0-9]+)*$）`);
+  } else {
+    slug = resolveArgvSlug(slug);
   }
 
   // Category（值来源: src/config/categories.ts 动态解析）

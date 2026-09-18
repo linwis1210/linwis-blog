@@ -1,6 +1,6 @@
 ---
 feature: Giscus 评论启用（Phase 12 收官）
-state: ACTIVE
+state: DONE
 date: 2026-09-18
 role-assignment:
   leader: main session
@@ -53,3 +53,8 @@ mapping=pathname  reactions=1  input-position=bottom  lang=zh-CN
 ## 状态流转记录
 
 - 2026-09-18 ACTIVE —— 用户提供官方参数（Discussions/giscus App 已由用户配置），Leader 建记录，派发 Builder。
+- 2026-09-18 派发降级记录 —— 自定义 Builder/Verifier 档案经客户端更新后被换绑到 `account:bigmodel-individual-coding-plan` 家族且思考档位未落盘（`reasoning-level-missing`，重试 2 次 + 档案回退旧绑定均无效——本会话缓存档案）。本 Feature 的 Builder 与 Verifier 均以 `general-purpose`（会话模型 GLM-5.3 / max）降级派发；新会话起档案恢复 Flash。已向用户透明说明。
+- 2026-09-18 Builder 完成（`d5cdda4` 启用配置 / `a255c8c` 主题同步）；主题同步采用 MutationObserver 观察 html class（零侵入，不建第二状态源）+ System 媒体监听 + 懒加载窗口 data-theme 属性同步。自验条款 1–5 全 PASS。环境事故一次（worktree --force 穿透 junction 清空 node_modules，npm ci 精确还原，零跟踪文件损失）。
+- 2026-09-18 Verifier R1 —— **条款 1–5 全部 PASS**（43 页全量扫描：9 文章页参数逐页命中、preferred_color_scheme 0 残留、非文章页全排除；script 计数 310=310；diff 恰 2 文件）。证据：`evidence/verifier-report.md`。
+- 2026-09-18 合并与条款 6 —— 证据提交 `deca703`；合并 `e9fb700` 推送；Actions **success**；线上：文章页四参数齐备、旧主题字面量 0、首页排除正确。**合同条款 1–6 全部通过**。用户实浏览器主题切换抽查待反馈（iframe 渲染无法 curl 验证）。
+- 2026-09-18 状态 → **DONE**。TASKS.md Phase 12 两项收尾勾选（155/191 约 81%）——**Phase 12 全部完成**。分支已删，tmp 已清。

@@ -3,7 +3,7 @@
 > **状态说明（2026-09-14，Leader 重建）**：仓库仅有单个初始提交，Git 历史无进度信号，此前全部复选框未勾、与实际实现脱节。
 > 今日依据磁盘代码证据逐项重建：勾选 = 有实现工件；未勾 = 未实现或仅部分实现（部分项附括号说明）。
 > 判定方法与证据索引：`.agents/tasks/_meta/2026-09-14-takeover-reconciliation.md`（归档后位于 `.agents/tasks/archive/_meta/`）。
-> 总计：153 / 191 项完成（约 80%）。2026-09-17 二次修订：3 项域名绑定条目作废；2026-09-18 Phase 6 图片体系四项完成。
+> 总计：155 / 191 项完成（约 81%）。2026-09-17 二次修订：3 项域名绑定条目作废；2026-09-18 Phase 6 图片体系四项完成。
 > 2026-09-15 范围修订：Docker / GHCR / CD-SSH 条目作废（Phase 19 重写为 Cloudflare Pages 部署，20/21 置空），总数由 212 调整为 194。
 
 ## Phase 0 — Repository
@@ -167,9 +167,9 @@
 ## Phase 12 — Comments
 
 - [x] GitHub Discussions（giscus pathname mapping）
-- [x] Giscus（组件完整：懒加载/超时降级/错误降级；当前 `FEATURES.giscus.enabled=false`）
+- [x] Giscus（已启用：真实仓库配置 + pathname + Announcements + zh-CN，2026-09-18 上线）
 - [x] Lazy Loading
-- [ ] Theme Sync（硬编码 preferred_color_scheme，无 postMessage 同步）
+- [x] Theme Sync（初始取站点解析主题 + postMessage 切换同步 + System 媒体监听，2026-09-18）
 - [x] Timeout Fallback
 - [x] Error Degradation
 

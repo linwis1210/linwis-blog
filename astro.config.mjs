@@ -4,6 +4,7 @@ import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import { transformerNotationDiff, transformerNotationHighlight } from "@shikijs/transformers";
 import remarkDirective from "remark-directive";
+import remarkFigure from "./src/lib/remark-figure.mjs";
 import { visit } from "unist-util-visit";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
@@ -49,11 +50,16 @@ export default defineConfig({
     // 资源目录改名以绕过浏览器对旧 CSS 文件名的顽固缓存
     assets: "_astro-v2",
   },
+  // 响应式图片默认布局：正文 markdown 图片与封面 Picture 自动生成
+  // srcset（宽高由源图决定），配合内容图默认 lazy 加载
+  image: {
+    layout: "constrained",
+  },
   vite: {
     plugins: [tailwindcss()],
   },
   markdown: {
-    remarkPlugins: [remarkDirective, remarkCallouts],
+    remarkPlugins: [remarkDirective, remarkCallouts, remarkFigure],
     rehypePlugins: [
       rehypeSlug,
       [

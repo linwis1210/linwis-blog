@@ -78,16 +78,18 @@ cover: "cover.jpg" # 支持 webp / avif / jpg / jpeg / png
 
 文章页会自动生成 AVIF/WebP 响应式 `<picture>`（LCP 优先，eager + 高优先级加载）。也可以用 `/` 开头的 public 路径（如 `cover: "/images/cover.webp"`，放 `public/` 目录），按原样渲染普通 `<img>`。文件名形式但文件不存在时构建期直接报错。
 
-**正文图**：图片与文章 md 放同一目录（`src/content/blog/`），Markdown 里用相对路径引用，构建时自动走优化管线（WebP/AVIF 副本 + srcset + 懒加载）：
+**正文图（推荐：按文章分目录）**：图片放 `src/assets/blog/<slug>/`（与封面同目录），md 里相对路径引用，构建时自动走优化管线（WebP 副本 + srcset + 懒加载）：
 
 ```md
-![流程图](./flow.png)
+![架构图](../../assets/blog/my-post/architecture.png)
 ```
+
+**正文图（备选：与 md 同目录）**：图少时也可直接放 `src/content/blog/` 用 `./xxx.png` 引用——注意文件名加文章前缀（如 `my-post-flow.png`）避免与其它文章撞名。
 
 **题注**：链接加 title 文字即生成 `<figure>` 图注（figcaption 居中小字）；无 title 不包裹：
 
 ```md
-![流程图](./flow.png "部署流程全图")
+![架构图](../../assets/blog/my-post/architecture.png "部署流程全图")
 ```
 
 ## 第三方功能开关

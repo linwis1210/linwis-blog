@@ -4,6 +4,7 @@ dist/
 .zcode/
 .agents/tmp/
 .wrangler/
+.obsidian/
 npm-debug.log*
 .DS_Store
 *.local

@@ -13,7 +13,6 @@ updated: 2026-09-18
 project: personal-blog
 ---
 
-# 什么是 Claude Code
 
 - Claude Code 是运行在终端中的 agentic coding system，直接在你的项目目录中读代码、改文件、跑命令、调试程序。了解它的技术定位、架构差异和核心能力。
 - 一句话定义：Claude Code 是一个**运行在本地终端中的 agentic coding system**。它不是给建议的聊天机器人——它直接在你的项目目录中读代码、改文件、跑命令、调试程序，拥有完整的 shell 能力.

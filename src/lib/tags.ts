@@ -25,10 +25,14 @@ export function normalizeTags(raw: string[]): string[] {
   return result;
 }
 
+/**
+ * 无编码的 URL 安全 slug：非 [a-z0-9] 连续段折叠为单个 `-`，去首尾 `-`。
+ * 样例：`Claude Code`→`claude-code`；`CI/CD`→`ci-cd`。
+ * 链接生成与 /blog/tag/[tag] 路由必须同用本函数，禁止手写 tag URL。
+ */
 export function tagToSlug(tag: string): string {
-  return encodeURIComponent(normalizeTag(tag).toLowerCase());
-}
-
-export function slugToTag(slug: string): string {
-  return decodeURIComponent(slug);
+  return normalizeTag(tag)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }

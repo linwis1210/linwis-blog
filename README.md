@@ -2,8 +2,16 @@
 
 > Build. Learn. Share. — 记录开发、项目与持续学习。
 
-基于 **Astro + TypeScript + Tailwind CSS** 的静态优先个人技术博客。
-构建产物为纯静态文件，部署于 Cloudflare Pages（2026-09-15 起），运行时零 Node.js。
+基于 **Astro 5 + TypeScript + Tailwind CSS 4** 的静态优先个人技术博客。
+构建产物为纯静态文件，部署于 Cloudflare Pages（[linwis.pages.dev](https://linwis.pages.dev)），运行时零 Node.js。
+当前版本 **v1.0.0**。
+
+## 功能一览
+
+- 完整内容系统：文章 / 项目复盘 / 分类 / 标签 / 系列 / 归档，内置内容 CLI 脚手架
+- 阅读体验：本地搜索（`Ctrl/Cmd+K`）、明暗主题（评论同步切换）、TOC、代码高亮与题注、Giscus 评论
+- 自动化：OG 分享卡生成、响应式图片管线（AVIF/WebP + srcset）、RSS 全文、sitemap、结构化数据
+- 工程：CI 质量门 + CF Pages 内嵌构建门、安全响应头（CSP 等）、Lighthouse 全项达标
 
 ## 快速开始
 
@@ -18,104 +26,61 @@ npm run preview    # 本地预览构建产物
 
 ```text
 src/
+├── assets/            # 构建期优化资产：fonts/（OG 字体）+ blog/<slug>/（文章封面与配图）
 ├── config/            # 站点/导航/分类/Tag 别名/社交与功能开关
 ├── content/
 │   ├── blog/          # 文章（.md / .mdx），文件名即 slug
 │   ├── projects/      # 项目复盘
 │   └── snippets/      # v1.0 不公开展示，仅预留模型
-├── components/        # Header / SearchDialog / TOC / PostList / Giscus 占位等
-├── layouts/           # BaseLayout（主题防闪烁 / 全局脚本）
-├── lib/               # 发布过滤 / 阅读时间 / Tag 归一化 / 相关文章加权 / 分页
-├── pages/             # 路由
+├── components/        # Header / SearchDialog / TOC / Giscus / CursorEffects 等
+├── layouts/           # BaseLayout（SEO / 主题防闪烁 / 全局脚本）
+├── lib/               # 发布过滤 / 阅读时间 / Tag 归一化 / 相关文章加权 / OG 渲染
+├── pages/             # 路由（含 rss.xml / search-index.json / og/*.png / _redirects 生成）
 └── styles/global.css  # Design Tokens（明暗双主题）+ 文章排版
+scripts/               # 内容 CLI（new:post / new:project）
+docs/                  # 内容写作指南（CONTENT.md）与部署指南（DEPLOYMENT.md）
+public/                # 原样直出：_headers（安全与缓存头）/ robots.txt / 项目 SVG 封面
 ```
 
 ## 写作
 
-新建文章推荐用脚手架（交互式，也支持参数/管道自动化）：
-
 ```bash
-npm run new:post     # 文章：Title → Slug 建议 → Category 校验 → Tags → 默认 draft: true
-npm run new:project  # 项目复盘：status / techStack / github / demo
+npm run new:post     # 文章脚手架：Title → Slug 建议 → Category 校验 → Tags → 默认 draft: true
+npm run new:project  # 项目复盘脚手架
+npm run dev          # 写作预览（draft: true 的文章不渲染，预览前先改为 false）
 ```
 
-完整参考：**[docs/CONTENT.md](docs/CONTENT.md)**（frontmatter 全字段 / 配图 / Markdown 增强 / 定时与系列）；部署运维见 **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**。
+**完整写作参考见 [docs/CONTENT.md](docs/CONTENT.md)**：frontmatter 全字段、封面与配图（自动 AVIF/WebP 响应式）、Markdown 增强（代码高亮 / diff / 题注 / callout / 脚注）、定时发布、系列与项目关联。
 
-也可手动在 `src/content/blog/` 创建 `my-post-slug.md`（英文小写连字符文件名即永久 URL `/blog/my-post-slug`，禁止日期/分类前缀）。
+速记：
 
-Frontmatter 示例（只写实际需要的字段）：
-
-```yaml
----
-title: "文章标题"
-description: "一句话摘要。"
-date: 2026-09-03
-updated: 2026-09-05 # 可选
-category: "Server" # 必须在 src/config/categories.ts 中登记
-tags: [Docker, Astro] # 自由填写，自动走别名归一化
-draft: false # true 则完全不构建
-featured: true # 首页/博客页精选
-series: "Docker Deployment" # 可选，需配 seriesOrder
-seriesOrder: 1
-project: "personal-blog" # 可选，项目页自动聚合相关文章
-cover: "cover.jpg" # 可选封面：文件名或 public 路径，见下方「配图指南」
-redirectFrom: ["/blog/old-url"] # 构建时生成 301 重定向（dist/_redirects）
----
-```
-
-规则速记：
-
-- **draft / 定时发布**：`draft: true` 不构建；`date` 在未来则发布前不可见，配合定时构建自动上线。
-- **Category**：单选，集中配置于 `src/config/categories.ts`，schema 校验。
-- **Tag**：多选自由输入，别名映射见 `src/config/tagAliases.ts`（如 `JS → JavaScript`）。
-- **Markdown 增强**：代码高亮（明暗双主题）、`// [!code highlight]`、diff、copy 按钮、`:::note[标题]` callout、脚注、表格、任务清单、标题锚点。
-
-### 配图指南
-
-**封面**：图片放 `src/assets/blog/<slug>/`（slug 与文章文件名一致），frontmatter 写文件名：
-
-```yaml
-cover: "cover.jpg" # 支持 webp / avif / jpg / jpeg / png
-```
-
-文章页会自动生成 AVIF/WebP 响应式 `<picture>`（LCP 优先，eager + 高优先级加载）。也可以用 `/` 开头的 public 路径（如 `cover: "/images/cover.webp"`，放 `public/` 目录），按原样渲染普通 `<img>`。文件名形式但文件不存在时构建期直接报错。
-
-**正文图（推荐：按文章分目录）**：图片放 `src/assets/blog/<slug>/`（与封面同目录），md 里相对路径引用，构建时自动走优化管线（WebP 副本 + srcset + 懒加载）：
-
-```md
-![架构图](../../assets/blog/my-post/architecture.png)
-```
-
-**正文图（备选：与 md 同目录）**：图少时也可直接放 `src/content/blog/` 用 `./xxx.png` 引用——注意文件名加文章前缀（如 `my-post-flow.png`）避免与其它文章撞名。
-
-**题注**：链接加 title 文字即生成 `<figure>` 图注（figcaption 居中小字）；无 title 不包裹：
-
-```md
-![架构图](../../assets/blog/my-post/architecture.png "部署流程全图")
-```
+- 永久 URL 即文件名：`my-post-slug.md` → `/blog/my-post-slug`（英文小写连字符，禁止日期/分类前缀）；
+- 分类单选，集中登记于 `src/config/categories.ts`（当前：Server / Frontend / DevOps / AI / Notes）；标签自由填写，别名归一化见 `src/config/tagAliases.ts`；
+- 改 slug 记得 `redirectFrom`（自动生成 301）。
 
 ## 第三方功能开关
 
-Giscus 评论 / GitHub Activity / Analytics 均为渐进增强，失败不影响正文。
-统一在 `src/config/social.ts` 的 `FEATURES` 中配置并 `enabled: true`。
+`src/config/social.ts` 的 `FEATURES` 统一控制，全部为渐进增强，失败不影响正文：
+
+| 功能 | 状态 |
+|---|---|
+| Giscus 评论（GitHub Discussions） | **已启用**（pathname 映射，主题跟随站内明暗切换） |
+| GitHub Activity（首页） | 关闭，组件就绪 |
+| Analytics（Umami / Plausible） | 关闭，适配器就绪 |
 
 ## 部署（Cloudflare Pages）
 
-- 部署通道为 **Cloudflare Pages Git 集成**（项目 `linwis`，https://linwis.pages.dev ）：push 到 main 后 CF 自动构建部署，无需部署 Secrets。
-- 质量门内嵌于 CF 构建命令（`format:check && lint && typecheck && build`，`NODE_VERSION=22`），任何检查不过即不部署；GitHub Actions 作为独立质量信号并行运行。
-- 安全与缓存响应头定义在 `public/_headers`；旧文重定向由文章 frontmatter `redirectFrom` 构建时生成 `dist/_redirects`（301）。
-- 回滚在 Pages Dashboard 选择历史版本一键恢复；定时发布（未来日期文章自动上线）见 docs/TASKS.md Phase 22 规划。
+push 到 `main` 即自动构建上线（[linwis.pages.dev](https://linwis.pages.dev)），无需部署 Secrets：
 
-## 设计体系
+- GitHub Actions 质量门（format / lint / typecheck / build）与 CF 构建并行；**质量门同时内嵌于 CF 构建命令**，任何检查不过即不部署；
+- 安全与缓存响应头在 `public/_headers`；`redirectFrom` 构建时生成 301；回滚在 Pages Dashboard 一键完成。
 
-- 极简白净：留白 + 1px 细线，无重阴影；蓝色点缀（`#0071E3` 亮 / `#58A6FF` 暗，见 DESIGN.md §4）
-- 主题：Light / Dark / System（默认跟随系统，localStorage 持久化，首帧防闪烁）
-- 系统字体栈，不依赖外部字体 CDN
-- Mobile First；键盘可访问（搜索 Command Palette `Ctrl/Cmd+K`、focus 可见、Reduced Motion）
-- 鼠标特效（轮换制，默认整体关闭）：光标与点击特效各 5 种循环 — 光标：小点 / mono 方块 / 彗星拖尾 /
-  「阅读」标签 / Emoji；点击：火花 / 纸屑 / Emoji 爆炸 / 涟漪 / 方块粒子。依 DESIGN.md §23/§24 克制原则
-  默认 `enabled: false`；卡片 spotlight 样式已备但当前无卡片挂载。开关在 `src/config/effects.ts`，
-  触屏与 reduced-motion 环境自动禁用
+完整细节（首次部署 / 新账号重建 / 版本发布 / 故障排查）见 **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**。
+
+## 设计与性能
+
+- 设计体系「Quiet Engineering」（[DESIGN.md](DESIGN.md)）：极简白净、留白 + 1px 细线、蓝色点缀（`#0071E3` 亮 / `#58A6FF` 暗）、系统字体栈、Mobile First、键盘可访问、Reduced Motion；
+- 性能基线（Lighthouse，线上实测）：Performance 97 / Accessibility 96 / Best Practices 100 / SEO 100，CLS 与 TBT 为 0。
 
 ## License
 

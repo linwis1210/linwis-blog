@@ -3,7 +3,7 @@
 > **状态说明（2026-09-14，Leader 重建）**：仓库仅有单个初始提交，Git 历史无进度信号，此前全部复选框未勾、与实际实现脱节。
 > 今日依据磁盘代码证据逐项重建：勾选 = 有实现工件；未勾 = 未实现或仅部分实现（部分项附括号说明）。
 > 判定方法与证据索引：`.agents/tasks/_meta/2026-09-14-takeover-reconciliation.md`（归档后位于 `.agents/tasks/archive/_meta/`）。
-> 总计：161 / 191 项完成（约 84%）。2026-09-17 二次修订：3 项域名绑定条目作废；2026-09-18 Phase 6 图片体系四项完成。
+> 总计：166 / 190 项完成（约 87%）。2026-09-19 三次修订：GHCR 发布条目随架构作废。2026-09-17 二次修订：3 项域名绑定条目作废；2026-09-18 Phase 6 图片体系四项完成。
 > 2026-09-15 范围修订：Docker / GHCR / CD-SSH 条目作废（Phase 19 重写为 Cloudflare Pages 部署，20/21 置空），总数由 212 调整为 194。
 
 ## Phase 0 — Repository
@@ -291,14 +291,14 @@ SEO ≥ 95
 
 ## Phase 25 — v1.0 Release
 
-- [ ] Final Regression Test
+- [x] Final Regression Test（2026-09-19 全页扫 17 端点全绿；发现并修复 tag 页 404）
 - [x] README
-- [ ] Deployment Guide
-- [ ] Content Guide（README「写作」节覆盖基础，无完整指南）
-- [ ] Git Tag `v1.0.0`
+- [x] Deployment Guide（docs/DEPLOYMENT.md）
+- [x] Content Guide（docs/CONTENT.md 完整指南）
+- [x] Git Tag `v1.0.0`
 - [ ] GitHub Release
-- [ ] GHCR `v1.0.0`
-- [ ] Production Deploy
+- ~~GHCR `v1.0.0`~~（N/A：无 Docker，CF Pages 连续部署）
+- [x] Production Deploy（连续部署：tag 所指 commit 已在线上）
 
 # v2 Roadmap
 

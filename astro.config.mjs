@@ -49,6 +49,8 @@ export default defineConfig({
   build: {
     // 资源目录改名以绕过浏览器对旧 CSS 文件名的顽固缓存
     assets: "_astro-v2",
+    // 全站单 CSS 文件直接内联进 HTML：消除渲染阻塞样式表请求（博客首访优先）
+    inlineStylesheets: "always",
   },
   // 响应式图片默认布局：正文 markdown 图片与封面 Picture 自动生成
   // srcset（宽高由源图决定），配合内容图默认 lazy 加载

@@ -1,5 +1,5 @@
 ---
-state: ACTIVE
+state: DONE
 date: 2026-09-18
 role: Leader（轻量路径：一行配置缺陷，Risk 1）
 risk: 1

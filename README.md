@@ -62,11 +62,11 @@ npm run dev          # 写作预览（draft: true 的文章不渲染，预览前
 
 `src/config/social.ts` 的 `FEATURES` 统一控制，全部为渐进增强，失败不影响正文：
 
-| 功能 | 状态 |
-|---|---|
+| 功能                              | 状态                                              |
+| --------------------------------- | ------------------------------------------------- |
 | Giscus 评论（GitHub Discussions） | **已启用**（pathname 映射，主题跟随站内明暗切换） |
-| GitHub Activity（首页） | 关闭，组件就绪 |
-| Analytics（Umami / Plausible） | 关闭，适配器就绪 |
+| GitHub Activity（首页）           | 关闭，组件就绪                                    |
+| Analytics（Umami / Plausible）    | 关闭，适配器就绪                                  |
 
 ## 部署（Cloudflare Pages）
 

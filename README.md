@@ -39,6 +39,8 @@ npm run new:post     # 文章：Title → Slug 建议 → Category 校验 → Ta
 npm run new:project  # 项目复盘：status / techStack / github / demo
 ```
 
+完整参考：**[docs/CONTENT.md](docs/CONTENT.md)**（frontmatter 全字段 / 配图 / Markdown 增强 / 定时与系列）；部署运维见 **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**。
+
 也可手动在 `src/content/blog/` 创建 `my-post-slug.md`（英文小写连字符文件名即永久 URL `/blog/my-post-slug`，禁止日期/分类前缀）。
 
 Frontmatter 示例（只写实际需要的字段）：

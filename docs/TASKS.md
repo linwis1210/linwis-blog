@@ -3,7 +3,7 @@
 > **状态说明（2026-09-14，Leader 重建）**：仓库仅有单个初始提交，Git 历史无进度信号，此前全部复选框未勾、与实际实现脱节。
 > 今日依据磁盘代码证据逐项重建：勾选 = 有实现工件；未勾 = 未实现或仅部分实现（部分项附括号说明）。
 > 判定方法与证据索引：`.agents/tasks/_meta/2026-09-14-takeover-reconciliation.md`（归档后位于 `.agents/tasks/archive/_meta/`）。
-> 总计：155 / 191 项完成（约 81%）。2026-09-17 二次修订：3 项域名绑定条目作废；2026-09-18 Phase 6 图片体系四项完成。
+> 总计：161 / 191 项完成（约 84%）。2026-09-17 二次修订：3 项域名绑定条目作废；2026-09-18 Phase 6 图片体系四项完成。
 > 2026-09-15 范围修订：Docker / GHCR / CD-SSH 条目作废（Phase 19 重写为 Cloudflare Pages 部署，20/21 置空），总数由 212 调整为 194。
 
 ## Phase 0 — Repository
@@ -273,12 +273,12 @@
 
 ## Phase 24 — Performance
 
-- [ ] Lighthouse
-- [ ] JS Bundle Review
-- [ ] Image Review
-- [ ] CLS Check
-- [ ] Mobile Performance
-- [ ] Third-party Script Audit
+- [x] Lighthouse（线上基线+修复+终验，2026-09-19）
+- [x] JS Bundle Review（TBT=0ms 全页次；script 计数多轮冻结）
+- [x] Image Review（responsive-images 修复：封面 1035w 档）
+- [x] CLS Check（全部页次 0.000）
+- [x] Mobile Performance（97–100；跨境 RTT 波动已记录为环境属性）
+- [x] Third-party Script Audit（giscus 懒加载+preconnect+CSP 合规；Activity/Analytics 关闭态）
 
 Targets:
 

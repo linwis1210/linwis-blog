@@ -15,7 +15,7 @@ import eslintConfigPrettier from "eslint-config-prettier";
 
 export default tseslint.config(
   {
-    ignores: ["dist/", ".astro/", "node_modules/", ".zcode/", ".agents/"],
+    ignores: ["dist/", ".astro/", "node_modules/", ".zcode/", ".agents/", ".wrangler/"],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,

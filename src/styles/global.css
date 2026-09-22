@@ -101,30 +101,48 @@
    字号层级 — DESIGN.md §6
 --------------------------------------------------------------------------- */
 .display-xl {
-  font-size: clamp(3.5rem, 7vw, 6.5rem);
+  font-size: clamp(3.25rem, 6.5vw, 6rem);
   font-weight: 700;
   line-height: 1.02;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
 }
 
 .display-lg {
-  font-size: clamp(2.75rem, 5vw, 4.5rem);
+  font-size: clamp(2.25rem, 4.2vw, 3.75rem);
   font-weight: 700;
-  line-height: 1.06;
-  letter-spacing: -0.035em;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
 .lead {
-  font-size: 1.25rem;
-  line-height: 1.6;
+  font-size: 1.1875rem;
+  line-height: 1.62;
   color: var(--muted);
   max-width: 60ch;
+  text-wrap: pretty;
 }
 
 @media (min-width: 640px) {
   .lead {
-    font-size: 1.3125rem;
+    font-size: 1.25rem;
   }
+}
+
+/* ---------------------------------------------------------------------------
+   阅读进度条 (Reading Progress Bar) — DESIGN.md §15.3
+--------------------------------------------------------------------------- */
+.reading-progress-bar {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  height: 2px;
+  width: 0%;
+  background: var(--accent);
+  transition: width 0.08s ease-out;
+  pointer-events: none;
+  z-index: 50;
 }
 
 /* ---------------------------------------------------------------------------
@@ -180,6 +198,8 @@ body {
   line-height: 1.78;
   color: var(--fg);
   overflow-wrap: break-word;
+  word-break: break-word;
+  text-wrap: pretty;
   max-width: 68ch;
 }
 
@@ -198,8 +218,9 @@ body {
 .prose h4 {
   font-weight: 650;
   line-height: 1.35;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.01em;
   scroll-margin-top: 5.5rem;
+  text-wrap: balance;
 }
 
 .prose > h2 {
@@ -294,7 +315,80 @@ body {
   line-height: 1.7;
 }
 
-/* 代码块 */
+/* 代码块容器与顶栏（GitHub Engineering Precision） */
+.code-block-wrapper {
+  margin-block: 1.35em;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  background: var(--code-bg);
+  transition: border-color 0.15s ease;
+}
+
+.code-block-wrapper:hover {
+  border-color: var(--line-strong);
+}
+
+.code-block-wrapper .astro-code {
+  border: none !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  padding: 0.85rem 1rem;
+}
+
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.35rem 0.85rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-subtle);
+  font-family: var(--font-mono);
+  user-select: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Mermaid 架构图与图表容器 — DESIGN.md §22 (Imagery & Diagrams)
+   居中自适应容器，流动溢出支持水平滚动，明暗模式自适应
+--------------------------------------------------------------------------- */
+.mermaid-render-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: auto;
+  padding: 1.5rem 1rem;
+  width: 100%;
+  background: var(--code-bg);
+}
+
+.mermaid-render-container svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  font-family: var(--font-sans);
+}
+
+.mermaid-render-container .node rect,
+.mermaid-render-container .node circle,
+.mermaid-render-container .node polygon,
+.mermaid-render-container .node path {
+  stroke-width: 1px;
+}
+
+.mermaid-render-container text,
+.mermaid-render-container .label text,
+.mermaid-render-container text.actor,
+.mermaid-render-container text.messageText {
+  font-family: var(--font-sans) !important;
+}
+
+.mermaid-render-container .nodeLabel,
+.mermaid-render-container .edgeLabel {
+  color: var(--fg);
+}
+
+/* 基础代码块回退 */
 .prose .astro-code {
   border: 1px solid var(--line);
   border-radius: 8px;

@@ -1,0 +1,378 @@
+---
+/**
+ * Mermaid.astro
+ * 客户端按需轻量渲染 Mermaid 架构图 / 流程图 / 时序图。
+ * 遵循 Quiet Engineering 视觉哲学与 Design Tokens，明暗双主题自适应且联动重绘。
+ * 无图表页面 0 字节开销，无 JS 时优雅回退显示原生代码块。
+ */
+---
+
+<script>
+  interface MermaidConfig {
+    startOnLoad?: boolean;
+    securityLevel?: string;
+    theme?: string;
+    themeVariables?: Record<string, string | boolean | number>;
+    flowchart?: Record<string, unknown>;
+    sequence?: Record<string, unknown>;
+    [key: string]: unknown;
+  }
+
+  interface MermaidAPI {
+    initialize(config: MermaidConfig): void;
+    render(
+      id: string,
+      text: string
+    ): Promise<{ svg: string; bindFunctions?: (element: Element) => void }>;
+  }
+
+  interface DiagramInstance {
+    wrapper: HTMLElement;
+    container: HTMLElement;
+    pre: HTMLElement;
+    rawCode: string;
+    id: string;
+  }
+
+  const initMermaid = async () => {
+    // 1. 检测 DOM 中是否存在 mermaid 代码块。若无图表，直接返回，实现零运行时与零网络开销
+    const codeBlocks = Array.from(
+      document.querySelectorAll<HTMLElement>(
+        ".prose .astro-code[data-language='mermaid'], .prose pre[data-language='mermaid']"
+      )
+    );
+
+    if (codeBlocks.length === 0) return;
+
+    // 2. 构造图表实例与 UI 外框（顶栏 DIAGRAM + 源码切换 + 复制按钮 + 居中容器）
+    const instances: DiagramInstance[] = [];
+    let diagramCounter = 0;
+
+    codeBlocks.forEach((pre) => {
+      // 避免重复包装
+      if (pre.closest(".mermaid-block-wrapper")) return;
+
+      const rawCode = (pre.querySelector("code")?.textContent ?? pre.textContent ?? "").trim();
+      if (!rawCode) return;
+
+      diagramCounter++;
+      const diagramId = `mermaid-d${diagramCounter}`;
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "mermaid-block-wrapper code-block-wrapper";
+      wrapper.setAttribute("data-diagram-id", diagramId);
+
+      // 顶栏：标明 DIAGRAM / MERMAID，并提供源码切换与复制源码能力
+      const header = document.createElement("div");
+      header.className = "code-header";
+
+      const titleTag = document.createElement("div");
+      titleTag.className = "flex items-center gap-2";
+      titleTag.innerHTML = `
+        <span class="font-mono uppercase tracking-wider text-[10px] text-faint font-semibold flex items-center gap-1.5 select-none">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect width="6" height="6" x="3" y="3" rx="1"/>
+            <rect width="6" height="6" x="15" y="15" rx="1"/>
+            <path d="M6 9v3a3 3 0 0 0 3 3h6"/>
+          </svg>
+          DIAGRAM <span class="opacity-50 font-normal">/ MERMAID</span>
+        </span>
+      `;
+      header.appendChild(titleTag);
+
+      const actionGroup = document.createElement("div");
+      actionGroup.className = "flex items-center gap-1.5";
+
+      // 源码切换按钮
+      const toggleCodeBtn = document.createElement("button");
+      toggleCodeBtn.type = "button";
+      toggleCodeBtn.className =
+        "mermaid-toggle-code-btn inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] text-muted hover:text-fg hover:bg-surface transition-colors cursor-pointer";
+      toggleCodeBtn.setAttribute("title", "查看 / 隐藏源码");
+      toggleCodeBtn.setAttribute("aria-label", "切换图表源码视图");
+      toggleCodeBtn.innerHTML = `
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="16 18 22 12 16 6"/>
+          <polyline points="8 6 2 12 8 18"/>
+        </svg>
+        <span>Code</span>
+      `;
+
+      // 复制源码按钮
+      const copyBtn = document.createElement("button");
+      copyBtn.type = "button";
+      copyBtn.className =
+        "code-copy-btn inline-flex items-center gap-1.5 rounded px-2 py-0.5 text-[11px] text-muted hover:text-fg hover:bg-surface transition-colors cursor-pointer";
+      copyBtn.setAttribute("title", "复制代码");
+      copyBtn.setAttribute("aria-label", "复制 Mermaid 图表源码");
+      copyBtn.innerHTML = `
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+          <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+        </svg>
+        <span>Copy</span>
+      `;
+
+      copyBtn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(rawCode);
+          copyBtn.innerHTML = `<span>Copied</span>`;
+          copyBtn.classList.add("text-accent");
+        } catch {
+          copyBtn.innerHTML = `<span>Failed</span>`;
+        }
+        setTimeout(() => {
+          copyBtn.innerHTML = `
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+            </svg>
+            <span>Copy</span>
+          `;
+          copyBtn.classList.remove("text-accent");
+        }, 1600);
+      });
+
+      actionGroup.appendChild(toggleCodeBtn);
+      actionGroup.appendChild(copyBtn);
+      header.appendChild(actionGroup);
+
+      // 图表 SVG 渲染容器
+      const container = document.createElement("div");
+      container.className =
+        "mermaid-render-container flex justify-center items-center overflow-x-auto p-4 md:p-6 w-full min-h-[72px]";
+
+      // 组装并替换到 DOM 中：隐藏初始 pre，待渲染成功后显示 SVG
+      pre.parentNode?.insertBefore(wrapper, pre);
+      wrapper.appendChild(header);
+      wrapper.appendChild(container);
+      wrapper.appendChild(pre);
+      pre.style.display = "none";
+
+      // 源码切换事件绑定
+      toggleCodeBtn.addEventListener("click", () => {
+        const isShowingCode = pre.style.display !== "none";
+        if (isShowingCode) {
+          // 切回图表
+          pre.style.display = "none";
+          container.style.display = "";
+          toggleCodeBtn.classList.remove("text-accent", "bg-surface");
+          toggleCodeBtn.innerHTML = `
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="16 18 22 12 16 6"/>
+              <polyline points="8 6 2 12 8 18"/>
+            </svg>
+            <span>Code</span>
+          `;
+        } else {
+          // 查看源码
+          pre.style.display = "";
+          container.style.display = "none";
+          toggleCodeBtn.classList.add("text-accent", "bg-surface");
+          toggleCodeBtn.innerHTML = `
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect width="6" height="6" x="3" y="3" rx="1"/>
+              <rect width="6" height="6" x="15" y="15" rx="1"/>
+              <path d="M6 9v3a3 3 0 0 0 3 3h6"/>
+            </svg>
+            <span>Diagram</span>
+          `;
+        }
+      });
+
+      instances.push({ wrapper, container, pre, rawCode, id: diagramId });
+    });
+
+    if (instances.length === 0) return;
+
+    // 3. 动态按需加载 Mermaid CDN
+    let mermaid: MermaidAPI;
+    try {
+      const cdnUrl = "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      const module = (await import(/* @vite-ignore */ cdnUrl)) as { default: MermaidAPI };
+      mermaid = module.default;
+    } catch (err) {
+      console.warn("[Mermaid] CDN 加载失败，安全降级显示原始代码：", err);
+      // 安全降级：直接显示原始格式化代码
+      instances.forEach(({ container, pre }) => {
+        container.style.display = "none";
+        pre.style.display = "";
+      });
+      return;
+    }
+
+    // 4. 主题变量提取与配置（严格对齐 DESIGN.md Quiet Engineering 色板）
+    const getThemeVariables = (isDark: boolean): Record<string, string | boolean | number> => {
+      const sansFont =
+        'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif';
+
+      if (isDark) {
+        return {
+          darkMode: true,
+          fontFamily: sansFont,
+          fontSize: "13px",
+          background: "#161b22",
+          mainBkg: "#161b22",
+          nodeBorder: "#30363d",
+          lineColor: "#58a6ff",
+          textColor: "#f0f6fc",
+          primaryColor: "#161b22",
+          primaryTextColor: "#f0f6fc",
+          primaryBorderColor: "#30363d",
+          secondaryColor: "#11161d",
+          secondaryTextColor: "#f0f6fc",
+          secondaryBorderColor: "#30363d",
+          tertiaryColor: "#1c2128",
+          tertiaryTextColor: "#f0f6fc",
+          tertiaryBorderColor: "#30363d",
+          clusterBkg: "#11161d",
+          clusterBorder: "#30363d",
+          edgeLabelBackground: "#161b22",
+          arrowheadColor: "#58a6ff",
+          actorBkg: "#161b22",
+          actorBorder: "#30363d",
+          actorTextColor: "#f0f6fc",
+          actorLineColor: "#30363d",
+          signalColor: "#58a6ff",
+          signalTextColor: "#f0f6fc",
+          labelBoxBkgColor: "#161b22",
+          labelBoxBorderColor: "#30363d",
+          labelTextColor: "#f0f6fc",
+          loopTextColor: "#f0f6fc",
+          noteBkgColor: "#11161d",
+          noteBorderColor: "#30363d",
+          noteTextColor: "#8b949e",
+          rectBorder: "#30363d",
+          rectBkg: "#161b22",
+        };
+      }
+
+      return {
+        darkMode: false,
+        fontFamily: sansFont,
+        fontSize: "13px",
+        background: "#f6f8fa",
+        mainBkg: "#f6f8fa",
+        nodeBorder: "#d8dee4",
+        lineColor: "#0071e3",
+        textColor: "#1d1d1f",
+        primaryColor: "#f6f8fa",
+        primaryTextColor: "#1d1d1f",
+        primaryBorderColor: "#d8dee4",
+        secondaryColor: "#ffffff",
+        secondaryTextColor: "#1d1d1f",
+        secondaryBorderColor: "#d8dee4",
+        tertiaryColor: "#f3f4f6",
+        tertiaryTextColor: "#1d1d1f",
+        tertiaryBorderColor: "#d8dee4",
+        clusterBkg: "#fbfbfd",
+        clusterBorder: "#d8dee4",
+        edgeLabelBackground: "#ffffff",
+        arrowheadColor: "#0071e3",
+        actorBkg: "#f6f8fa",
+        actorBorder: "#d8dee4",
+        actorTextColor: "#1d1d1f",
+        actorLineColor: "#d8dee4",
+        signalColor: "#0071e3",
+        signalTextColor: "#1d1d1f",
+        labelBoxBkgColor: "#f6f8fa",
+        labelBoxBorderColor: "#d8dee4",
+        labelTextColor: "#1d1d1f",
+        loopTextColor: "#1d1d1f",
+        noteBkgColor: "#ffffff",
+        noteBorderColor: "#d8dee4",
+        noteTextColor: "#656d76",
+        rectBorder: "#d8dee4",
+        rectBkg: "#f6f8fa",
+      };
+    };
+
+    let renderVersion = 0;
+
+    const renderAll = async () => {
+      const isDark = document.documentElement.classList.contains("dark");
+      renderVersion++;
+      const currentVersion = renderVersion;
+
+      try {
+        mermaid.initialize({
+          startOnLoad: false,
+          securityLevel: "loose",
+          theme: "base",
+          themeVariables: getThemeVariables(isDark),
+        });
+      } catch (e) {
+        console.warn("[Mermaid] 初始化配置失败：", e);
+      }
+
+      for (let i = 0; i < instances.length; i++) {
+        if (currentVersion !== renderVersion) break; // 如果触发了新一轮渲染，放弃当前批次
+        const item = instances[i];
+        const uniqueRenderId = `mermaid-svg-${item.id}-${currentVersion}`;
+
+        // 清理潜在同名 DOM 元素
+        document.getElementById(uniqueRenderId)?.remove();
+
+        try {
+          const { svg, bindFunctions } = await mermaid.render(uniqueRenderId, item.rawCode);
+          if (currentVersion !== renderVersion) break;
+          item.container.innerHTML = svg;
+          bindFunctions?.(item.container);
+
+          // 确保渲染完成后原 pre 保持隐藏（除非用户处于源码视图）
+          const isShowingCode =
+            item.wrapper
+              .querySelector(".mermaid-toggle-code-btn")
+              ?.classList.contains("text-accent") ?? false;
+          if (!isShowingCode) {
+            item.pre.style.display = "none";
+            item.container.style.display = "";
+          }
+        } catch (renderError) {
+          console.warn(`[Mermaid] 渲染图表 ${item.id} 发生异常，回退显示源码：`, renderError);
+          // 回退显示原生格式化源码
+          item.container.style.display = "none";
+          item.pre.style.display = "";
+        }
+      }
+    };
+
+    // 初始渲染
+    await renderAll();
+
+    // 5. 监听全站主题切换与系统主题变更，动态重绘
+    let currentDark = document.documentElement.classList.contains("dark");
+
+    const themeObserver = new MutationObserver(() => {
+      const isDark = document.documentElement.classList.contains("dark");
+      if (isDark !== currentDark) {
+        currentDark = isDark;
+        renderAll();
+      }
+    });
+
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    const systemMedia = window.matchMedia("(prefers-color-scheme: dark)");
+    systemMedia.addEventListener("change", () => {
+      if (localStorage.getItem("theme") === null) {
+        const isDark = systemMedia.matches;
+        if (isDark !== currentDark) {
+          currentDark = isDark;
+          renderAll();
+        }
+      }
+    });
+  };
+
+  // DOM 就绪后执行初始化
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initMermaid);
+  } else {
+    initMermaid();
+  }
+  document.addEventListener("astro:page-load", initMermaid);
+</script>

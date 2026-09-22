@@ -12,7 +12,8 @@
     "new:project": "node scripts/new-project.mjs",
     "lint": "eslint .",
     "format:check": "prettier --check .",
-    "typecheck": "astro check"
+    "typecheck": "astro check",
+    "check:links": "node scripts/check-links.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.0",

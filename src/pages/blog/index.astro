@@ -41,7 +41,10 @@ const allTags = [...new Set(payload.flatMap((p) => p.tags))];
           <ul class="divide-y divide-line">
             {featured.map((post) => (
               <li>
-                <a href={`/blog/${post.id}`} class="group flex gap-3 items-baseline py-3">
+                <a
+                  href={`/blog/${post.id}`}
+                  class="group flex gap-3 items-baseline py-3 px-3 -mx-3 rounded-lg hover:bg-surface-subtle/70 transition-colors"
+                >
                   <span class="text-accent font-mono text-xs shrink-0 pt-0.5" aria-hidden="true">
                     ★
                   </span>

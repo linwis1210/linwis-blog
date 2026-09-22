@@ -7,7 +7,8 @@ const isActive = (href: string) =>
   href === "/" ? path === "/" : path === href || path.startsWith(href + "/");
 ---
 
-<header class="sticky top-0 z-40 border-b border-line bg-bg/85 backdrop-blur">
+<header class="sticky top-0 z-40 border-b border-line bg-bg/85 backdrop-blur relative">
+  <div id="reading-progress" class="reading-progress-bar" aria-hidden="true"></div>
   <div class="page-shell">
     <div class="flex h-14 items-center justify-between gap-4">
       <a href="/" class="font-mono font-bold text-[15px] tracking-tight">
@@ -52,7 +53,7 @@ const isActive = (href: string) =>
             <path d="m20 20-3.5-3.5"></path>
           </svg>
           <span class="hidden sm:inline">搜索</span>
-          <kbd class="hidden sm:inline">Ctrl K</kbd>
+          <kbd data-search-shortcut class="hidden sm:inline">Ctrl K</kbd>
         </button>
 
         <button
@@ -170,4 +171,14 @@ const isActive = (href: string) =>
       localStorage.setItem("theme", next);
     }
   });
+
+  // 快捷键平台感知（macOS 显示 ⌘K，Windows/Linux 显示 Ctrl K）
+  const isMac =
+    typeof navigator !== "undefined" && /(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgent);
+  if (isMac) {
+    const kbd = document.querySelector<HTMLElement>("[data-search-shortcut]");
+    if (kbd) kbd.textContent = "⌘K";
+    const searchBtn = document.querySelector<HTMLElement>("[data-search-open]");
+    if (searchBtn) searchBtn.setAttribute("aria-label", "搜索（⌘K）");
+  }
 </script>

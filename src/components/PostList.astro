@@ -19,7 +19,10 @@ const { posts, numbered = false, showCategory = false } = Astro.props;
     <ul class="divide-y divide-line">
       {posts.map((post, i) => (
         <li>
-          <a href={`/blog/${post.id}`} class="group flex items-baseline gap-4 sm:gap-6 py-5">
+          <a
+            href={`/blog/${post.id}`}
+            class="group flex items-baseline gap-4 sm:gap-6 py-5 px-3 -mx-3 rounded-lg hover:bg-surface-subtle/70 transition-colors"
+          >
             <span class="font-mono text-[13px] text-faint tabular-nums shrink-0" aria-hidden="true">
               {String(i + 1).padStart(2, "0")}
             </span>
@@ -42,12 +45,6 @@ const { posts, numbered = false, showCategory = false } = Astro.props;
                 )}
               </span>
             </span>
-            <span
-              class="hidden sm:block self-center text-faint group-hover:text-accent transition-colors shrink-0"
-              aria-hidden="true"
-            >
-              →
-            </span>
           </a>
         </li>
       ))}
@@ -56,7 +53,10 @@ const { posts, numbered = false, showCategory = false } = Astro.props;
     <ul class="divide-y divide-line/70">
       {posts.map((post) => (
         <li>
-          <a href={`/blog/${post.id}`} class="group flex gap-3 sm:gap-5 py-3.5 items-baseline">
+          <a
+            href={`/blog/${post.id}`}
+            class="group flex gap-3 sm:gap-5 py-3.5 px-3 -mx-3 rounded-lg hover:bg-surface-subtle/70 transition-colors items-baseline"
+          >
             <time
               datetime={post.data.date.toISOString()}
               class="font-mono text-[13px] text-faint tabular-nums shrink-0 w-[88px]"

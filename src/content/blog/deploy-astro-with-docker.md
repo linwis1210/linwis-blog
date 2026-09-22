@@ -21,6 +21,29 @@ project: "personal-blog"
 
 把构建环境和运行环境分开，镜像体积可以从 1GB+ 降到 50MB 以内。构建阶段需要 Node 和全部依赖，运行阶段只需要一个能吐静态文件的 Nginx。
 
+```mermaid
+flowchart LR
+  subgraph Stage1["Stage 1: build (node:22-alpine)"]
+    direction TB
+    Src["源码与依赖<br/>package.json / src"]
+    NpmBuild["执行 npm run build"]
+    Dist["静态产物目录<br/>/app/dist"]
+    Src --> NpmBuild --> Dist
+  end
+
+  subgraph Stage2["Stage 2: runtime (nginx:alpine)"]
+    direction TB
+    NginxConf["nginx.conf<br/>安全头 / 静态缓存"]
+    NginxHtml["静态托管根目录<br/>/usr/share/nginx/html"]
+    NginxProc["Nginx 服务进程<br/>监听 80 端口"]
+    NginxConf --> NginxProc
+    NginxHtml --> NginxProc
+  end
+
+  Dist -->|"COPY --from=build"| NginxHtml
+  Client["浏览器 / 反向代理"] -->|"HTTP 请求"| NginxProc
+```
+
 ```dockerfile
 # 构建阶段
 FROM node:22-alpine AS build

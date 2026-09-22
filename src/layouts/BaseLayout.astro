@@ -6,6 +6,7 @@ import Footer from "../components/Footer.astro";
 import SearchDialog from "../components/SearchDialog.astro";
 import CursorEffects from "../components/CursorEffects.astro";
 import Analytics from "../components/Analytics.astro";
+import Mermaid from "../components/Mermaid.astro";
 import { FEATURES } from "../config/social";
 
 interface Props {
@@ -115,6 +116,7 @@ const websiteJsonLd = toJsonLd({
     <SearchDialog />
     <CursorEffects />
     <Analytics />
+    <Mermaid />
 
     <!-- 图片 Lightbox -->
     <dialog id="lightbox" class="lightbox-dialog" aria-label="图片预览">
@@ -122,27 +124,86 @@ const websiteJsonLd = toJsonLd({
     </dialog>
 
     <script>
-      // 代码块复制按钮
-      document.querySelectorAll<HTMLElement>(".astro-code").forEach((pre) => {
-        pre.style.position = "relative";
+      // 阅读进度条：仅在包含 article 的页面计算滚动比例
+      const progressBar = document.getElementById("reading-progress");
+      const articleEl = document.querySelector("article");
+      if (progressBar && articleEl) {
+        let ticking = false;
+        const updateProgress = () => {
+          const rect = articleEl.getBoundingClientRect();
+          const total = rect.height - window.innerHeight;
+          if (total <= 0) {
+            progressBar.style.width = "0%";
+            ticking = false;
+            return;
+          }
+          const current = Math.max(0, -rect.top);
+          const percent = Math.min(100, Math.round((current / total) * 100));
+          progressBar.style.width = `${percent}%`;
+          ticking = false;
+        };
+
+        window.addEventListener(
+          "scroll",
+          () => {
+            if (!ticking) {
+              window.requestAnimationFrame(updateProgress);
+              ticking = true;
+            }
+          },
+          { passive: true }
+        );
+        updateProgress();
+      }
+
+      // 代码块增强：GitHub 风格轻量顶栏（语言/文件名 + 复制按钮）
+      document.querySelectorAll<HTMLElement>(".prose .astro-code").forEach((pre) => {
+        if (pre.parentElement?.classList.contains("code-block-wrapper")) return;
+
+        const rawLang = pre.getAttribute("data-language") || "";
+        const lang = rawLang.toLowerCase();
+
+        // mermaid 由 Mermaid 组件专门接管渲染与交互，避免生成两层顶栏
+        if (lang === "mermaid") return;
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "code-block-wrapper";
+
+        const header = document.createElement("div");
+        header.className = "code-header";
+
+        const langTag = document.createElement("span");
+        langTag.className =
+          "font-mono uppercase tracking-wider text-[10px] text-faint font-semibold";
+        langTag.textContent = lang || "CODE";
+        header.appendChild(langTag);
+
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className =
-          "code-copy-btn absolute right-2.5 top-2.5 rounded-md border border-line bg-surface px-2 py-1 text-[11px] text-muted opacity-0 transition-opacity hover:text-accent focus-visible:opacity-100";
-        btn.textContent = "Copy";
+          "code-copy-btn inline-flex items-center gap-1.5 rounded px-2 py-0.5 text-[11px] text-muted hover:text-fg hover:bg-surface transition-colors";
+        btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span>Copy</span>`;
+
         btn.addEventListener("click", async () => {
           const code = pre.querySelector("code")?.textContent ?? "";
           try {
             await navigator.clipboard.writeText(code);
-            btn.textContent = "Copied";
+            btn.innerHTML = `<span>Copied</span>`;
+            btn.classList.add("text-accent");
           } catch {
-            btn.textContent = "Failed";
+            btn.innerHTML = `<span>Failed</span>`;
           }
-          setTimeout(() => (btn.textContent = "Copy"), 1600);
+          setTimeout(() => {
+            btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><span>Copy</span>`;
+            btn.classList.remove("text-accent");
+          }, 1600);
         });
-        pre.addEventListener("mouseenter", () => (btn.style.opacity = "1"));
-        pre.addEventListener("mouseleave", () => (btn.style.opacity = "0"));
-        pre.appendChild(btn);
+
+        header.appendChild(btn);
+
+        pre.parentNode?.insertBefore(wrapper, pre);
+        wrapper.appendChild(header);
+        wrapper.appendChild(pre);
       });
 
       // 图片 Lightbox：点击正文图片放大预览

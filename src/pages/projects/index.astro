@@ -3,12 +3,16 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ProjectCard from "../../components/ProjectCard.astro";
 
-const projects = (await getCollection("projects")).sort((a, b) => {
+const allProjects = await getCollection("projects");
+const projects = allProjects.sort((a, b) => {
   const rank = { active: 0, completed: 1, archived: 2 } as const;
   const byStatus = rank[a.data.status] - rank[b.data.status];
   if (byStatus !== 0) return byStatus;
   return (b.data.startedAt?.getTime() ?? 0) - (a.data.startedAt?.getTime() ?? 0);
 });
+
+const featured = projects.filter((p) => p.data.featured);
+const others = projects.filter((p) => !p.data.featured);
 ---
 
 <BaseLayout
@@ -21,8 +25,36 @@ const projects = (await getCollection("projects")).sort((a, b) => {
       做过的东西和踩过的坑。每个项目附技术复盘：为什么这么选、难在哪、结果如何。
     </p>
 
-    <div class="mt-10 grid gap-4">
-      {projects.map((project) => <ProjectCard project={project} />)}
-    </div>
+    {
+      featured.length > 0 && (
+        <section class="mt-12" aria-label="精选项目">
+          <h2 class="text-xs uppercase tracking-wider font-mono text-faint mb-4">精选项目</h2>
+          <div class="grid sm:grid-cols-2 gap-5">
+            {featured.map((project) => (
+              <ProjectCard project={project} />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      others.length > 0 && (
+        <section class={featured.length > 0 ? "mt-12" : "mt-8"} aria-label="其他项目">
+          <h2 class="text-xs uppercase tracking-wider font-mono text-faint mb-4">全部工程</h2>
+          <div class="grid sm:grid-cols-2 gap-5">
+            {others.map((project) => (
+              <ProjectCard project={project} />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      projects.length === 0 && (
+        <p class="py-14 text-center text-sm text-muted">暂无公开展示的项目。</p>
+      )
+    }
   </div>
 </BaseLayout>

@@ -235,7 +235,10 @@ draft: false
 
 ## 8. Scheduled Publishing
 
-支持未来发布时间。
+> **2026-09-21 范围修订**：构建期未来日期过滤（`isPublished`）保留生效。
+> 经用户裁决，外部定时触发机制（GitHub Actions 定时 workflow / Cloudflare Deploy Hook）作废不予实施（个人博客无定时发刊刚需，且避免 Actions 闲置 60 天被禁及每日空跑构建）。文章上线以即时 `git push` 为准。
+
+支持未来发布时间过滤。
 
 例如：
 
@@ -244,15 +247,13 @@ date: 2026-09-10
 draft: false
 ```
 
-在日期到达之前：
+在日期到达之前（构建期计算）：
 
 - 不出现在 Blog
 - 不出现在首页
 - 不进入搜索
 - 不进入 RSS
 - 不进入 Sitemap
-
-GitHub Actions 定时触发构建，实现自动上线。
 
 ## 9. Category
 

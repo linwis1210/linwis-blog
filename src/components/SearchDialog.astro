@@ -28,11 +28,20 @@
   </div>
   <ul
     id="search-results"
-    class="overflow-y-auto overscroll-contain py-1.5"
+    class="overflow-y-auto overscroll-contain py-1.5 max-h-[360px]"
     role="listbox"
     aria-label="搜索结果"
   >
   </ul>
+  <div
+    class="hidden sm:flex items-center justify-between border-t border-line px-4 py-2 text-[11px] font-mono text-faint bg-surface-subtle/50 select-none"
+  >
+    <div class="flex items-center gap-3">
+      <span><kbd class="mr-1">↑</kbd><kbd>↓</kbd> 导航</span>
+      <span><kbd>↵</kbd> 打开</span>
+    </div>
+    <span><kbd>Esc</kbd> 退出</span>
+  </div>
 </dialog>
 
 <script>
@@ -116,7 +125,27 @@
   function render(query: string): void {
     if (!list) return;
     if (!query.trim()) {
-      list.innerHTML = "";
+      if (index && index.length > 0) {
+        const recent = index.slice(0, 5);
+        results = recent;
+        list.innerHTML =
+          '<li class="px-4 py-1.5 text-[11px] font-mono text-faint uppercase tracking-wider select-none">最近更新</li>' +
+          recent
+            .map((doc, i) => {
+              const meta = doc.kind === "post" ? `文章 · ${doc.category}` : "项目";
+              return `
+              <li role="option" aria-selected="false" data-index="${i}" class="search-item">
+                <a href="${doc.url}" class="block px-4 py-2.5 hover:bg-surface-hover transition-colors">
+                  <p class="text-sm font-medium">${escapeHtml(doc.title)}</p>
+                  <p class="mt-0.5 text-xs text-muted line-clamp-1">${meta}${doc.description ? " · " + escapeHtml(doc.description) : ""}</p>
+                </a>
+              </li>`;
+            })
+            .join("");
+      } else {
+        list.innerHTML = "";
+        results = [];
+      }
       active = -1;
       return;
     }
@@ -169,10 +198,6 @@
     dialog.showModal();
     loadIndex()
       .then(() => {
-        if (input && !input.value.trim()) {
-          if (list) list.innerHTML = "";
-          return;
-        }
         render(input?.value ?? "");
       })
       .catch(() => {

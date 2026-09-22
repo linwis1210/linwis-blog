@@ -3,7 +3,7 @@
 > **状态说明（2026-09-14，Leader 重建）**：仓库仅有单个初始提交，Git 历史无进度信号，此前全部复选框未勾、与实际实现脱节。
 > 今日依据磁盘代码证据逐项重建：勾选 = 有实现工件；未勾 = 未实现或仅部分实现（部分项附括号说明）。
 > 判定方法与证据索引：`.agents/tasks/_meta/2026-09-14-takeover-reconciliation.md`（归档后位于 `.agents/tasks/archive/_meta/`）。
-> 总计：167 / 190 项完成（约 88%）。2026-09-19 三次修订：GHCR 发布条目随架构作废。2026-09-17 二次修订：3 项域名绑定条目作废；2026-09-18 Phase 6 图片体系四项完成。
+> 总计：169 / 187 项完成（约 90.4%）。2026-09-21 六次修订：Phase 18 Broken Link Check 全站死链与静态资源检查器完成并归档。2026-09-21 五次修订：Phase 4 Mermaid 架构图支持完成。2026-09-21 四次修订：Phase 22 外部定时重建条目随用户裁决作废（保留构建期未来日期过滤，不实施外部定时触发流）。2026-09-19 三次修订：GHCR 发布条目随架构作废。2026-09-17 二次修订：3 项域名绑定条目作废；2026-09-18 Phase 6 图片体系四项完成。
 > 2026-09-15 范围修订：Docker / GHCR / CD-SSH 条目作废（Phase 19 重写为 Cloudflare Pages 部署，20/21 置空），总数由 212 调整为 194。
 
 ## Phase 0 — Repository
@@ -72,7 +72,7 @@
 - [x] Line Highlight
 - [ ] Optional Line Number
 - [x] Diff
-- [ ] Mermaid
+- [x] Mermaid（按需动态 ESM 渲染，零无图表页开销，双主题自动对齐，2026-09-21）
 - [ ] LaTeX
 - [x] Footnote
 - [x] Tables
@@ -231,7 +231,7 @@
 - [ ] Content Validation
 - [ ] Unit Tests
 - [x] Astro Build
-- [ ] Broken Link Check
+- [x] Broken Link Check（check:links 静态产物 AST 级扫描，81ms 极速，2026-09-21）
 - [ ] Playwright Smoke Test
 
 ## Phase 19 — Deployment（Cloudflare Pages）
@@ -256,12 +256,15 @@
 
 > 2026-09-15 并入 Phase 19（Cloudflare Pages），无条目。
 
-## Phase 22 — Scheduled Publishing
+## Phase 22 — ~~Scheduled Publishing~~（obsolete / won't do）
 
-- [ ] 每日定时重建触发（CF Deploy Hook，方案定于 2026-09-16）
-- [x] Future Article Filter（构建期 date 过滤已实现）
-- [ ] Automatic Rebuild（hook 触发 CF 重建部署）
-- [ ] RSS / Sitemap / Search Index 随部署刷新（线上验证一次）
+> 2026-09-21 范围修订：个人技术博客无定时发刊刚需，且避免 GitHub Actions 闲置 60 天自动禁用及每日空跑构建浪费。
+> 构建期未来日期过滤（Future Article Filter）保留已实现，外部定时触发机制（Deploy Hook / 定时重建）作废不予实施。文章上线以即时 git push 为准。
+
+- ~~每日定时重建触发（CF Deploy Hook）~~（obsolete：不实施外部定时触发）
+- [x] Future Article Filter（构建期 date 过滤已实现并保留）
+- ~~Automatic Rebuild（hook 触发 CF 重建部署）~~（obsolete）
+- ~~RSS / Sitemap / Search Index 随部署刷新（线上验证一次）~~（obsolete：无定时部署流）
 
 ## Phase 23 — Production（2026-09-15 修订）
 
